@@ -110,6 +110,12 @@ blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); 
 .panel p { margin: 0; }
 .panel-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 
+#vid-folder.ready { border-color: var(--good); color: var(--good); }
+dialog#player { border: 1px solid var(--line); border-radius: 10px; padding: 0; background: var(--surface); color: var(--ink); width: min(1280px, calc(100vw - 32px)); max-height: calc(100vh - 32px); }
+dialog#player::backdrop { background: rgba(10, 16, 22, .72); }
+.player-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 12px; font-family: var(--f-display); font-weight: 700; font-size: 20px; }
+#player-video { display: block; width: 100%; aspect-ratio: 16 / 9; max-height: calc(100vh - 110px); background: #000; }
+.vidnote { font-size: 12.5px; color: var(--muted); }
 .toast { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); background: var(--ink); color: var(--surface); padding: 10px 14px; border-radius: 8px; font-size: 13px; max-width: calc(100% - 32px); box-shadow: 0 6px 20px rgba(0,0,0,.18); z-index: 20; }
 </style>
 </head>
@@ -125,6 +131,8 @@ blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); 
         <button id="mode-guided" type="button" aria-pressed="true">Guided</button>
         <button id="mode-explore" type="button" aria-pressed="false">Explore</button>
       </div>
+      <button id="vid-folder" class="btn" type="button" title="Pick the folder on this computer that holds the step videos">Videos folder</button>
+      <input id="vid-input" type="file" webkitdirectory multiple hidden>
       <button id="back" class="btn" type="button">Back</button>
       <span id="progress" class="progress" aria-live="polite"></span>
       <button id="next" class="btn primary" type="button">Next</button>
@@ -155,6 +163,10 @@ blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); 
   </main>
 </div>
 <div class="toast" id="toast" hidden></div>
+<dialog id="player" aria-label="Step video">
+  <div class="player-head"><span id="player-title"></span><button type="button" class="btn" id="player-close">Close</button></div>
+  <video id="player-video" controls playsinline></video>
+</dialog>
 
 <script type="importmap">
 { "imports": {
@@ -193,12 +205,12 @@ const STEPS = [
     does:"Data Perspective Studio: today's output, the gap, and the automation options framed as an open question.",
     kpis:["1,190 vs 1,681 units/day","68 s vs 48 s per unit","+175,000 units/yr"], done:"gap +491/day",
     hand:"New product scope to Marco. Capacity question to Priya.", focus:["office"] },
-  { n:2, tab:"What exactly are we building?", who:"Marco", role:"Manufacturing Engineer", at:[29, 17, -7], view:['office', 1.0],
+  { n:2, video:true, tab:"What exactly are we building?", who:"Marco", role:"Manufacturing Engineer", at:[29, 17, -7], view:['office', 1.0],
     quote:"Engineering released the wall-hung WC. I have to turn it into something this plant can build.",
     does:"EBOM to MBOM, with one variant and option applied. The MBOM shows two operations the plant has never done.",
     kpis:["Frame welding","Frame + tank assembly","No resource for either"], done:"2 new ops",
     hand:"Two operations with no home, to Priya.", focus:["office"] },
-  { n:3, tab:"Where does the line break?", who:"Priya", role:"Industrial Engineer", at:[-25, 6, 0], view:['line', 1.0],
+  { n:3, video:true, tab:"Where does the line break?", who:"Priya", role:"Industrial Engineer", at:[-25, 6, 0], view:['line', 1.0],
     quote:"Everyone says buy robots. I want proof of where the line actually breaks.",
     does:"Flow simulation of today's plant. Casting, drying and firing have headroom. Glazing does not, and inside glazing the manual stations are the limit.",
     kpis:["1,190 units/day","Manual glazing at 100%","Robots waiting for input"], done:"glazing is the limit",
@@ -210,12 +222,12 @@ const STEPS = [
     kpis:["≥1,681 units/day target","Weld cell placed","Assembly line placed"], done:"layout v2",
     hand:"Weld cell location to Tomás. Takt targets to Kenji.", focus:["glaze","cut","weld","asm"],
     aisha:"Robots take the exterior spraying. Aisha moves to internal glazing, the skilled part of the job." },
-  { n:5, tab:"Will the fixture hold?", who:"Tomás", role:"Tooling Engineer", at:[-6.6, 5.5, -8.5], view:['weld', 1.0],
+  { n:5, video:true, tab:"Will the fixture hold?", who:"Tomás", role:"Tooling Engineer", at:[-6.6, 5.5, -8.5], view:['weld', 1.0],
     quote:"If the frame isn't held right, every weld is wrong.",
     does:"Holding fixture imported into the weld cell, kinematics added, clamp and positioning sequence simulated.",
     kpis:["Clamp sequence collision-free","[fixture handling time]"], done:"fixture OK",
     hand:"Validated fixture and part positions, to Kenji.", focus:["weld"] },
-  { n:6, tab:"Can the robots hit takt?", who:"Kenji", role:"Robotics Engineer", at:[-14.5, 6, 6], view:['glaze', 1.0],
+  { n:6, video:true, tab:"Can the robots hit takt?", who:"Kenji", role:"Robotics Engineer", at:[-14.5, 6, 6], view:['glaze', 1.0],
     quote:"I have 48 seconds per unit. The robots hit it on screen before they hit it on the floor.",
     does:"Glaze spray paths for the WC exterior and weld paths on the frame. Real cycle times go back into the flow simulation.",
     kpis:["Glazing ≤48 s per unit","[weld cycle vs frame takt]"], done:"≤48 s/unit",
@@ -490,9 +502,81 @@ function renderPanel(s, guided) {
     <div><div class="label">On screen</div><div class="chips">${s.kpis.map(k => `<span class="chip">${esc(k)}</span>`).join('')}</div></div>
     ${guided && s.aisha ? `<div class="aisha"><strong>Aisha, glazing operator.</strong> ${esc(s.aisha)}</div>` : ''}
     <div><div class="label">Hands off</div><p>${esc(s.hand)}</p></div>
-    <div class="panel-actions"><button class="btn primary" type="button" id="open-tab">Open tab</button></div>`;
+    <div class="panel-actions">${videos.has(s.n) ? `<button class="btn primary" type="button" id="play-vid">Play video</button>` : ''}<button class="btn${videos.has(s.n) ? '' : ' primary'}" type="button" id="open-tab">Open tab</button></div>
+    ${!videos.has(s.n) && s.video ? `<p class="vidnote">${videos.size ? `No file named "step${s.n}…" in the videos folder.` : 'Pick the videos folder to play this step\'s video.'}</p>` : ''}`;
   $('open-tab').addEventListener('click', () => toast(`In the dashboard, this opens the tab "${s.tab}".`));
+  const pv = $('play-vid'); if (pv) pv.addEventListener('click', () => playStep(s));
 }
+
+/* ---------- step videos from a folder on this computer ----------
+   Files are matched by name: anything starting with "step" + the step number, e.g. "step3.mp4" or "Step 5 - fixture.mp4".
+   The files never leave the computer; the page only plays them. */
+const videos = new Map();          // step number -> File
+const VIDEO_EXT = /\.(mp4|webm|m4v|mov)$/i;
+function addVideoFile(f) {
+  const m = f.name.match(/^step[\s_-]*0?([1-8])(?!\d)/i);
+  if (m && VIDEO_EXT.test(f.name)) videos.set(+m[1], f);
+}
+function videosLoaded(source) {
+  const b = $('vid-folder');
+  b.classList.toggle('ready', videos.size > 0);
+  b.textContent = videos.size ? `Videos: ${videos.size}` : 'Videos folder';
+  if (source) toast(videos.size ? `Found videos for step ${[...videos.keys()].sort().join(', ')}.` : 'No files named step1… to step8… in that folder.');
+  render(false);
+}
+const DB = 'novaceris-map', STORE = 'handles';
+function idb(mode, fn) {
+  return new Promise((ok, fail) => {
+    const rq = indexedDB.open(DB, 1);
+    rq.onupgradeneeded = () => rq.result.createObjectStore(STORE);
+    rq.onsuccess = () => { const tx = rq.result.transaction(STORE, mode); const r = fn(tx.objectStore(STORE)); tx.oncomplete = () => ok(r && r.result); tx.onerror = () => fail(tx.error); };
+    rq.onerror = () => fail(rq.error);
+  });
+}
+async function readDir(dir) {
+  videos.clear();
+  for await (const h of dir.values()) if (h.kind === 'file' && VIDEO_EXT.test(h.name)) addVideoFile(await h.getFile());
+}
+let savedDir = null;
+async function pickFolder() {
+  if (savedDir) {                                   // a folder picked on an earlier visit: one click re-grants it
+    try { if (await savedDir.requestPermission({ mode: 'read' }) === 'granted') { await readDir(savedDir); return videosLoaded(true); } } catch (e) {}
+  }
+  if (window.showDirectoryPicker) {
+    try {
+      const dir = await window.showDirectoryPicker({ id: 'novaceris-videos', mode: 'read' });
+      savedDir = dir; await readDir(dir); videosLoaded(true);
+      try { await idb('readwrite', s => s.put(dir, 'videos')); } catch (e) {}
+      return;
+    } catch (e) { if (e.name === 'AbortError') return; }
+  }
+  $('vid-input').click();                           // browsers without the folder picker: choose the folder each visit
+}
+$('vid-folder').addEventListener('click', pickFolder);
+$('vid-input').addEventListener('change', e => { videos.clear(); for (const f of e.target.files) addVideoFile(f); videosLoaded(true); });
+(async () => {
+  try {
+    const dir = await idb('readonly', s => s.get('videos'));
+    if (!dir) return;
+    savedDir = dir;
+    if (await dir.queryPermission({ mode: 'read' }) === 'granted') { await readDir(dir); videosLoaded(false); }
+    else { $('vid-folder').textContent = 'Reconnect videos'; }
+  } catch (e) {}
+})();
+
+let playingUrl = null;
+function playStep(s) {
+  const f = videos.get(s.n); if (!f) return;
+  if (playingUrl) URL.revokeObjectURL(playingUrl);
+  playingUrl = URL.createObjectURL(f);
+  $('player-title').textContent = `Step ${s.n} · ${s.who} · ${s.tab}`;
+  const v = $('player-video'); v.src = playingUrl;
+  $('player').showModal(); v.play().catch(() => {});
+}
+function closePlayer() { const v = $('player-video'); v.pause(); $('player').close(); }
+$('player-close').addEventListener('click', closePlayer);
+$('player').addEventListener('close', () => $('player-video').pause());
+$('player').addEventListener('click', e => { if (e.target === $('player')) closePlayer(); });
 
 let tt;
 function toast(msg) { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(tt); tt = setTimeout(() => t.hidden = true, 2600); }
@@ -502,7 +586,7 @@ $('back').addEventListener('click', () => { if (state.step > 0) { state.step--; 
 $('mode-guided').addEventListener('click', () => { state.mode = 'guided'; render(true); });
 $('mode-explore').addEventListener('click', () => { state.mode = 'explore'; state.sel = null; render(true); });
 document.addEventListener('keydown', e => {
-  if (state.mode !== 'guided' || e.target.closest('input,textarea')) return;
+  if (state.mode !== 'guided' || e.target.closest('input,textarea') || $('player').open) return;
   if (e.key === 'ArrowRight' && state.step < 8) { state.step++; render(true); }
   if (e.key === 'ArrowLeft' && state.step > 0) { state.step--; render(true); }
 });
