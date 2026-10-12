@@ -35,9 +35,18 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f
 .wrap { max-width: 1440px; margin: 0 auto; padding: 16px 16px 32px; display: grid; gap: 14px; }
 
 header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
-.brand { display: grid; gap: 2px; min-width: 0; }
+.lockup { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.logo { width: 44px; height: 44px; flex: none; color: var(--accent); display: grid; place-items: center; }
+.logo svg, .logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.company { font-family: var(--f-display); font-weight: 700; font-size: 26px; letter-spacing: .14em; text-transform: uppercase; line-height: 1; }
+.powered { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 4px; }
+.powered b { color: var(--ink); font-weight: 600; }
+.powered img { height: 18px; width: auto; display: block; }
+.hero { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 18px; padding-top: 2px; border-top: 1px solid var(--line); padding: 10px 0 0; }
 .eyebrow { font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-h1 { margin: 0; font-family: var(--f-display); font-weight: 700; font-size: clamp(24px, 3.2vw, 34px); line-height: 1.05; text-wrap: balance; }
+h1 { margin: 0; font-family: var(--f-display); font-weight: 700; font-size: clamp(34px, 4.6vw, 60px); line-height: 1; letter-spacing: .005em; text-wrap: balance; }
+h1 span { color: var(--accent); }
+.sub { margin: 0; font-family: var(--f-display); font-weight: 600; font-size: clamp(18px, 2vw, 26px); color: var(--muted); }
 .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
 .seg button { border: 0; background: transparent; color: var(--muted); font: 500 13px var(--f-body); padding: 7px 14px; cursor: pointer; }
@@ -94,13 +103,71 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 14px; al
 .scale { padding-top: 16px; display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 10.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .note { font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; padding-inline: 4px; }
 
+.stagebox { position: relative; min-width: 0; }
+.xcard { position: absolute; top: 12px; right: 12px; width: min(330px, calc(100% - 24px)); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; box-shadow: 0 8px 26px rgba(0,0,0,.18); display: grid; gap: 10px; z-index: 3; }
+.xc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.xc-step { font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.xc-name { font-family: var(--f-display); font-weight: 700; font-size: 26px; line-height: 1.05; margin-top: 2px; }
+.xc-x { border: 0; background: none; color: var(--muted); font-size: 20px; line-height: 1; cursor: pointer; padding: 0 2px; }
+.xc-chal { font-size: 13.5px; }
+.xc-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; border-top: 1px solid var(--line); padding-top: 10px; }
+.brandmark { display: inline-flex; align-items: center; gap: 8px; font-family: var(--f-display); font-weight: 700; font-size: 18px; letter-spacing: .1em; text-transform: uppercase; }
+.brandmark img { height: 26px; width: auto; display: block; }
+.brandmark .ph { border: 1.5px solid var(--ink); border-radius: 4px; padding: 1px 7px; }
+.mode { font-family: var(--f-mono); font-size: 11px; padding: 2px 7px; border-radius: 5px; border: 1px solid var(--line); color: var(--muted); }
+.mode.live { color: var(--good); border-color: var(--good); }
+.xc-gov { font-size: 12px; color: var(--muted); }
+.intro { position: absolute; left: 16px; top: 16px; bottom: 16px; width: min(560px, 54%); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 22px 24px; box-shadow: 0 10px 30px rgba(0,0,0,.2); display: flex; flex-direction: column; gap: 12px; z-index: 4; overflow: auto; }
+.intro h2 { margin: 0; font-family: var(--f-display); font-weight: 700; font-size: clamp(28px, 3vw, 40px); line-height: 1.02; text-wrap: balance; }
+.intro p { margin: 0; font-size: 15px; }
+.intro ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14.5px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(88px, 1fr)); gap: 8px; }
+.fact { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--bg); }
+.fact b { display: block; font-family: var(--f-display); font-weight: 700; font-size: 23px; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.fact span { font-size: 12px; color: var(--muted); }
+.exps { display: grid; gap: 6px; }
+.exp { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: baseline; border-bottom: 1px solid var(--line); padding-bottom: 5px; font-size: 14px; }
+.exp b { font-weight: 600; }
+.exp span { font-family: var(--f-mono); font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+.intro-foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.dots { display: flex; gap: 6px; }
+.dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+.dots i.on { background: var(--accent); }
+@media (max-width: 760px) {
+  .intro, .xcard { position: static; width: auto; margin-top: 10px; box-shadow: none; }
+}
+.agenda { display: grid; gap: 2px; }
+.agenda button { display: grid; grid-template-columns: 26px 1fr; gap: 8px; align-items: center; text-align: left; border: 0; background: none; color: var(--ink); font: inherit; padding: 6px 4px; border-radius: 6px; cursor: pointer; }
+.agenda button:hover { background: var(--bg); }
+.agenda .n { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--accent); color: var(--accent); display: grid; place-items: center; font: 500 11.5px var(--f-mono); }
+.agenda b { display: block; font-weight: 600; font-size: 13.5px; }
+.agenda small { color: var(--muted); font-size: 12px; }
+/* Booth mode: the plant fills the screen and tours itself */
+.stagebox:fullscreen, .stagebox.fs { background: var(--stage); width: 100vw; height: 100vh; }
+.stagebox.fs { position: fixed; inset: 0; z-index: 50; }
+.stagebox:fullscreen .stage, .stagebox.fs .stage { aspect-ratio: auto; height: 100%; border-radius: 0; }
+.booth-brand, .booth-cap { display: none; }
+.booth .booth-brand { display: flex; position: absolute; left: 24px; top: 20px; z-index: 3; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 18px; box-shadow: 0 8px 26px rgba(0,0,0,.18); }
+.booth .booth-brand .logo { width: 56px; height: 56px; }
+.booth .booth-brand .company { font-size: 34px; }
+.booth .booth-brand .bt { font-family: var(--f-display); font-weight: 700; font-size: clamp(26px, 2.6vw, 40px); line-height: 1; }
+.booth .booth-brand .bt span { color: var(--accent); }
+.booth .booth-cap { display: block; position: absolute; left: 24px; bottom: 24px; z-index: 3; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 20px; box-shadow: 0 8px 26px rgba(0,0,0,.18); max-width: min(720px, calc(100% - 48px)); }
+.booth .booth-cap b { display: block; font-family: var(--f-display); font-weight: 700; font-size: clamp(24px, 2.4vw, 36px); line-height: 1.05; }
+.booth .booth-cap span { color: var(--muted); font-size: 15px; }
+.booth .overlay, .booth .hint { display: none; }
+.booth .xcard { top: 20px; right: 24px; width: 380px; }
+.booth-exit { position: absolute; right: 24px; bottom: 24px; z-index: 3; display: none; }
+.booth .booth-exit { display: block; }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 14px; min-width: 0; }
 .stepno { font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
 .panel h2 { margin: 0; font-family: var(--f-display); font-weight: 700; font-size: 28px; line-height: 1.05; text-wrap: balance; }
-.persona { display: flex; align-items: center; gap: 10px; }
-.avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; font-family: var(--f-display); font-weight: 700; font-size: 18px; flex: none; }
-.persona b { display: block; font-weight: 600; }
-.persona span { color: var(--muted); font-size: 13px; }
+.persona { display: flex; align-items: center; gap: 14px; }
+.avatar { width: 76px; height: 76px; border-radius: 50%; background: var(--accent-soft) center / cover no-repeat; color: var(--accent); display: grid; place-items: center; font-family: var(--f-display); font-weight: 700; font-size: 34px; flex: none; border: 2px solid var(--accent); }
+.avatar.photo { color: transparent; }
+.pname { font-family: var(--f-display); font-weight: 700; font-size: 32px; line-height: 1; }
+.prole { color: var(--muted); font-size: 14px; margin-top: 3px; }
+.panel h2.q { font-size: 24px; }
 blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); font-size: 15px; }
 .label { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -124,32 +191,47 @@ dialog#player::backdrop { background: rgba(10, 16, 22, .72); }
 <body>
 <div class="wrap">
   <header>
-    <div class="brand">
-      <div class="eyebrow">Novaceris · Perfect Production for Sanitaryware</div>
-      <h1>Ten steps, one constraint, 600,000 WCs</h1>
+    <div class="lockup">
+      <span class="logo" data-img="novaceris-logo"><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="1" y="1" width="42" height="42" rx="11" fill="currentColor"/><path d="M13 31V13l18 18V13" fill="none" stroke="#fff" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <div>
+        <div class="company">Novaceris</div>
+        <div class="powered"><span>Powered by</span><span data-img="3dexperience-logo" hidden></span><b>Dassault Systèmes 3DEXPERIENCE</b><span>platform</span></div>
+      </div>
     </div>
     <div class="controls">
       <div class="seg" role="group" aria-label="Mode">
         <button id="mode-guided" type="button" aria-pressed="true">Guided</button>
         <button id="mode-explore" type="button" aria-pressed="false">Explore</button>
       </div>
-      <button id="vid-folder" class="btn" type="button" title="Pick the folder on this computer that holds the step videos">Videos folder</button>
+      <button id="vid-folder" class="btn" type="button" title="Pick the folder on this computer that holds the step videos, logos and persona photos">Media folder</button>
       <input id="vid-input" type="file" webkitdirectory multiple hidden>
+      <button id="booth" class="btn" type="button" title="Full screen: the plant runs and tours itself, for a booth screen">Booth mode</button>
       <button id="back" class="btn" type="button">Back</button>
       <span id="progress" class="progress" aria-live="polite"></span>
       <button id="next" class="btn primary" type="button">Next</button>
     </div>
   </header>
+  <div class="hero">
+    <h1><span>Perfect Production</span> for Sanitaryware</h1>
+    <p class="sub">Ten steps, one constraint, 600,000 WCs a year</p>
+  </div>
 
   <main>
     <section class="plantcol" aria-label="Factory">
-      <div class="stage" id="stage">
-        <div class="overlay" id="overlay"></div>
-        <div class="hint"><span>Drag to rotate · scroll to zoom</span><button type="button" id="reframe">Re-center</button></div>
-        <div class="loading" id="loading">
-          <div class="mono" id="load-text">Loading the plant…</div>
-          <div class="lbar"><div id="load-bar"></div></div>
+      <div class="stagebox" id="stagebox">
+        <div class="stage" id="stage">
+          <div class="overlay" id="overlay"></div>
+          <div class="hint"><span>Drag to rotate · scroll to zoom</span><button type="button" id="reframe">Re-center</button><button type="button" id="fs">Full screen</button></div>
+          <div class="loading" id="loading">
+            <div class="mono" id="load-text">Loading the plant…</div>
+            <div class="lbar"><div id="load-bar"></div></div>
+          </div>
+          <div class="booth-brand"><span class="logo" data-img="novaceris-logo"><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="1" y="1" width="42" height="42" rx="11" fill="currentColor"/><path d="M13 31V13l18 18V13" fill="none" stroke="#fff" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><div class="company">Novaceris</div><div class="bt"><span>Perfect Production</span> for Sanitaryware</div><div class="powered"><span>Powered by</span><span data-img="3dexperience-logo" hidden></span><b>Dassault Systèmes 3DEXPERIENCE</b><span>platform</span></div></div></div>
+          <div class="booth-cap" id="booth-cap"></div>
+          <button type="button" class="btn booth-exit" id="booth-exit">Exit booth mode</button>
         </div>
+        <aside class="xcard" id="xcard" aria-live="polite" hidden></aside>
+        <section class="intro" id="intro" aria-live="polite" hidden></section>
       </div>
       <div class="meter" aria-live="polite">
         <div class="meter-head">
@@ -181,6 +263,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
 const FLOOR = 1.15;
 // Plant areas in model coordinates (metres): [xMin, xMax, zMin, zMax]
@@ -205,76 +288,101 @@ const RACKS_AT = { before: [-23, -8.8, 0], after: [-13.7, 23.4, 0] };   // [x, z
 const ROOM_SRC = [13.5, 20.6, -16.3, -9.2];   // its footprint in the model
 const ROOM_TODAY = [-23.65, 3.9];             // shift from the model to today's spot, in the frame-line space
 
+// exp: the Experience the step delivers. brand: the 3DEXPERIENCE brand behind it. chal: the business challenge it answers.
+// show: what runs live on the platform in the demo and what is on video.
 const STEPS = [
   { n:1, tab:"Can we reach 600,000?", who:"Elena", role:"VP Manufacturing", at:[37, 23, -14], view:['office', 1.0],
+    exp:"Business Insight Experience", brand:"NETVIBES", show:{ live:"Data Perspective dashboard" },
+    chal:"The board wants 41% more output and a new product, and nobody can say yet what it costs or when it pays back.",
     quote:"The board wants 600,000 units a year and a modular wall-hung WC. I need to know what it costs and when it pays back.",
     does:"Data Perspective: today's output, the gap, and the options framed as an open question. No answer yet.",
     kpis:["1,190 vs 1,681 units/day","68 s vs 48 s per unit","+175,000 units/yr"], done:"gap +491/day",
     hand:"Two asks: the new product to Marco first, then capacity.", focus:["office"] },
   { n:2, video:true, tab:"What exactly are we building?", who:"Marco", role:"Manufacturing Engineer", at:[29, 17, -7], view:['office', 1.0],
+    exp:"Manufacturing Definition Experience", brand:"DELMIA", show:{ live:"EBOM and MBOM loading", video:"MBOM creation" },
+    chal:"A product the plant has never built: a wall-hung WC with its own steel frame and flush tank.",
     quote:"Engineering released the wall-hung WC. I have to turn it into something this plant can build.",
     does:"EBOM to MBOM, with the frame-height option applied. The MBOM shows two operations the plant has never done.",
     kpis:["Frame welding","Frame + tank assembly","No floor space for either"], done:"2 new ops",
     hand:"Two operations with nowhere to run, to Priya.", focus:["office"] },
-  { n:3, tab:"Where does the frame line go?", who:"Priya", role:"Plant Layout Engineer", at:[-27, 6.5, -9], view:['plant', 1.0],
+  { n:3, video:true, tab:"Where does the frame line go?", who:"Priya", role:"Plant Layout Engineer", at:[-27, 6.5, -9], view:['plant', 1.0],
+    exp:"Virtual Factory Experience", brand:"DELMIA", show:{ video:"Plant layout and catalog reuse" },
+    chal:"No free floor space for a new frame line, and no budget for a new building.",
     quote:"The space is already in the plant. It's full of racks that sit in the wrong place.",
     does:"Plant Layout Design: the raw-material racks move into slip preparation, next to the mills that use them, and the modular experience room moves next to the office. IP Classify and Reuse inserts the company's standard robotic arc welding cell.",
     kpis:["Racks at point of use","Experience room by the office","Standard weld cell reused"], done:"frame line placed",
     hand:"The weld cell, to Tomás for the fixture.", focus:["cut","weld","asm"] },
   { n:4, video:true, tab:"Will the fixture hold the frame?", who:"Tomás", role:"Tooling Engineer", at:[-8.6, 5.5, -11], view:['weld', 1.0],
+    exp:"Equipment Design Experience", brand:"CATIA", show:{ video:"Fixture kinematics and clamp sequence" },
+    chal:"A new weld fixture has to hold the frame right the first time; a wrong fixture means every weld is wrong.",
     quote:"If the frame isn't held right, every weld is wrong.",
     does:"Equipment Design: the frame holding fixture with forward kinematics, and the clamp and positioning sequence simulated.",
     kpis:["Fixture kinematics","Clamp sequence collision-free","Frame positioned for welding"], done:"fixture proven",
     hand:"A fixture that holds the frame, to Kenji for the weld paths.", focus:["weld"] },
   { n:5, video:true, tab:"Can the robot weld it in takt?", who:"Kenji", role:"Robotics Engineer", at:[-4.4, 5.5, -6.2], view:['weld', 1.0],
+    exp:"Robot Programming Experience", brand:"DELMIA", show:{ video:"Arc welding robot programming" },
+    chal:"Prove the catalog weld cell welds this frame in takt before a single robot is bought.",
     quote:"The cell came from the catalog. I still have to prove it welds this frame.",
     does:"DELMIA arc welding: weld paths on the frame held by Tomás's fixture, reach and collisions checked, and the cycle time against frame takt.",
     kpis:["Weld paths reachable","No collisions with the fixture","[weld cycle vs frame takt]"], done:"weld cell proven",
     hand:"A proven frame line, before a single robot is bought. Now the second ask: capacity.", focus:["weld"] },
   { n:6, video:true, tab:"Where does the line break?", who:"Priya", role:"Industrial Engineer", at:[-25, 6, 0], view:['line', 1.0],
+    exp:"Factory Simulation Experience", brand:"DELMIA", show:{ video:"Factory flow simulation, today's plant" },
+    chal:"Find the real constraint before spending on capacity, instead of buying what everyone assumes is needed.",
     quote:"Everyone says buy robots. I want proof of where the line actually breaks.",
     does:"Factory Flow Simulation of today's plant at the 1,681 load. Casting, drying and firing have headroom. Glazing does not, and inside glazing the manual glazers are the limit.",
     kpis:["1,190 units/day","Manual glazers at 100%","Other areas with headroom"], done:"glazing is the limit",
     hand:"The constraint, to Kenji.", focus:["glaze","kiln","cast","slip"],
     aisha:"Aisha and three colleagues spray every unit by hand at 100% utilization. The line runs at their pace because there is no slack." },
   { n:7, video:true, tab:"Can robots glaze it?", who:"Kenji", role:"Robotics Engineer", at:[-14.5, 6, 6], view:['glaze', 1.0],
-    quote:"48 seconds a unit: exterior, interior and rim. The robots hit it on screen before they hit it on the floor.",
-    does:"Robot glazing for two double booths: spray paths on the exterior, interior and rim, coverage and cycle time. Two booths stay manual, for quality control only.",
-    kpis:["4 robots, 2 QC booths","Glazing ≤48 s per unit","[robot cycle per unit]"], done:"≤48 s/unit",
+    exp:"Robot Programming Experience", brand:"DELMIA", show:{ video:"Programming one robot cell", live:"The robot cell in 3DPlay, inside the dashboard" },
+    chal:"Glazing skill is scarce and manual spraying caps output; the robots must glaze a whole WC each, consistently.",
+    quote:"One robot, one WC, start to finish. Program one cell, prove it on screen, and the other three run the same program.",
+    does:"Robot glazing: one robot cell programmed for the exterior, interior and rim, with coverage and cycle time checked. Each of the four robots glazes a whole WC on its own; two booths stay manual, for quality control only.",
+    kpis:["4 independent robots, 2 QC booths","155 s per WC per robot","≈2,090 glazed a day"], done:"155 s per WC",
     hand:"Robot cycle times, to Priya's simulation.", focus:["glaze"],
     aisha:"Robots take the spraying. Aisha moves to quality control, where her judgement matters most." },
-  { n:8, tab:"Does it clear 1,681?", who:"Priya", role:"Industrial Engineer", at:[-27, 6, 9], view:['line', 1.0],
+  { n:8, video:true, tab:"Does it clear 1,681?", who:"Priya", role:"Industrial Engineer", at:[-27, 6, 9], view:['line', 1.0],
+    exp:"Factory Simulation Experience", brand:"DELMIA", show:{ video:"Factory flow simulation, re-run" },
+    chal:"Prove the plant reaches 1,681 good WCs a day before the robots are ordered.",
     quote:"Same model, real robot cycle times. Now the plant has to prove it.",
     does:"Factory Flow Simulation re-run with the robotic glazing cell: throughput and utilization by area, next to today's result.",
-    kpis:["[1,750] units/day","Glazing below 100%","[utilization by area]"], done:"[1,750]/day",
+    kpis:["1,750 units/day","Robots 87% busy","Glazing no longer the limit"], done:"1,750/day",
     hand:"Throughput, to Elena's business case. The new line's people, to Sara.", focus:["glaze","kiln","cast","slip"] },
-  { n:9, tab:"Ready on day one?", who:"Sara", role:"Process Planner", at:[15.7, 5, 3.5], view:['asm', 1.0],
+  { n:9, video:true, tab:"Ready on day one?", who:"Sara", role:"Process Planner", at:[15.7, 5, 3.5], view:['asm', 1.0],
+    exp:"Work Instruction Experience", brand:"DELMIA", show:{ live:"Work instruction review", video:"Work instruction creation" },
+    chal:"Operators have to be trained on a line that does not exist yet.",
     quote:"New operators start before the line exists. They need to be right on day one.",
     does:"3D work instructions for the frame and flush tank assembly, built from the operations Marco defined.",
     kpis:["[number of steps]","[training time]"], done:"instructions ready",
     hand:"A line ready to staff.", focus:["asm"],
     aisha:"Two of Aisha's former colleagues move to the new assembly line and learn it here." },
   { n:10, tab:"Is it worth it?", who:"Elena", role:"VP Manufacturing", at:[27, 23, -22], view:['plant', 1.0],
+    exp:"Business Insight Experience", brand:"NETVIBES", show:{ live:"Data Perspective scenario comparison" },
+    chal:"Choose the investment that pays back fastest, on simulated numbers rather than assumptions.",
     quote:"Now the numbers are simulated, not assumed. Show me payback.",
-    does:"Scenario comparison: the breakeven built from the throughput in Step 8 and the cycle times in Steps 5 and 7. It answers the question from Step 1.",
-    kpis:["[capex]","[contribution per year]","[breakeven month]"], done:"payback [x] mo",
-    hand:"Decision.", focus:["office"] }
+    does:"Scenario comparison of three options, built from the throughput in Step 8 and the cycle times in Steps 5 and 7. A new hall costs €32M and pays back around 2035. Glazing v2 with the wall-hung line costs €8.6M and pays back in September 2028.",
+    kpis:["€8.6M capex","+€17.7M EBITDA a year","Payback Sep 2028"], done:"payback Sep 2028",
+    hand:"Decision: Glazing v2 with the wall-hung line.", focus:["office"] }
 ];
+// Iterop governs every hand-off between the steps.
+const GOVERNANCE = "Business Process Experience (Iterop) governs every hand-off";
 const LAST = STEPS.length;
 
 // Camera presets: [target, offset from target]
 const VIEWS = {
   plant:  { t: [0, 0, 0],      o: [-38, 58, -62] },
-  intro:  { t: [2, 0, 2],      o: [-52, 62, -58] },
+  intro:  { t: [15, 0, -9],    o: [-52, 62, -58] },   // the plant sits to the right of the intro card
   office: { t: [33, 9, -14],   o: [-34, 20, -26] },
   line:   { t: [-16, 1, 3],    o: [4, 26, -29] },
   glaze:  { t: [-19, 1, 3.5],  o: [2, 13, -15] },
   weld:   { t: [-7, 1, -8.5],  o: [6, 13, 15] },
   asm:    { t: [15.5, 1, 3.5], o: [-12, 13, -13] },
+  whs:    { t: [22, 1, 13],    o: [-16, 15, -17] },
 };
 
 const $ = id => document.getElementById(id);
-const state = { mode: 'guided', step: 0, sel: null };
+const state = { mode: 'guided', step: 0, sel: null, slide: 0, card: true, booth: false };
 
 /* ---------- three.js scene ---------- */
 const stage = $('stage');
@@ -419,6 +527,7 @@ fetchModel('factory.glb')
       }
     });
     initRoom(); plainGround();
+    try { initLife(); } catch (e) { console.warn('Plant motion is off:', e); }
     $('loading').hidden = true;
     setBg(); render(true);
   })
@@ -504,19 +613,312 @@ function setLayout(moved, animate) {
   relayout = { t0: performance.now() + 900, dur: 2600, from: layoutK, to };   // waits for the camera to settle
 }
 
+/* ---------- the plant at work: WCs on the conveyors, robots, frames and forklifts ----------
+   The model has no animation, so motion is added here. WCs already in the model ride their conveyors; robot parts
+   turn about their joints; extra WCs, steel frames and forklifts follow paths across the floor. */
+const life = { ready: false, wc: null, wcInv: null, bowl: null, bowlInv: null, wcs: [], robots: [], belts: [], lifts: [], sparks: [], mists: [] };
+const L4 = { a: new THREE.Matrix4(), b: new THREE.Matrix4(), c: new THREE.Matrix4(), v: new THREE.Vector3(), w: new THREE.Vector3(), q: new THREE.Quaternion(), up: new THREE.Vector3(0, 1, 0) };
+// WCs in the model that ride a conveyor: along an axis, at a fixed coordinate, from -> to in metres, at v m/s
+const WC_LINES = [
+  { along: 'z', fix: [-25.4, -22.4, -18.6, -15.6], from: 7.9, to: 1.1, v: .2, yMin: 1.75 },   // into the glazing booths and out
+  { along: 'x', fix: [0], from: -26.2, to: -11.4, v: .3 },                                     // collecting conveyor to the kiln
+  { along: 'x', fix: [1.4, 4.8], from: -10, to: -.4, v: .05 },                                 // kiln cars through the tunnel kilns
+];
+const KILN_TO_PACK = [[2, 3.25], [7.6, 3.25], [8.6, 3.6], [9.25, 4.6], [9.25, 14.6], [9.7, 15.8], [10.6, 16.25], [16.5, 16.25]];
+const FRAME_BELT = [[-2.7, -6.9], [8.5, -6.5], [12.2, -5.7], [13.4, -2.3], [13.6, 8], [15.1, 10.8], [20.6, 11.3]];
+const FORKLIFTS = [
+  { pts: [[24.5, 14.2], [37, 14.2], [37, 20.3], [24.5, 20.3]], v: 1.5, n: 2 },   // packed WCs to the warehouse racks
+  { pts: [[-31.6, -1.2], [-31.6, 8.6], [-29.4, 8.6], [-29.4, -1.2]], v: 1.1, n: 1 },   // green ware to glazing
+];
+
+function makePath(pts, loop) {
+  const p = loop ? pts.concat([pts[0]]) : pts, cum = [0];
+  for (let i = 1; i < p.length; i++) cum.push(cum[i - 1] + Math.hypot(p[i][0] - p[i - 1][0], p[i][1] - p[i - 1][1]));
+  return { p, cum, len: cum[cum.length - 1] };
+}
+function pathAt(path, d, out) {
+  d = ((d % path.len) + path.len) % path.len;
+  let i = 1; while (i < path.cum.length - 1 && path.cum[i] < d) i++;
+  const a = path.p[i - 1], b = path.p[i], k = (d - path.cum[i - 1]) / ((path.cum[i] - path.cum[i - 1]) || 1);
+  out.x = a[0] + (b[0] - a[0]) * k; out.z = a[1] + (b[1] - a[1]) * k; out.h = Math.atan2(b[0] - a[0], b[1] - a[1]);
+  return out;
+}
+// Height of the conveyor surface along a path: the median of what a ray straight down hits
+function beltHeight(path, fallback) {
+  const ray = new THREE.Raycaster(), down = new THREE.Vector3(0, -1, 0), ys = [], o = {};
+  ray.far = 2.2;
+  for (let d = .5; d < path.len; d += 1.6) {
+    pathAt(path, d, o); ray.set(L4.v.set(o.x, FLOOR + 2.2, o.z), down);
+    const h = ray.intersectObject(model, true).find(h => h.point.y > FLOOR + .3 && h.point.y < FLOOR + 1.4);
+    if (h) ys.push(h.point.y);
+  }
+  ys.sort((a, b) => a - b);
+  return ys.length >= 3 ? ys[ys.length >> 1] : fallback;
+}
+function worldOf(o, i, out) { if (o.isInstancedMesh) { o.getMatrixAt(i, out); return out.premultiply(o.matrixWorld); } return out.copy(o.matrixWorld); }
+function centerOf(o, i) {
+  if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
+  return o.geometry.boundingBox.getCenter(new THREE.Vector3()).applyMatrix4(worldOf(o, i, new THREE.Matrix4()));
+}
+
+function initLife() {
+  const hiddenGrp = new Map(hideInst.map(h => [h.o.uuid + ':' + h.i, h.grp]));
+  const byName = {}; model.traverse(o => { if (o.isMesh) (byName[o.name] = byName[o.name] || []).push(o); });
+
+  // 1. WCs already on the conveyors: mesh 150 is the carrier, mesh 151 the WC sitting on it
+  const wc = life.wc = (byName.mesh_150 || [])[0], bowl = life.bowl = (byName.mesh_151 || [])[0];
+  const bowls = [];
+  if (bowl) {
+    life.bowlInv = bowl.matrixWorld.clone().invert(); bowl.frustumCulled = false;
+    for (let j = 0; j < bowl.count; j++) if (!hiddenGrp.has(bowl.uuid + ':' + j)) bowls.push({ j, c: centerOf(bowl, j) });
+  }
+  if (wc) {
+    life.wcInv = wc.matrixWorld.clone().invert(); wc.frustumCulled = false;
+    for (let i = 0; i < wc.count; i++) {
+      if (hiddenGrp.has(wc.uuid + ':' + i)) continue;
+      const c = centerOf(wc, i);
+      for (const L of WC_LINES) {
+        const fixed = L.along === 'z' ? c.x : c.z, run = L.along === 'z' ? c.z : c.x, lo = Math.min(L.from, L.to), hi = Math.max(L.from, L.to);
+        if (!L.fix.some(f => Math.abs(fixed - f) < .3) || run < lo - .2 || run > hi + .2 || (L.yMin && c.y < L.yMin)) continue;
+        const top = bowls.find(b => Math.abs(b.c.x - c.x) < .45 && Math.abs(b.c.z - c.z) < .45 && b.c.y > c.y && b.c.y < c.y + .9);
+        life.wcs.push({ i, w: worldOf(wc, i, new THREE.Matrix4()), j: top ? top.j : -1, wj: top ? worldOf(bowl, top.j, new THREE.Matrix4()) : null, L, s0: (run - L.from) * Math.sign(L.to - L.from) });
+        break;
+      }
+    }
+  }
+
+  // 2. Robots. Each part is turned by the joints it hangs from; pivots are taken from the model's rest pose.
+  function robot(base, joints) { const r = { base, joints, parts: [], mats: joints.map(() => new THREE.Matrix4()) }; life.robots.push(r); return r; }
+  function part(r, o, i, level) {
+    r.parts.push({ o, i, level, w0: worldOf(o, i, new THREE.Matrix4()), inv: (o.isInstancedMesh ? o.matrixWorld : o.parent.matrixWorld).clone().invert(), grp: o.isInstancedMesh ? hiddenGrp.get(o.uuid + ':' + i) : null });
+    if (o.isInstancedMesh) o.frustumCulled = false; else o.matrixAutoUpdate = false;
+  }
+  // Glazing robots: one instance per robot in each of the meshes 376 to 384; the whole arm swivels on its base
+  const cobase = (byName.mesh_376 || [])[0];
+  if (cobase) {
+    const bots = [];
+    for (let i = 0; i < cobase.count; i++) {
+      const c = centerOf(cobase, i), ph = Math.round(c.x) * 1.7;
+      bots.push(robot(c, [{ p: c.clone(), axis: L4.up.clone(), amp: .55, f: .9, ph }]));
+    }
+    for (const [name, list] of Object.entries(byName)) {
+      const m = name.match(/^mesh_(37[7-9]|38[0-4])(_\d+)?$/); if (!m) continue;
+      for (const o of list) for (let i = 0; i < (o.count || 1); i++) {
+        const c = centerOf(o, i); let best = null, bd = 1.2;
+        for (const b of bots) { const d = Math.hypot(c.x - b.base.x, c.z - b.base.z); if (d < bd) { bd = d; best = b; } }
+        if (best) part(best, o, i, 1);
+      }
+    }
+    // Glaze mist where a robot sprays a WC in its booth
+    for (const x of WC_LINES[0].fix) {
+      let best = null, bd = 2; for (const b of bots) { const d = Math.abs(b.base.x - x); if (d < bd) { bd = d; best = b; } }
+      if (best) life.mists.push({ bot: best, at: new THREE.Vector3(x, 2.25, 4.2), pts: puff(0xe9f1f7, .055, .55) });
+    }
+  }
+  // Arc welding robots: meshes 269 to 275 under _instance_0 and _instance_1; 269-270 turret, 271 lower arm, 272-275 forearm and torch
+  const weld = {};
+  for (const [name, list] of Object.entries(byName)) {
+    const m = name.match(/^mesh_(269|27[0-5])(?:_\d+)?(?:_instance_(\d+))?$/); if (!m) continue;
+    for (const o of list) {
+      const k = m[2] ?? (o.parent && (o.parent.name.match(/_instance_(\d+)/) || [])[1]); if (k == null) continue;
+      (weld[k] = weld[k] || []).push({ o, n: +m[1] });
+    }
+  }
+  for (const list of Object.values(weld)) {
+    const avg = (n) => { const v = new THREE.Vector3(); const l = list.filter(x => x.n === n); l.forEach(x => v.add(centerOf(x.o, 0))); return l.length ? v.divideScalar(l.length) : null; };
+    const base = avg(269), shoulder = avg(270), elbow = avg(272), tool = avg(274);
+    if (!base || !shoulder || !elbow || !tool) continue;
+    const reach = new THREE.Vector3(tool.x - base.x, 0, tool.z - base.z).normalize(), axis = new THREE.Vector3(-reach.z, 0, reach.x);
+    const ph = base.x;
+    const r = robot(base, [
+      { p: base.clone(), axis: L4.up.clone(), amp: .32, f: 1.1, ph },
+      { p: shoulder.clone(), axis: axis.clone(), amp: .12, f: 1.7, ph: ph + 1 },
+      { p: elbow.clone(), axis: axis.clone(), amp: .2, f: 1.3, ph: ph + 2 },
+    ]);
+    for (const x of list) part(r, x.o, 0, x.n <= 270 ? 1 : x.n === 271 ? 2 : 3);
+    const torch = list.filter(x => x.n === 275).map(x => centerOf(x.o, 0))[0] || tool;
+    life.sparks.push({ r, tip: torch, pts: puff(0xffb347, .045, .9) });
+  }
+
+  // 3. Fired WCs from the kiln to packing, and welded frames from the weld cell to assembly
+  const firstBowl = life.wcs.find(e => e.j >= 0);
+  if (bowl && firstBowl) {
+    const ref = firstBowl.wj;
+    if (!bowl.geometry.boundingBox) bowl.geometry.computeBoundingBox();
+    const bb = bowl.geometry.boundingBox.clone().applyMatrix4(ref), c0 = bb.getCenter(new THREE.Vector3());
+    const unit = new THREE.Matrix4().makeTranslation(-c0.x, -c0.y, -c0.z).multiply(ref);   // the WC centred on the origin
+    belt(KILN_TO_PACK, bowl.geometry, bowl.material, unit, (c0.y - bb.min.y), 1.35, .3, FLOOR + .85, null);
+  }
+  const frameGeo = frameGeometry(), frameMat = new THREE.MeshStandardMaterial({ color: 0x8f9aa3, metalness: .55, roughness: .45 });
+  belt(FRAME_BELT, frameGeo, frameMat, new THREE.Matrix4(), .03, 1.7, .32, FLOOR + .9, 'frame');
+
+  // 4. Forklifts
+  for (const f of FORKLIFTS) {
+    const path = makePath(f.pts, true);
+    for (let k = 0; k < f.n; k++) { const g = forklift(k); scene.add(g); life.lifts.push({ g, path, v: f.v, d0: k * path.len / f.n, h: null }); }
+  }
+  life.ready = true;
+}
+
+function belt(pts, geo, mat, unit, half, gap, v, fallbackY, grp) {
+  const path = makePath(pts, false), n = Math.floor(path.len / gap);
+  const im = new THREE.InstancedMesh(geo, mat, n); im.frustumCulled = false; scene.add(im);
+  life.belts.push({ im, path, n, gap, v, unit, y: beltHeight(path, fallbackY) + half, grp });
+}
+function frameGeometry() {
+  // A wall-hung WC frame lying flat on the belt: two uprights, three cross members and the feet
+  const parts = [], bar = (w, h, d, x, y, z) => { const g = new THREE.BoxGeometry(w, h, d); g.translate(x, y, z); parts.push(g); };
+  bar(.05, .04, 1.12, -.22, 0, 0); bar(.05, .04, 1.12, .22, 0, 0);
+  bar(.49, .04, .05, 0, 0, -.54); bar(.49, .04, .05, 0, 0, .1); bar(.49, .04, .05, 0, 0, .54);
+  bar(.12, .03, .08, -.22, .01, -.6); bar(.12, .03, .08, .22, .01, -.6);
+  return mergeGeometries(parts);
+}
+function forklift(k) {
+  const g = new THREE.Group(), m = c => new THREE.MeshStandardMaterial({ color: c, roughness: .7, metalness: .1 });
+  const body = m(0xe2a72e), dark = m(0x2b2f33), steel = m(0x6d757c), wood = m(0x9a7a52), box = m(0xc9a46b), shirt = m(0x3d5a73), skin = m(0xd9b08c);
+  const b = (w, h, d, mt, x, y, z) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mt); o.position.set(x, y, z); g.add(o); return o; };
+  b(1.1, .7, 1.7, body, 0, .55, 0); b(1.12, .55, .45, dark, 0, .6, -.75);        // chassis and counterweight
+  for (const [x, z] of [[-.5, .55], [.5, .55], [-.5, -.55], [.5, -.55]]) { const w = new THREE.Mesh(new THREE.CylinderGeometry(.24, .24, .2, 16), dark); w.rotation.z = Math.PI / 2; w.position.set(x, .24, z); g.add(w); }
+  for (const [x, z] of [[-.48, .35], [.48, .35], [-.48, -.45], [.48, -.45]]) b(.05, 1.3, .05, dark, x, 1.5, z);   // overhead guard
+  b(1.05, .05, .9, dark, 0, 2.15, -.05);
+  b(.38, .1, .38, dark, 0, .95, -.15); b(.36, .5, .24, shirt, 0, 1.25, -.2);    // seat and driver
+  const head = new THREE.Mesh(new THREE.SphereGeometry(.12, 12, 10), skin); head.position.set(0, 1.62, -.2); g.add(head);
+  b(.08, 2.2, .08, steel, -.32, 1.15, .92); b(.08, 2.2, .08, steel, .32, 1.15, .92); b(.72, .08, .08, steel, 0, 2.2, .92);   // mast
+  const lift = new THREE.Group(); lift.position.set(0, 0, 0); g.add(lift);
+  for (const x of [-.2, .2]) { const f = new THREE.Mesh(new THREE.BoxGeometry(.1, .04, 1.1), steel); f.position.set(x, .12, 1.5); lift.add(f); }
+  const pal = new THREE.Mesh(new THREE.BoxGeometry(.8, .14, 1.2), wood); pal.position.set(0, .21, 1.5); lift.add(pal);
+  for (let i = 0; i < 4; i++) { const c = new THREE.Mesh(new THREE.BoxGeometry(.36, .42, .55), box); c.position.set(i % 2 ? .19 : -.19, .5, 1.5 + (i < 2 ? -.29 : .29)); lift.add(c); }
+  g.userData.lift = lift;
+  g.position.y = FLOOR;
+  return g;
+}
+function puff(color, size, opacity) {
+  const n = 36, geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(n * 3), 3));
+  const pts = new THREE.Points(geo, new THREE.PointsMaterial({ color, size, transparent: true, opacity, depthWrite: false, blending: THREE.AdditiveBlending }));
+  pts.frustumCulled = false; pts.visible = false; scene.add(pts); return pts;
+}
+function scatter(pts, at, r, t, fall) {
+  const a = pts.geometry.attributes.position;
+  for (let i = 0; i < a.count; i++) {
+    const k = ((i * 0.618 + t * (fall ? 2.2 : .9)) % 1);
+    const th = i * 2.4 + t * 3, ph = Math.sin(i * 12.9) * Math.PI;
+    a.setXYZ(i, at.x + Math.cos(th) * Math.cos(ph) * r * k, at.y + Math.sin(ph) * r * k * .6 - (fall ? k * k * .5 : 0), at.z + Math.sin(th) * Math.cos(ph) * r * k);
+  }
+  a.needsUpdate = true;
+}
+
+const RISE = new THREE.Matrix4(), PIV = new THREE.Matrix4();
+function stepLife(t) {
+  // WCs on the model's own conveyors
+  if (life.wc && life.wcs.length) {
+    for (const e of life.wcs) {
+      const L = e.L, span = Math.abs(L.to - L.from), dir = Math.sign(L.to - L.from);
+      const d = ((((e.s0 + L.v * t) % span) + span) % span - e.s0) * dir;
+      L4.a.makeTranslation(L.along === 'x' ? d : 0, 0, L.along === 'z' ? d : 0).multiply(e.w).premultiply(life.wcInv);
+      life.wc.setMatrixAt(e.i, L4.a);
+      if (e.j >= 0) { L4.a.makeTranslation(L.along === 'x' ? d : 0, 0, L.along === 'z' ? d : 0).multiply(e.wj).premultiply(life.bowlInv); life.bowl.setMatrixAt(e.j, L4.a); }
+    }
+    life.wc.instanceMatrix.needsUpdate = true;
+    if (life.bowl) life.bowl.instanceMatrix.needsUpdate = true;
+  }
+  // Robots
+  const touched = new Set();
+  for (const r of life.robots) {
+    r.joints.forEach((j, k) => {
+      PIV.makeTranslation(j.p.x, j.p.y, j.p.z).multiply(RISE.makeRotationAxis(j.axis, j.amp * Math.sin(t * j.f + j.ph))).multiply(L4.c.makeTranslation(-j.p.x, -j.p.y, -j.p.z));
+      if (k) r.mats[k].multiplyMatrices(r.mats[k - 1], PIV); else r.mats[k].copy(PIV);
+    });
+    r.on = false;
+    for (const pt of r.parts) {
+      if (pt.grp && !builtShown[pt.grp]) continue;
+      L4.b.multiplyMatrices(r.mats[pt.level - 1], pt.w0);
+      if (pt.o.isInstancedMesh) { pt.o.setMatrixAt(pt.i, L4.b.premultiply(pt.inv)); touched.add(pt.o); }
+      else { pt.o.matrix.multiplyMatrices(pt.inv, L4.b); pt.o.matrixWorldNeedsUpdate = true; }
+      r.on = r.on || pt.o.visible !== false;
+    }
+  }
+  for (const o of touched) o.instanceMatrix.needsUpdate = true;
+  for (const m of life.mists) { m.pts.visible = m.bot.on && Math.sin(t * 1.4 + m.at.x) > -.2; if (m.pts.visible) scatter(m.pts, m.at, .38, t, false); }
+  for (const s of life.sparks) {
+    const r = s.r, vis = r.on && r.parts.some(p => p.o.visible) && builtShown.frame !== false && Math.sin(t * 5.3 + r.base.x) > -.35;
+    s.pts.visible = vis;
+    if (vis) scatter(s.pts, L4.w.copy(s.tip).applyMatrix4(r.mats[r.mats.length - 1]), .16, t * 1.6, true);
+  }
+  // Belts: WCs to packing, frames to assembly
+  const o = {};
+  for (const b of life.belts) {
+    b.im.visible = !b.grp || builtShown[b.grp] === true;
+    if (!b.im.visible) continue;
+    for (let i = 0; i < b.n; i++) {
+      pathAt(b.path, Math.min(b.path.len - .01, (i * b.gap + b.v * t) % (b.n * b.gap)), o);
+      L4.a.makeRotationY(o.h).setPosition(o.x, b.y, o.z).multiply(b.unit);
+      b.im.setMatrixAt(i, L4.a);
+    }
+    b.im.instanceMatrix.needsUpdate = true;
+  }
+  // Forklifts: drive the loop, turn smoothly, raise the forks now and then
+  for (const f of life.lifts) {
+    pathAt(f.path, f.d0 + f.v * t, o);
+    if (f.h === null) f.h = o.h;
+    let dh = o.h - f.h; dh = Math.atan2(Math.sin(dh), Math.cos(dh)); f.h += dh * .12;
+    f.g.position.set(o.x, FLOOR, o.z); f.g.rotation.y = f.h;
+    f.g.userData.lift.position.y = Math.max(0, Math.sin(t * .35 + f.d0)) * .9;
+  }
+}
+
+/* ---------- booth mode: full screen, the finished plant at work, touring its cells ---------- */
+const TOUR = [
+  { view: 'plant', step: 3,  title: 'The Novaceris plant, as a virtual twin', sub: 'Layout, lines and flows of the whole plant, before anything moves on the floor' },
+  { view: 'glaze', step: 7,  title: 'Robotic glazing', sub: 'Four robots, each glazing a whole WC on its own; two booths stay manual for quality control' },
+  { view: 'weld',  step: 5,  title: 'Arc welding cell', sub: 'The standard weld cell from the catalog, proven on the new wall-hung frame' },
+  { view: 'line',  step: 8,  title: 'From glazing to the kilns', sub: '1,750 WCs a day, proven in simulation before a robot was bought' },
+  { view: 'asm',   step: 9,  title: 'Frame and tank assembly', sub: 'Operators trained on 3D work instructions before the line exists' },
+  { view: 'whs',   step: 10, title: 'Packing and dispatch', sub: '600,000 WCs a year, with payback in September 2028' },
+];
+const tour = { i: 0, t0: 0, hold: 0 };
+const stagebox = $('stagebox');
+function showTour() {
+  const it = TOUR[tour.i];
+  $('booth-cap').innerHTML = `<b>${esc(it.title)}</b><span>${esc(it.sub)}</span>`;
+  renderCard(null); goTo(it.view);
+}
+async function boothOn() {
+  state.booth = true; tour.i = 0; tour.t0 = performance.now(); tour.hold = 0;
+  stagebox.classList.add('booth');
+  if (stagebox.requestFullscreen) { try { await stagebox.requestFullscreen(); } catch (e) { stagebox.classList.add('fs'); } }
+  else stagebox.classList.add('fs');
+  render(false); showTour();
+}
+function boothOff() {
+  if (!state.booth) return;
+  state.booth = false; stagebox.classList.remove('booth', 'fs');
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  render(true);
+}
+function boothTick() {
+  const now = performance.now();
+  if (now - tour.t0 > 16000 && now > tour.hold && !fly) { tour.i = (tour.i + 1) % TOUR.length; tour.t0 = now; showTour(); }
+}
+document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && state.booth && !stagebox.classList.contains('fs')) boothOff(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && state.booth) boothOff(); });
+$('booth').addEventListener('click', boothOn);
+$('fs').addEventListener('click', boothOn);
+$('booth-exit').addEventListener('click', boothOff);
+renderer.domElement.addEventListener('pointerdown', () => { if (state.booth) { tour.hold = performance.now() + 20000; tour.t0 = performance.now(); } });
+
 /* ---------- story state ---------- */
 function current() { return state.mode === 'guided' ? state.step : (state.sel || 0); }
 function currentView() {
   const s = STEPS.find(x => x.n === current());
-  return s ? s.view[0] : (state.mode === 'guided' ? 'intro' : 'plant');
+  return s ? s.view[0] : (state.mode === 'guided' && stage.clientWidth > 760 ? 'intro' : 'plant');
 }
-function select(n) { if (state.mode === 'guided') state.step = n; else state.sel = n; render(true); }
+function select(n) { if (state.mode === 'guided') state.step = n; else state.sel = n; state.card = true; render(true); }
 
 let prevG = -1;
 function render(move) {
   const guided = state.mode === 'guided';
   const step = current();
-  const g = guided ? state.step : LAST;   // plant state; explore shows the finished plant
+  const g = guided && !state.booth ? state.step : LAST;   // plant state; explore and booth mode show the finished plant
   const s = STEPS.find(x => x.n === step);
   const framed = g >= 3;
   if (model) {
@@ -538,7 +940,7 @@ function render(move) {
   paintZones();
 
   // Tags
-  T.glaze.el.textContent = { none: '', bad: 'Glazing: 4 manual booths at 100%', warn: 'Robotic glazing: ≤48 s per unit', good: 'Re-run: glazing no longer the limit' }[gs];
+  T.glaze.el.textContent = { none: '', bad: 'Glazing: 4 manual booths at 100%', warn: 'Robotic glazing: 4 robots, 155 s per WC each', good: 'Re-run: glazing no longer the limit' }[gs];
   T.glaze.el.className = 'tag ' + gs; T.glaze.hide = gs === 'none';
   for (const k of ['kiln', 'cast', 'slip']) T[k].hide = !sim;
   T.wip.hide = !(guided && g === 6);
@@ -570,39 +972,49 @@ function render(move) {
 
   // Controls
   $('back').hidden = $('next').hidden = $('progress').hidden = !guided;
-  $('back').disabled = state.step === 0;
   $('next').disabled = state.step === LAST;
-  $('next').textContent = state.step === 0 ? 'Start' : 'Next';
-  $('progress').textContent = state.step === 0 ? 'Intro' : `Step ${state.step} of ${LAST}`;
+  $('next').textContent = state.step === 0 && state.slide === SLIDES.length - 1 ? 'Start' : 'Next';
+  $('progress').textContent = state.step === 0 ? `Intro ${state.slide + 1} of ${SLIDES.length}` : `Step ${state.step} of ${LAST}`;
+  $('back').disabled = state.step === 0 && state.slide === 0;
   $('mode-guided').setAttribute('aria-pressed', guided);
   const h = guided && state.step ? `#step=${state.step}` : '';   // the address always names the step, so a link can open it
   if (location.hash !== h) history.replaceState(null, '', h || location.pathname + location.search);
   $('mode-explore').setAttribute('aria-pressed', !guided);
 
   renderPanel(s, guided);
-  if (move) goTo(currentView());
+  renderCard(s);
+  renderIntro(guided && state.step === 0 && !state.booth);
+  if (move && !state.booth) goTo(currentView());
 }
 
 function esc(t) { return String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+const keyOf = t => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+function avatar(name) {
+  const url = images.get('persona-' + keyOf(name));
+  return `<div class="avatar${url ? ' photo' : ''}" aria-hidden="true"${url ? ` style="background-image:url('${url}')"` : ''}>${esc(name[0])}</div>`;
+}
+function brandMark(b) {
+  const url = images.get('brand-' + keyOf(b));
+  return `<span class="brandmark">${url ? `<img src="${url}" alt="${esc(b)}">` : `<span class="ph">${esc(b)}</span>`}</span>`;
+}
 function renderPanel(s, guided) {
   const panel = $('panel');
   if (!s) {
     panel.innerHTML = guided ? `
-      <div class="stepno">Intro</div>
-      <h2>From 425,000 to 600,000 WCs a year</h2>
-      <p>The plant makes 1,190 units a day and needs 1,681. Follow ten steps through the plant to find what limits it, fix it, and prove the payback.</p>
-      <div><div class="label">Planning basis</div><div class="chips"><span class="chip">357 days/yr</span><span class="chip">22.5 h/day</span><span class="chip">takt 48 s</span></div></div>
-      <div class="panel-actions"><button class="btn primary" type="button" id="start">Start with Elena</button></div>` : `
+      <div class="stepno">The demo</div>
+      <h2>Ten steps, ten people, one plant</h2>
+      <div class="agenda">${STEPS.map(x => `<button type="button" data-n="${x.n}"><span class="n">${x.n}</span><span><b>${esc(x.who)} · ${esc(x.tab)}</b><small>${esc(x.exp)}</small></span></button>`).join('')}</div>
+      <p class="xc-gov">${esc(GOVERNANCE)}.</p>` : `
       <div class="stepno">Explore</div>
       <h2>Pick anyone in the plant</h2>
-      <p>The plant shows the finished state. Select a pin to see that person's step and open their tab.</p>`;
-    const b = $('start'); if (b) b.addEventListener('click', () => { state.step = 1; render(true); });
+      <p>The plant shows the finished state. Select a pin to see that person's step, the Experience behind it, and the cell at work.</p>`;
+    panel.querySelectorAll('.agenda button').forEach(b => b.addEventListener('click', () => { state.step = +b.dataset.n; state.card = true; render(true); }));
     return;
   }
   panel.innerHTML = `
-    <div class="stepno">Step ${s.n} of ${LAST}</div>
-    <h2>${esc(s.tab)}</h2>
-    <div class="persona"><div class="avatar" aria-hidden="true">${esc(s.who[0])}</div><div><b>${esc(s.who)}</b><span>${esc(s.role)}</span></div></div>
+    <div class="stepno">Step ${s.n} of ${LAST} · ${esc(s.exp)}</div>
+    <div class="persona">${avatar(s.who)}<div><div class="pname">${esc(s.who)}</div><div class="prole">${esc(s.role)}</div></div></div>
+    <h2 class="q">${esc(s.tab)}</h2>
     <blockquote>${esc(s.quote)}</blockquote>
     <div><div class="label">On the platform</div><p>${esc(s.does)}</p></div>
     <div><div class="label">On screen</div><div class="chips">${s.kpis.map(k => `<span class="chip">${esc(k)}</span>`).join('')}</div></div>
@@ -610,15 +1022,81 @@ function renderPanel(s, guided) {
     <div><div class="label">Hands off</div><p>${esc(s.hand)}</p></div>
     <div class="panel-actions">${videos.has(s.n) ? `<button class="btn primary" type="button" id="play-vid">Play video</button>` : ''}<button class="btn${videos.has(s.n) ? '' : ' primary'}" type="button" id="open-tab">Open tab</button></div>
     ${allVideos.length ? `<label class="vidpick"><span>Video for this step</span><select id="vid-assign"><option value="">None</option>${allVideos.map(f => `<option value="${esc(f.name)}"${videos.get(s.n) === f ? ' selected' : ''}>${esc(f.name)}</option>`).join('')}</select></label>`
-      : s.video ? `<p class="vidnote">Pick the videos folder to play this step's video.</p>` : ''}`;
+      : s.video ? `<p class="vidnote">Pick the media folder to play this step's video.</p>` : ''}`;
   $('open-tab').addEventListener('click', () => toast(`In the dashboard, this opens the tab "${s.tab}".`));
   const pv = $('play-vid'); if (pv) pv.addEventListener('click', () => playStep(s));
   const va = $('vid-assign'); if (va) va.addEventListener('change', () => assignVideo(s.n, va.value));
 }
 
-/* ---------- step videos from a folder on this computer ----------
-   A file is matched to a step by its name ("step3.mp4", "Step 4 - fixture.mp4") or by picking it in the step's
-   "Video for this step" list; picks are remembered by file name. The files never leave the computer. */
+/* ---------- Experience card: shows over the plant when a step is open ---------- */
+function renderCard(s) {
+  const c = $('xcard');
+  if (state.booth) s = STEPS.find(x => x.n === TOUR[tour.i].step);
+  if (!s || (!state.card && !state.booth)) { c.hidden = true; return; }
+  c.hidden = false;
+  const modes = [s.show.live ? `<span class="mode live" title="${esc(s.show.live)}">Live: ${esc(s.show.live)}</span>` : '', s.show.video ? `<span class="mode" title="${esc(s.show.video)}">Video: ${esc(s.show.video)}</span>` : ''].join('');
+  c.innerHTML = `
+    <div class="xc-top"><div><div class="xc-step">Step ${s.n} · ${esc(s.who)}</div><div class="xc-name">${esc(s.exp)}</div></div>${state.booth ? '' : '<button type="button" class="xc-x" id="xc-x" aria-label="Close">×</button>'}</div>
+    <div><div class="label">Business challenge</div><div class="xc-chal">${esc(s.chal)}</div></div>
+    <div class="xc-foot">${brandMark(s.brand)}<span class="chips">${modes}</span></div>
+    <div class="xc-gov">${esc(GOVERNANCE)}.</div>`;
+  const x = $('xc-x'); if (x) x.addEventListener('click', () => { state.card = false; c.hidden = true; });
+}
+
+/* ---------- intro, before Step 1 ---------- */
+const EXPS = [...new Map(STEPS.map(x => [x.exp, STEPS.filter(y => y.exp === x.exp).map(y => y.n)])).entries()];
+const SLIDES = [
+  () => `<div class="stepno">Meet the customer</div>
+    <h2>Novaceris makes premium ceramic WCs in Saxony</h2>
+    <p>A sanitaryware maker with one plant in eastern Germany, selling through its own distribution centres in Germany and France.</p>
+    <div class="facts">
+      <div class="fact"><b>425,000</b><span>WCs a year</span></div>
+      <div class="fact"><b>1,190</b><span>good WCs a day</span></div>
+      <div class="fact"><b>330</b><span>people</span></div>
+      <div class="fact"><b>€59.5M</b><span>revenue</span></div>
+      <div class="fact"><b>1 + 8</b><span>plant and distribution centres</span></div>
+    </div>`,
+  () => `<div class="stepno">The business challenge</div>
+    <h2>Grow 41% in a plant that is already full</h2>
+    <ul>
+      <li><b>600,000 WCs a year</b>, up from 425,000: 1,681 good WCs a day.</li>
+      <li><b>A new wall-hung WC</b> with its own steel frame and flush tank, built in-house.</li>
+      <li><b>No free floor space</b> and no budget for a new building.</li>
+      <li><b>Nobody knows where the line will break</b> at the higher rate, and every euro of capex has to pay back fast.</li>
+    </ul>`,
+  () => `<div class="stepno">How Perfect Production solves it</div>
+    <h2>Prove every decision on the virtual twin first</h2>
+    <p>Perfect Production runs the plant's engineering on the 3DEXPERIENCE platform. Each step is an Experience, and one governed process ties them together.</p>
+    <div class="exps">${EXPS.map(([e, ns]) => `<div class="exp"><b>${esc(e)}</b><span>Step${ns.length > 1 ? 's' : ''} ${ns.join(', ')}</span></div>`).join('')}
+      <div class="exp"><b>Business Process Experience</b><span>Every step</span></div></div>`,
+];
+function renderIntro(on) {
+  const el = $('intro'); el.hidden = !on;
+  controls.autoRotate = state.booth; controls.autoRotateSpeed = .35;
+  if (!on) return;
+  const last = state.slide === SLIDES.length - 1;
+  el.innerHTML = SLIDES[state.slide]() + `<div class="intro-foot"><span class="dots">${SLIDES.map((_, i) => `<i class="${i === state.slide ? 'on' : ''}"></i>`).join('')}</span><button class="btn primary" type="button" id="intro-next">${last ? 'Start with Elena' : 'Next'}</button></div>`;
+  $('intro-next').addEventListener('click', () => advance(1));
+}
+
+/* ---------- media from a folder on this computer: step videos, logos and persona photos ----------
+   A video is matched to a step by its name ("step3.mp4", "Step 4 - fixture.mp4") or by picking it in the step's
+   "Video for this step" list; picks are remembered by file name. Images are matched by name, any of .png .jpg .webp .svg:
+   novaceris-logo, 3dexperience-logo, brand-delmia, brand-catia, brand-netvibes, persona-elena, persona-marco, ...
+   The files never leave the computer, so logos and photos are not published with the page. */
+const images = new Map();          // file name without extension, lower case -> object URL
+const IMAGE_EXT = /\.(png|jpe?g|webp|svg|gif)$/i;
+let imageFiles = [];
+function loadImages() {
+  for (const u of images.values()) URL.revokeObjectURL(u);
+  images.clear();
+  for (const f of imageFiles) images.set(f.name.replace(IMAGE_EXT, '').toLowerCase().trim(), URL.createObjectURL(f));
+  document.querySelectorAll('[data-img]').forEach(el => {
+    const url = images.get(el.dataset.img);
+    if (el.dataset.img === 'novaceris-logo') { if (url) el.innerHTML = `<img src="${url}" alt="Novaceris">`; }
+    else { el.hidden = !url; el.innerHTML = url ? `<img src="${url}" alt="3DEXPERIENCE">` : ''; }
+  });
+}
 const videos = new Map();          // step number -> File
 let allVideos = [];                // every video found in the folder
 const VIDEO_EXT = /\.(mp4|webm|m4v|mov|mkv|avi|wmv)$/i;
@@ -636,11 +1114,11 @@ function matchVideos() {
 }
 function assignVideo(n, name) { const a = loadAssign(); a[n] = name; saveAssign(a); matchVideos(); videosLoaded(false); }
 function videosLoaded(source) {
-  matchVideos();
+  matchVideos(); if (source !== false || !images.size) loadImages();
   const b = $('vid-folder');
-  b.classList.toggle('ready', allVideos.length > 0);
-  b.textContent = allVideos.length ? `Videos: ${videos.size} of ${allVideos.length} placed` : 'Videos folder';
-  if (source) toast(!allVideos.length ? 'No video files in that folder. Pick the folder that holds the .mp4 files.'
+  b.classList.toggle('ready', allVideos.length + images.size > 0);
+  b.textContent = allVideos.length + images.size ? `Media: ${videos.size}/${allVideos.length} videos, ${images.size} images` : 'Media folder';
+  if (source) toast(!allVideos.length ? `No video files in that folder${images.size ? `; ${images.size} images loaded` : ''}. Pick the folder that holds the .mp4 files.`
     : videos.size ? `Found ${allVideos.length} videos; ${videos.size} placed on steps. Use each step's list to place the rest.`
     : `Found ${allVideos.length} videos. Open a step and pick its video from the list on its card.`);
   render(false);
@@ -655,9 +1133,10 @@ function idb(mode, fn) {
   });
 }
 async function readDir(dir, depth = 0) {
-  if (depth === 0) allVideos = [];
+  if (depth === 0) { allVideos = []; imageFiles = []; }
   for await (const h of dir.values()) {
     if (h.kind === 'file' && VIDEO_EXT.test(h.name)) allVideos.push(await h.getFile());
+    else if (h.kind === 'file' && IMAGE_EXT.test(h.name)) imageFiles.push(await h.getFile());
     else if (h.kind === 'directory' && depth < 2) await readDir(h, depth + 1);
   }
   if (depth === 0) allVideos.sort((x, y) => x.name.localeCompare(y.name, 'en', { numeric: true }));
@@ -680,6 +1159,7 @@ async function pickFolder() {
 $('vid-folder').addEventListener('click', pickFolder);
 $('vid-input').addEventListener('change', e => {
   allVideos = [...e.target.files].filter(f => VIDEO_EXT.test(f.name)).sort((x, y) => x.name.localeCompare(y.name, 'en', { numeric: true }));
+  imageFiles = [...e.target.files].filter(f => IMAGE_EXT.test(f.name));
   videosLoaded(true);
 });
 (async () => {
@@ -688,7 +1168,7 @@ $('vid-input').addEventListener('change', e => {
     if (!dir) return;
     savedDir = dir;
     if (await dir.queryPermission({ mode: 'read' }) === 'granted') { await readDir(dir); videosLoaded(false); }
-    else { needsRegrant = true; $('vid-folder').textContent = 'Reconnect videos'; }
+    else { needsRegrant = true; $('vid-folder').textContent = 'Reconnect media'; }
   } catch (e) {}
 })();
 
@@ -709,14 +1189,22 @@ $('player').addEventListener('click', e => { if (e.target === $('player')) close
 let tt;
 function toast(msg) { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(tt); tt = setTimeout(() => t.hidden = true, 2600); }
 
-$('next').addEventListener('click', () => { if (state.step < LAST) { state.step++; render(true); } });
-$('back').addEventListener('click', () => { if (state.step > 0) { state.step--; render(true); } });
+// Next and Back walk through the intro slides first, then the steps.
+function advance(d) {
+  if (state.step === 0 && d > 0 && state.slide < SLIDES.length - 1) { state.slide++; return render(false); }
+  if (state.step === 0 && d < 0) { if (state.slide > 0) { state.slide--; render(false); } return; }
+  if (state.step === 1 && d < 0) { state.step = 0; state.slide = SLIDES.length - 1; return render(true); }
+  const n = state.step + d; if (n < 0 || n > LAST) return;
+  state.step = n; state.card = true; render(true);
+}
+$('next').addEventListener('click', () => advance(1));
+$('back').addEventListener('click', () => advance(-1));
 $('mode-guided').addEventListener('click', () => { state.mode = 'guided'; render(true); });
 $('mode-explore').addEventListener('click', () => { state.mode = 'explore'; state.sel = null; render(true); });
 document.addEventListener('keydown', e => {
-  if (state.mode !== 'guided' || e.target.closest('input,textarea,select') || $('player').open) return;
-  if (e.key === 'ArrowRight' && state.step < LAST) { state.step++; render(true); }
-  if (e.key === 'ArrowLeft' && state.step > 0) { state.step--; render(true); }
+  if (state.mode !== 'guided' || state.booth || e.target.closest('input,textarea,select') || $('player').open) return;
+  if (e.key === 'ArrowRight') advance(1);
+  if (e.key === 'ArrowLeft') advance(-1);
 });
 
 const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -731,6 +1219,8 @@ renderer.setAnimationLoop(() => {
     layoutK = relayout.from + (relayout.to - relayout.from) * ease(k); poseLegacy(layoutK);
     if (k === 1) { if (relayout.to === 1) showBuilt('frame', true); relayout = null; }
   }
+  if (life.ready && (state.booth || !matchMedia('(prefers-reduced-motion: reduce)').matches)) stepLife(performance.now() / 1000);
+  if (state.booth) boothTick();
   controls.update();
   renderer.render(scene, camera);
   for (const pn of pins) place(pn, pn.hide);

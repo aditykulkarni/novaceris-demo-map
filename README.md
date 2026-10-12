@@ -1,20 +1,32 @@
 # Novaceris factory map
 
-Clickable 3D map of the Novaceris sanitaryware plant for the "Perfect Production for Sanitaryware" demo. Guided mode walks through ten persona steps; Explore mode shows the finished plant.
+Clickable 3D map of the Novaceris sanitaryware plant for the "Perfect Production for Sanitaryware" demo. Guided mode opens with three intro slides (the company, its business challenge, and how Perfect Production answers it), then walks through ten persona steps; Explore mode shows the finished plant. Each step has an Experience card over the plant: the Experience, the business challenge, the brand, and what is live or on video.
+
+The plant is at work: WCs ride the glazing lines, kiln cars and the packing conveyor, frames ride the frame line, the glazing and welding robots move, and forklifts drive the warehouse and the area by glazing. **Booth mode** (or **Full screen** on the plant) fills the screen with the finished plant and tours its cells on its own; Esc or **Exit booth mode** leaves it. With reduced motion set in the operating system, the plant only moves in booth mode.
 
 The plant changes twice. At Step 3 the raw-material racks move into the mill room in slip preparation, the experience room moves out next to the office, and the frame line (including the frame packaging machine) appears where they stood. At Step 7 the glazing cell becomes robotic, with two manual booths kept for quality control. The experience room is the one in the model, which the page shows inside the plant until Step 3; the racks are simple shapes drawn by the page. The striped ground from the model is replaced with a plain surface.
 
 - `index.html`: the page (three.js from jsDelivr)
 - `factory.glb`: the plant model, compressed with meshopt and WebP textures
 
-## Step videos
+## Step videos, logos and persona photos
 
-Videos stay on the presenting laptop; the page only plays them. Click **Videos folder**, open the folder that holds them and click **Select folder**. The picker shows folders only, not the files inside; that is normal. The button then reads **Videos: N of M placed**.
+Videos and images stay on the presenting laptop; the page only shows them, so logos and photos are never published with the public page. Click **Media folder**, open the folder that holds them and click **Select folder**. The picker shows folders only, not the files inside; that is normal. The button then reads **Media: N/M videos, K images**.
+
+Images are matched by file name (PNG, JPG, WebP or SVG); anything missing falls back to the built-in placeholder:
+
+| File name | Where it shows |
+|---|---|
+| `novaceris-logo` | Header and booth mode, in place of the drawn N mark |
+| `3dexperience-logo` | Next to "Powered by Dassault Systèmes 3DEXPERIENCE platform" |
+| `brand-delmia`, `brand-catia`, `brand-netvibes` | Experience card, in place of the text badge |
+| `persona-elena`, `persona-marco`, `persona-priya`, `persona-tomas`, `persona-kenji`, `persona-sara` | Round photo on the step card (square crops work best) |
+
 
 - Any file name works. Each step card has a **Video for this step** list with every video found (subfolders included, two levels deep); the pick is remembered.
 - Files named after their step (`step3.mp4`, `Step 4 - fixture.mp4`, `step10.mp4`) are placed automatically.
 - MP4 (H.264), WebM, M4V, MOV, MKV, AVI or WMV; what plays depends on the browser, and H.264 MP4 is the safe choice.
-- In Chrome or Edge the page remembers the folder; on the next visit, one click on **Reconnect videos** re-grants access. Other browsers ask for the folder on each visit.
+- In Chrome or Edge the page remembers the folder; on the next visit, one click on **Reconnect media** re-grants access. Other browsers ask for the folder on each visit.
 
 ## Opening at a step
 
