@@ -7,8 +7,9 @@ Clickable 3D map of the Novaceris sanitaryware plant for the "Perfect Production
 
 ## Step videos
 
-Videos stay on the presenting laptop; the page only plays them. Click **Videos folder** and pick the folder that holds them.
+Videos stay on the presenting laptop; the page only plays them. Click **Videos folder**, open the folder that holds them and click **Select folder**. The picker shows folders only, not the files inside; that is normal. The button then reads **Videos: N of M placed**.
 
-- Name each file after its step: `step3.mp4`, `Step 5 - fixture.mp4`, and so on (`step` + the step number at the start of the name).
-- MP4 (H.264), WebM, M4V or MOV.
+- Any file name works. Each step card has a **Video for this step** list with every video found (subfolders included, two levels deep); the pick is remembered.
+- Files named after their step (`step3.mp4`, `Step 5 - fixture.mp4`) are placed automatically.
+- MP4 (H.264), WebM, M4V, MOV, MKV, AVI or WMV; what plays depends on the browser, and H.264 MP4 is the safe choice.
 - In Chrome or Edge the page remembers the folder; on the next visit, one click on **Reconnect videos** re-grants access. Other browsers ask for the folder on each visit.

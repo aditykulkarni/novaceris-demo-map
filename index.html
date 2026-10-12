@@ -116,6 +116,8 @@ dialog#player::backdrop { background: rgba(10, 16, 22, .72); }
 .player-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 12px; font-family: var(--f-display); font-weight: 700; font-size: 20px; }
 #player-video { display: block; width: 100%; aspect-ratio: 16 / 9; max-height: calc(100vh - 110px); background: #000; }
 .vidnote { font-size: 12.5px; color: var(--muted); }
+.vidpick { display: grid; gap: 4px; font-size: 12.5px; color: var(--muted); }
+.vidpick select { font: 13px var(--f-body); padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); max-width: 100%; }
 .toast { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); background: var(--ink); color: var(--surface); padding: 10px 14px; border-radius: 8px; font-size: 13px; max-width: calc(100% - 32px); box-shadow: 0 6px 20px rgba(0,0,0,.18); z-index: 20; }
 </style>
 </head>
@@ -503,25 +505,40 @@ function renderPanel(s, guided) {
     ${guided && s.aisha ? `<div class="aisha"><strong>Aisha, glazing operator.</strong> ${esc(s.aisha)}</div>` : ''}
     <div><div class="label">Hands off</div><p>${esc(s.hand)}</p></div>
     <div class="panel-actions">${videos.has(s.n) ? `<button class="btn primary" type="button" id="play-vid">Play video</button>` : ''}<button class="btn${videos.has(s.n) ? '' : ' primary'}" type="button" id="open-tab">Open tab</button></div>
-    ${!videos.has(s.n) && s.video ? `<p class="vidnote">${videos.size ? `No file named "step${s.n}…" in the videos folder.` : 'Pick the videos folder to play this step\'s video.'}</p>` : ''}`;
+    ${allVideos.length ? `<label class="vidpick"><span>Video for this step</span><select id="vid-assign"><option value="">None</option>${allVideos.map(f => `<option value="${esc(f.name)}"${videos.get(s.n) === f ? ' selected' : ''}>${esc(f.name)}</option>`).join('')}</select></label>`
+      : s.video ? `<p class="vidnote">Pick the videos folder to play this step's video.</p>` : ''}`;
   $('open-tab').addEventListener('click', () => toast(`In the dashboard, this opens the tab "${s.tab}".`));
   const pv = $('play-vid'); if (pv) pv.addEventListener('click', () => playStep(s));
+  const va = $('vid-assign'); if (va) va.addEventListener('change', () => assignVideo(s.n, va.value));
 }
 
 /* ---------- step videos from a folder on this computer ----------
-   Files are matched by name: anything starting with "step" + the step number, e.g. "step3.mp4" or "Step 5 - fixture.mp4".
-   The files never leave the computer; the page only plays them. */
+   A file is matched to a step by its name ("step3.mp4", "Step 5 - fixture.mp4") or by picking it in the step's
+   "Video for this step" list; picks are remembered by file name. The files never leave the computer. */
 const videos = new Map();          // step number -> File
-const VIDEO_EXT = /\.(mp4|webm|m4v|mov)$/i;
-function addVideoFile(f) {
-  const m = f.name.match(/^step[\s_-]*0?([1-8])(?!\d)/i);
-  if (m && VIDEO_EXT.test(f.name)) videos.set(+m[1], f);
+let allVideos = [];                // every video found in the folder
+const VIDEO_EXT = /\.(mp4|webm|m4v|mov|mkv|avi|wmv)$/i;
+const ASSIGN_KEY = 'novaceris-video-assign';
+function loadAssign() { try { return JSON.parse(localStorage.getItem(ASSIGN_KEY)) || {}; } catch (e) { return {}; } }
+function saveAssign(a) { try { localStorage.setItem(ASSIGN_KEY, JSON.stringify(a)); } catch (e) {} }
+function matchVideos() {
+  videos.clear();
+  for (const f of allVideos) { const m = f.name.match(/^step[\s_-]*0?([1-8])(?!\d)/i); if (m) videos.set(+m[1], f); }
+  const a = loadAssign();
+  for (const [n, name] of Object.entries(a)) {
+    if (name === '') { videos.delete(+n); continue; }
+    const f = allVideos.find(x => x.name === name); if (f) videos.set(+n, f);
+  }
 }
+function assignVideo(n, name) { const a = loadAssign(); a[n] = name; saveAssign(a); matchVideos(); videosLoaded(false); }
 function videosLoaded(source) {
+  matchVideos();
   const b = $('vid-folder');
-  b.classList.toggle('ready', videos.size > 0);
-  b.textContent = videos.size ? `Videos: ${videos.size}` : 'Videos folder';
-  if (source) toast(videos.size ? `Found videos for step ${[...videos.keys()].sort().join(', ')}.` : 'No files named step1… to step8… in that folder.');
+  b.classList.toggle('ready', allVideos.length > 0);
+  b.textContent = allVideos.length ? `Videos: ${videos.size} of ${allVideos.length} placed` : 'Videos folder';
+  if (source) toast(!allVideos.length ? 'No video files in that folder. Pick the folder that holds the .mp4 files.'
+    : videos.size ? `Found ${allVideos.length} videos; ${videos.size} placed on steps. Use each step's list to place the rest.`
+    : `Found ${allVideos.length} videos. Open a step and pick its video from the list on its card.`);
   render(false);
 }
 const DB = 'novaceris-map', STORE = 'handles';
@@ -533,19 +550,23 @@ function idb(mode, fn) {
     rq.onerror = () => fail(rq.error);
   });
 }
-async function readDir(dir) {
-  videos.clear();
-  for await (const h of dir.values()) if (h.kind === 'file' && VIDEO_EXT.test(h.name)) addVideoFile(await h.getFile());
+async function readDir(dir, depth = 0) {
+  if (depth === 0) allVideos = [];
+  for await (const h of dir.values()) {
+    if (h.kind === 'file' && VIDEO_EXT.test(h.name)) allVideos.push(await h.getFile());
+    else if (h.kind === 'directory' && depth < 2) await readDir(h, depth + 1);
+  }
+  if (depth === 0) allVideos.sort((x, y) => x.name.localeCompare(y.name, 'en', { numeric: true }));
 }
-let savedDir = null;
+let savedDir = null, needsRegrant = false;
 async function pickFolder() {
-  if (savedDir) {                                   // a folder picked on an earlier visit: one click re-grants it
-    try { if (await savedDir.requestPermission({ mode: 'read' }) === 'granted') { await readDir(savedDir); return videosLoaded(true); } } catch (e) {}
+  if (savedDir && needsRegrant) {                   // folder from an earlier visit: one click re-grants it
+    try { if (await savedDir.requestPermission({ mode: 'read' }) === 'granted') { needsRegrant = false; await readDir(savedDir); return videosLoaded(true); } } catch (e) {}
   }
   if (window.showDirectoryPicker) {
     try {
       const dir = await window.showDirectoryPicker({ id: 'novaceris-videos', mode: 'read' });
-      savedDir = dir; await readDir(dir); videosLoaded(true);
+      savedDir = dir; needsRegrant = false; await readDir(dir); videosLoaded(true);
       try { await idb('readwrite', s => s.put(dir, 'videos')); } catch (e) {}
       return;
     } catch (e) { if (e.name === 'AbortError') return; }
@@ -553,14 +574,17 @@ async function pickFolder() {
   $('vid-input').click();                           // browsers without the folder picker: choose the folder each visit
 }
 $('vid-folder').addEventListener('click', pickFolder);
-$('vid-input').addEventListener('change', e => { videos.clear(); for (const f of e.target.files) addVideoFile(f); videosLoaded(true); });
+$('vid-input').addEventListener('change', e => {
+  allVideos = [...e.target.files].filter(f => VIDEO_EXT.test(f.name)).sort((x, y) => x.name.localeCompare(y.name, 'en', { numeric: true }));
+  videosLoaded(true);
+});
 (async () => {
   try {
     const dir = await idb('readonly', s => s.get('videos'));
     if (!dir) return;
     savedDir = dir;
     if (await dir.queryPermission({ mode: 'read' }) === 'granted') { await readDir(dir); videosLoaded(false); }
-    else { $('vid-folder').textContent = 'Reconnect videos'; }
+    else { needsRegrant = true; $('vid-folder').textContent = 'Reconnect videos'; }
   } catch (e) {}
 })();
 
@@ -586,7 +610,7 @@ $('back').addEventListener('click', () => { if (state.step > 0) { state.step--; 
 $('mode-guided').addEventListener('click', () => { state.mode = 'guided'; render(true); });
 $('mode-explore').addEventListener('click', () => { state.mode = 'explore'; state.sel = null; render(true); });
 document.addEventListener('keydown', e => {
-  if (state.mode !== 'guided' || e.target.closest('input,textarea') || $('player').open) return;
+  if (state.mode !== 'guided' || e.target.closest('input,textarea,select') || $('player').open) return;
   if (e.key === 'ArrowRight' && state.step < 8) { state.step++; render(true); }
   if (e.key === 'ArrowLeft' && state.step > 0) { state.step--; render(true); }
 });
