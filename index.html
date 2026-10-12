@@ -63,6 +63,7 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 14px; al
 .plantcol { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px; display: grid; gap: 10px; min-width: 0; }
 .stage { position: relative; aspect-ratio: 16 / 10; background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom) 70%); border-radius: 8px; overflow: hidden; min-width: 0; }
 .stage::after { content: ""; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 120px rgba(8, 16, 24, .28); z-index: 1; }
+.stage.land::after { box-shadow: inset 0 0 90px rgba(8, 16, 24, .16); }
 .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
 .overlay { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
 
@@ -126,10 +127,6 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 14px; al
 .fact { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--bg); }
 .fact b { display: block; font-family: var(--f-display); font-weight: 700; font-size: 23px; line-height: 1.05; font-variant-numeric: tabular-nums; }
 .fact span { font-size: 12px; color: var(--muted); }
-.exps { display: grid; gap: 6px; }
-.exp { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: baseline; border-bottom: 1px solid var(--line); padding-bottom: 5px; font-size: 14px; }
-.exp b { font-weight: 600; }
-.exp span { font-family: var(--f-mono); font-size: 11.5px; color: var(--muted); white-space: nowrap; }
 .intro-foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 .dots { display: flex; gap: 6px; }
 .dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
@@ -137,12 +134,6 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 14px; al
 @media (max-width: 760px) {
   .intro, .xcard { position: static; width: auto; margin-top: 10px; box-shadow: none; }
 }
-.agenda { display: grid; gap: 2px; }
-.agenda button { display: grid; grid-template-columns: 26px 1fr; gap: 8px; align-items: center; text-align: left; border: 0; background: none; color: var(--ink); font: inherit; padding: 6px 4px; border-radius: 6px; cursor: pointer; }
-.agenda button:hover { background: var(--bg); }
-.agenda .n { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--accent); color: var(--accent); display: grid; place-items: center; font: 500 11.5px var(--f-mono); }
-.agenda b { display: block; font-weight: 600; font-size: 13.5px; }
-.agenda small { color: var(--muted); font-size: 12px; }
 /* Booth mode: the plant fills the screen and tours itself */
 .stagebox:fullscreen, .stagebox.fs { background: var(--stage); width: 100vw; height: 100vh; }
 .stagebox.fs { position: fixed; inset: 0; z-index: 50; }
@@ -160,6 +151,51 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 14px; al
 .booth .xcard { top: 20px; right: 24px; width: 380px; }
 .booth-exit { position: absolute; right: 24px; bottom: 24px; z-index: 3; display: none; }
 .booth .booth-exit { display: block; }
+/* 3DEXPERIENCE compass: the quadrant the current step works in glows. Drawn neutral; no brand colours. */
+.compass { position: absolute; left: 12px; top: 12px; z-index: 2; display: flex; align-items: center; gap: 10px; pointer-events: none; }
+.compass svg { width: 96px; height: 96px; flex: none; overflow: visible; filter: drop-shadow(0 3px 8px rgba(0,0,0,.22)); }
+.compass .q { fill: var(--surface); stroke: var(--line); stroke-width: 1.2; transition: fill .4s, stroke .4s; }
+.compass .q.on { fill: var(--accent); stroke: var(--accent); filter: url(#cglow); animation: qglow 2.2s ease-in-out infinite; }
+.compass .hub { fill: var(--surface); stroke: var(--line); stroke-width: 1.2; }
+.compass .hub-t { font: 700 13px var(--f-display); fill: var(--ink); letter-spacing: .02em; }
+.compass .ql { font: 600 9px var(--f-mono); fill: var(--muted); }
+.compass .ql.on { fill: var(--surface); }
+.cmp-cap { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 11px; box-shadow: 0 4px 14px rgba(0,0,0,.15); }
+.cmp-cap span { display: block; font: 500 10.5px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.cmp-cap b { display: block; font: 700 19px/1.1 var(--f-display); color: var(--accent); }
+@keyframes qglow { 0%, 100% { opacity: 1; } 50% { opacity: .72; } }
+@media (prefers-reduced-motion: reduce) { .compass .q.on { animation: none; } }
+@media (max-width: 760px) { .compass svg { width: 64px; height: 64px; } .cmp-cap b { font-size: 15px; } }
+#amb[aria-pressed="true"] { border-color: var(--good); color: var(--good); }
+/* The team, introduced before Step 1 */
+.team { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.mate { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; align-items: center; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--bg); }
+.mate .avatar { width: 54px; height: 54px; font-size: 24px; grid-row: span 2; }
+.mate b { font-family: var(--f-display); font-weight: 700; font-size: 22px; line-height: 1; }
+.mate small { display: block; color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+.mate p { grid-column: 1 / -1; font-size: 13px; }
+.intro-tools { display: flex; gap: 8px; align-items: center; }
+/* Present mode: the intro full screen, over the plant */
+.present .overlay, .present .hint, .present .xcard, .intro-on .hint { display: none; }
+.present .booth-brand { display: flex; position: absolute; right: 28px; top: 24px; z-index: 3; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 18px; box-shadow: 0 8px 26px rgba(0,0,0,.18); }
+.present .booth-brand .logo { width: 56px; height: 56px; }
+.present .booth-brand .company { font-size: 34px; }
+.present .booth-brand .bt { font-family: var(--f-display); font-weight: 700; font-size: clamp(24px, 2.2vw, 36px); line-height: 1; }
+.present .booth-brand .bt span { color: var(--accent); }
+.present .intro { left: 4vw; top: 6vh; bottom: 6vh; width: min(1040px, 58vw); padding: 4vh 3.2vw; gap: 2.2vh; }
+.present .intro h2 { font-size: clamp(40px, 4.2vw, 76px); }
+.present .intro p { font-size: clamp(17px, 1.45vw, 26px); }
+.present .intro ul { font-size: clamp(17px, 1.4vw, 25px); gap: 1.2vh; }
+.present .intro .stepno { font-size: clamp(12px, .9vw, 16px); }
+.present .fact b { font-size: clamp(26px, 2.6vw, 46px); }
+.present .fact span { font-size: clamp(12px, .95vw, 17px); }
+.present .team { grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 1.4vh 1vw; }
+.present .mate .avatar { width: clamp(54px, 5vw, 92px); height: clamp(54px, 5vw, 92px); font-size: clamp(24px, 2.2vw, 40px); }
+.present .mate b { font-size: clamp(22px, 1.9vw, 34px); }
+.present .mate small { font-size: clamp(12.5px, .95vw, 17px); }
+.present .mate p { font-size: clamp(13px, 1vw, 18px); }
+.present .intro-foot .btn { font-size: clamp(13px, 1vw, 18px); padding: 1vh 1.4vw; }
+.present #intro-fs { display: none; }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 14px; min-width: 0; }
 .stepno { font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
 .panel h2 { margin: 0; font-family: var(--f-display); font-weight: 700; font-size: 28px; line-height: 1.05; text-wrap: balance; }
@@ -206,6 +242,7 @@ dialog#player::backdrop { background: rgba(10, 16, 22, .72); }
       </div>
       <button id="vid-folder" class="btn" type="button" title="Pick the folder on this computer that holds the step videos, logos and persona photos">Media folder</button>
       <input id="vid-input" type="file" webkitdirectory multiple hidden>
+      <button id="amb" class="btn" type="button" aria-pressed="true" title="Landscape, sunlight and shadows, kiln glow and people. Turn it off on a slower laptop; the choice is remembered.">Ambiance on</button>
       <button id="booth" class="btn" type="button" title="Full screen: the plant runs and tours itself, for a booth screen">Booth mode</button>
       <button id="back" class="btn" type="button">Back</button>
       <span id="progress" class="progress" aria-live="polite"></span>
@@ -221,6 +258,7 @@ dialog#player::backdrop { background: rgba(10, 16, 22, .72); }
     <section class="plantcol" aria-label="Factory">
       <div class="stagebox" id="stagebox">
         <div class="stage" id="stage">
+          <div class="compass" id="compass" hidden></div>
           <div class="overlay" id="overlay"></div>
           <div class="hint"><span>Drag to rotate · scroll to zoom</span><button type="button" id="reframe">Re-center</button><button type="button" id="fs">Full screen</button></div>
           <div class="loading" id="loading">
@@ -266,8 +304,10 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
 const FLOOR = 1.15;
+const METAL_MAX = .5;
 // Plant areas in model coordinates (metres): [xMin, xMax, zMin, zMax]
 const ZONES = {
   office:  { box: [23, 45.5, -25, -3],    label: 'Plant office' },
@@ -384,7 +424,7 @@ const VIEWS = {
 };
 
 const $ = id => document.getElementById(id);
-const state = { mode: 'guided', step: 0, sel: null, slide: 0, card: true, booth: false };
+const state = { mode: 'guided', step: 0, sel: null, slide: 0, card: true, booth: false, present: false };
 
 /* ---------- three.js scene ---------- */
 const stage = $('stage');
@@ -402,20 +442,79 @@ const sun = new THREE.DirectionalLight(0xfff1dc, 2.6); sun.position.set(42, 70, 
 sun.castShadow = true; sun.shadow.mapSize.set(3072, 3072); sun.shadow.bias = -0.0004; sun.shadow.normalBias = .04;
 Object.assign(sun.shadow.camera, { left: -62, right: 62, top: 50, bottom: -50, near: 10, far: 220 }); sun.shadow.camera.updateProjectionMatrix();
 const pmrem = new THREE.PMREMGenerator(renderer);
-scene.environment = pmrem.fromScene(new RoomEnvironment(), .04).texture;
+const roomEnv = pmrem.fromScene(new RoomEnvironment(), .04).texture;
+scene.environment = roomEnv;
+// Ambiance: the plant stands in a park landscape (a CC0 HDRI from Poly Haven: the sky and horizon, and the light on the metals)
+// on a meadow drawn by the page, with sunlight and shadows, kiln glow and people. Off: a plain sky gradient and no shadows,
+// for a slower laptop. The choice is remembered on this computer.
+const AMB_KEY = 'novaceris-ambiance';
+const amb = { on: true, chosen: false, sky: null, env: null, meadow: null, loading: null };
+try { const a = localStorage.getItem(AMB_KEY); if (a) { amb.on = a === 'on'; amb.chosen = true; } } catch (e) {}
+function meadow() {
+  // Tiled grass, sharp near the plant, fading into the photo's own meadow and tree line at the horizon
+  const R = 900, c = document.createElement('canvas'); c.width = c.height = 512; const g = c.getContext('2d');
+  let seed = 11; const rnd = () => (seed = seed * 16807 % 2147483647) / 2147483647;
+  g.fillStyle = '#5a7431'; g.fillRect(0, 0, 512, 512);
+  for (let i = 0; i < 46; i++) {                  // soft lighter and darker patches, wrapped so the tile repeats seamlessly
+    const x = rnd() * 512, y = rnd() * 512, r = 30 + rnd() * 90, tone = rnd() < .5 ? '150,160,80' : '35,55,18';
+    for (const dx of [-512, 0, 512]) for (const dy of [-512, 0, 512]) {
+      const gr = g.createRadialGradient(x + dx, y + dy, 0, x + dx, y + dy, r);
+      gr.addColorStop(0, `rgba(${tone},.16)`); gr.addColorStop(1, `rgba(${tone},0)`);
+      g.fillStyle = gr; g.fillRect(x + dx - r, y + dy - r, 2 * r, 2 * r);
+    }
+  }
+  g.globalAlpha = .5;
+  for (let i = 0; i < 14000; i++) {               // blades
+    const x = rnd() * 512, y = rnd() * 512, l = 2 + rnd() * 6, a = rnd() * Math.PI * 2, k = rnd();
+    g.strokeStyle = `hsl(${74 + k * 26}, ${32 + k * 22}%, ${18 + rnd() * 26}%)`; g.lineWidth = .8 + rnd() * .9;
+    g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(a) * l, y + Math.sin(a) * l); g.stroke();
+  }
+  const map = new THREE.CanvasTexture(c);
+  map.wrapS = map.wrapT = THREE.RepeatWrapping; map.repeat.set(R / 5, R / 5); map.colorSpace = THREE.SRGBColorSpace;
+  map.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  const f = document.createElement('canvas'); f.width = f.height = 256; const fg = f.getContext('2d');
+  const gr = fg.createRadialGradient(128, 128, 0, 128, 128, 128);
+  gr.addColorStop(0, '#fff'); gr.addColorStop(.55, '#fff'); gr.addColorStop(1, '#000');
+  fg.fillStyle = gr; fg.fillRect(0, 0, 256, 256);
+  const m = new THREE.Mesh(new THREE.CircleGeometry(R, 96), new THREE.MeshStandardMaterial({ map, alphaMap: new THREE.CanvasTexture(f), transparent: true, roughness: 1, metalness: 0 }));
+  m.rotation.x = -Math.PI / 2; m.position.y = FLOOR - .3; m.receiveShadow = true; m.renderOrder = -1; m.visible = false;
+  scene.add(m); return m;
+}
+function loadLandscape() {
+  if (!amb.loading) amb.loading = new RGBELoader().loadAsync('env/rooitou_park_1k.hdr').then(tex => {
+    tex.mapping = THREE.EquirectangularReflectionMapping;
+    amb.env = pmrem.fromEquirectangular(tex).texture;
+    amb.sky = tex; amb.meadow = meadow();
+  }).catch(e => console.warn('The landscape did not load:', e));
+  return amb.loading;
+}
+function setAmbiance(on, chosen) {
+  amb.on = on;
+  if (chosen) { amb.chosen = true; try { localStorage.setItem(AMB_KEY, on ? 'on' : 'off'); } catch (e) {} }
+  const b = $('amb'); b.setAttribute('aria-pressed', on); b.textContent = on ? 'Ambiance on' : 'Ambiance off';
+  sun.castShadow = on; renderer.shadowMap.needsUpdate = true;
+  if (life.glow) { for (const g of life.glow) g.visible = on; life.kilnLight.visible = on; for (const p of life.people) p.g.visible = on; }
+  if (on) loadLandscape().then(setBg);
+  setBg();
+}
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true; controls.maxPolarAngle = Math.PI * 0.47; controls.minDistance = 6; controls.maxDistance = 220;
 
 function cssVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
-let envK = .7;
+let envK = 1;
 function applyEnv() { if (model) model.traverse(o => { if (o.isMesh) for (const mt of [].concat(o.material)) if ('envMapIntensity' in mt) mt.envMapIntensity = envK; }); }
 function setBg() {
   const dark = cssVar('--sky-top').toUpperCase() === '#070C12';
-  scene.background = null;
-  scene.fog = new THREE.Fog(cssVar('--sky-bottom') || '#E9EEF2', 140, 380);
-  groundMat.color.set(cssVar('--ground') || '#B9C2B0');
-  hemi.intensity = dark ? .55 : .9; sun.intensity = dark ? 1.3 : 2.6; renderer.toneMappingExposure = dark ? .9 : 1.05;
-  envK = dark ? .35 : .7; applyEnv();
+  const land = amb.on && !!amb.sky;
+  if (amb.meadow) amb.meadow.visible = land;
+  scene.background = land ? amb.sky : null;
+  scene.environment = land ? amb.env : roomEnv;
+  scene.fog = land ? null : new THREE.Fog(cssVar('--sky-bottom') || '#E9EEF2', 140, 380);
+  groundMat.color.set(land ? '#9C9C94' : cssVar('--ground') || '#B9C2B0');
+  stage.classList.toggle('land', land);
+  if (land) { hemi.intensity = .35; sun.intensity = 2.3; renderer.toneMappingExposure = 1; envK = 1; }
+  else { hemi.intensity = dark ? .55 : .9; sun.intensity = dark ? 1.3 : 2.6; renderer.toneMappingExposure = dark ? .9 : 1.05; envK = dark ? .6 : 1; }
+  applyEnv();
   paintZones();
 }
 const groundMat = new THREE.MeshStandardMaterial({ color: 0xB9C2B0, roughness: 1 });   // plain site surface in place of the model's striped ground
@@ -532,6 +631,8 @@ fetchModel('factory.glb')
       if (!o.isMesh) return;
       const mats = Array.isArray(o.material) ? o.material : [o.material];
       for (const mt of mats) if (mt.transmission > 0) { mt.transmission = 0; mt.transparent = true; mt.opacity = .35; }
+      // Fully metallic parts have no diffuse colour, so away from a reflection they render black. Half metal keeps the sheen and takes the light.
+      for (const mt of mats) if (mt.metalness > METAL_MAX) mt.metalness = METAL_MAX;
       o.receiveShadow = true; o.castShadow = !mats.some(mt => mt.transparent);
       if (o.isInstancedMesh) {
         for (let i = 0; i < o.count; i++) {
@@ -549,7 +650,7 @@ fetchModel('factory.glb')
     initRoom(); plainGround(); ground && (ground.receiveShadow = true);
     try { initLife(); } catch (e) { console.warn('Plant motion is off:', e); }
     $('loading').hidden = true;
-    setBg(); render(true);
+    setAmbiance(amb.on); render(true);
   })
   .catch(err => { $('load-text').textContent = 'The plant did not load: ' + (err.message || err); });
 
@@ -990,6 +1091,7 @@ function showTour() {
   renderCard(null); goTo(it.view);
 }
 async function boothOn() {
+  if (state.present) presentOff();
   state.booth = true; tour.i = 0; tour.t0 = performance.now(); tour.hold = 0;
   stagebox.classList.add('booth');
   if (stagebox.requestFullscreen) { try { await stagebox.requestFullscreen(); } catch (e) { stagebox.classList.add('fs'); } }
@@ -1006,9 +1108,14 @@ function boothTick() {
   const now = performance.now();
   if (now - tour.t0 > 16000 && now > tour.hold && !fly) { tour.i = (tour.i + 1) % TOUR.length; tour.t0 = now; showTour(); }
 }
-document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && state.booth && !stagebox.classList.contains('fs')) boothOff(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && state.booth) boothOff(); });
+document.addEventListener('fullscreenchange', () => {
+  if (document.fullscreenElement || stagebox.classList.contains('fs')) return;
+  if (state.booth) boothOff();
+  if (state.present) presentOff();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { if (state.booth) boothOff(); if (state.present) presentOff(); } });
 $('booth').addEventListener('click', boothOn);
+$('amb').addEventListener('click', () => setAmbiance(!amb.on, true));
 $('fs').addEventListener('click', boothOn);
 $('booth-exit').addEventListener('click', boothOff);
 renderer.domElement.addEventListener('pointerdown', () => { if (state.booth) { tour.hold = performance.now() + 20000; tour.t0 = performance.now(); } });
@@ -1088,8 +1195,10 @@ function render(move) {
   if (location.hash !== h) history.replaceState(null, '', h || location.pathname + location.search);
   $('mode-explore').setAttribute('aria-pressed', !guided);
 
+  if (state.present && !(guided && state.step === 0)) presentOff();
   renderPanel(s, guided);
   renderCard(s);
+  renderCompass(s);
   renderIntro(guided && state.step === 0 && !state.booth);
   if (move && !state.booth) goTo(currentView());
 }
@@ -1108,14 +1217,15 @@ function renderPanel(s, guided) {
   const panel = $('panel');
   if (!s) {
     panel.innerHTML = guided ? `
-      <div class="stepno">The demo</div>
-      <h2>Ten steps, ten people, one plant</h2>
-      <div class="agenda">${STEPS.map(x => `<button type="button" data-n="${x.n}"><span class="n">${x.n}</span><span><b>${esc(x.who)} · ${esc(x.tab)}</b><small>${esc(x.exp)}</small></span></button>`).join('')}</div>
-      <p class="xc-gov">${esc(GOVERNANCE)}.</p>` : `
+      <div class="stepno">Introduction</div>
+      <h2>Meet Novaceris and the people who run the plant</h2>
+      <p>${SLIDES.length} slides before Step 1: the customer, the challenge, how Perfect Production answers it, and the team.</p>
+      <div class="panel-actions"><button class="btn primary" type="button" id="present">Present the intro full screen</button></div>
+      <p class="xc-gov">Next, Back, the arrow keys and a presentation clicker move through the slides. Esc leaves full screen.</p>` : `
       <div class="stepno">Explore</div>
       <h2>Pick anyone in the plant</h2>
       <p>The plant shows the finished state. Select a pin to see that person's step, the Experience behind it, and the cell at work.</p>`;
-    panel.querySelectorAll('.agenda button').forEach(b => b.addEventListener('click', () => { state.step = +b.dataset.n; state.card = true; render(true); }));
+    const pr = $('present'); if (pr) pr.addEventListener('click', presentOn);
     return;
   }
   panel.innerHTML = `
@@ -1150,8 +1260,16 @@ function renderCard(s) {
   const x = $('xc-x'); if (x) x.addEventListener('click', () => { state.card = false; c.hidden = true; });
 }
 
-/* ---------- intro, before Step 1 ---------- */
-const EXPS = [...new Map(STEPS.map(x => [x.exp, STEPS.filter(y => y.exp === x.exp).map(y => y.n)])).entries()];
+/* ---------- intro, before Step 1: the customer, the challenge, the answer and the team (no steps) ---------- */
+const PEOPLE = [
+  ['Elena', 'VP Manufacturing', 'Owns the plant\u2019s output and the business case for growth.'],
+  ['Marco', 'Manufacturing Engineer', 'Turns engineering\u2019s new wall-hung WC into something the plant can build.'],
+  ['Priya', 'Plant Layout and Industrial Engineer', 'Plans the plant floor and finds where the line really breaks.'],
+  ['Tomás', 'Tooling Engineer', 'Designs the fixtures that hold the parts for welding.'],
+  ['Kenji', 'Robotics Engineer', 'Programs the welding and glazing robots.'],
+  ['Sara', 'Process Planner', 'Writes the work instructions operators build from.'],
+  ['Aisha', 'Glazing operator', 'Sprays every WC by hand today; her pace is the line\u2019s pace.'],
+];
 const SLIDES = [
   () => `<div class="stepno">Meet the customer</div>
     <h2>Novaceris makes premium ceramic WCs in Saxony</h2>
@@ -1171,19 +1289,67 @@ const SLIDES = [
       <li><b>No free floor space</b> and no budget for a new building.</li>
       <li><b>Nobody knows where the line will break</b> at the higher rate, and every euro of capex has to pay back fast.</li>
     </ul>`,
-  () => `<div class="stepno">How Perfect Production solves it</div>
+  () => `<div class="stepno">How Perfect Production answers it</div>
     <h2>Prove every decision on the virtual twin first</h2>
-    <p>Perfect Production runs the plant's engineering on the 3DEXPERIENCE platform. Each step is an Experience, and one governed process ties them together.</p>
-    <div class="exps">${EXPS.map(([e, ns]) => `<div class="exp"><b>${esc(e)}</b><span>Step${ns.length > 1 ? 's' : ''} ${ns.join(', ')}</span></div>`).join('')}
-      <div class="exp"><b>Business Process Experience</b><span>Every step</span></div></div>`,
+    <ul>
+      <li><b>One virtual twin of the plant</b> on the 3DEXPERIENCE platform: the product, the process and the factory together.</li>
+      <li><b>Experiences, not tools:</b> each person works in the Experience made for their job, on the same data.</li>
+      <li><b>One governed process</b> carries every hand-off, so nothing is decided on a spreadsheet nobody else can see.</li>
+      <li><b>Robots, fixtures and floor space proven before money is spent.</b></li>
+    </ul>`,
+  () => `<div class="stepno">Meet the team</div>
+    <h2>The people who make this decision</h2>
+    <div class="team">${PEOPLE.map(([n, r, t]) => `<div class="mate">${avatar(n)}<div><b>${esc(n)}</b><small>${esc(r)}</small></div><p>${esc(t)}</p></div>`).join('')}</div>`,
 ];
 function renderIntro(on) {
-  const el = $('intro'); el.hidden = !on;
-  controls.autoRotate = state.booth; controls.autoRotateSpeed = .35;
+  const el = $('intro'); el.hidden = !on; stagebox.classList.toggle('intro-on', on);
+  controls.autoRotate = state.booth || (on && state.present); controls.autoRotateSpeed = state.booth ? .35 : .2;
   if (!on) return;
   const last = state.slide === SLIDES.length - 1;
-  el.innerHTML = SLIDES[state.slide]() + `<div class="intro-foot"><span class="dots">${SLIDES.map((_, i) => `<i class="${i === state.slide ? 'on' : ''}"></i>`).join('')}</span><button class="btn primary" type="button" id="intro-next">${last ? 'Start with Elena' : 'Next'}</button></div>`;
+  el.innerHTML = SLIDES[state.slide]() + `<div class="intro-foot"><span class="dots">${SLIDES.map((_, i) => `<i class="${i === state.slide ? 'on' : ''}"></i>`).join('')}</span><span class="intro-tools"><button class="btn" type="button" id="intro-fs">Full screen</button><button class="btn primary" type="button" id="intro-next">${last ? 'Start with Elena' : 'Next'}</button></span></div>`;
   $('intro-next').addEventListener('click', () => advance(1));
+  $('intro-fs').addEventListener('click', presentOn);
+}
+// Present mode: the intro full screen over the slowly turning plant. Leaving the intro, or Esc, ends it.
+async function presentOn() {
+  if (state.present || state.booth) return;
+  state.present = true; stagebox.classList.add('present');
+  if (stagebox.requestFullscreen) { try { await stagebox.requestFullscreen(); } catch (e) { stagebox.classList.add('fs'); } }
+  else stagebox.classList.add('fs');
+  render(false); goTo('intro');
+}
+function presentOff() {
+  if (!state.present) return;
+  state.present = false; stagebox.classList.remove('present', 'fs');
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  render(false);
+}
+
+/* ---------- 3DEXPERIENCE compass: the quadrant of the current step's apps glows ----------
+   Quadrants as on the platform: north Social & Collaborative, west 3D Modeling, south Content & Simulation (DELMIA),
+   east Information Intelligence (NETVIBES). The quadrant follows the step's brand. */
+const QUADS = { N: 'Social & Collaborative', E: 'Information Intelligence', S: 'Content & Simulation', W: '3D Modeling' };
+const QUAD_OF = { NETVIBES: 'E', DELMIA: 'S', CATIA: 'W' };
+const compass = $('compass');
+compass.innerHTML = (() => {
+  const wedge = a => {
+    const r0 = 18, r1 = 47, h = 42, P = (r, d) => { const t = (a + d) * Math.PI / 180; return `${(r * Math.sin(t)).toFixed(2)} ${(-r * Math.cos(t)).toFixed(2)}`; };
+    return `M${P(r0, -h)} L${P(r1, -h)} A${r1} ${r1} 0 0 1 ${P(r1, h)} L${P(r0, h)} A${r0} ${r0} 0 0 0 ${P(r0, -h)}Z`;
+  };
+  const at = { N: 0, E: 90, S: 180, W: 270 };
+  return `<svg viewBox="-50 -50 100 100" role="img" aria-label="3DEXPERIENCE compass">
+    <defs><filter id="cglow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+    ${Object.keys(QUADS).map(k => `<path class="q" data-q="${k}" d="${wedge(at[k])}"><title>${QUADS[k]}</title></path>`).join('')}
+    ${Object.keys(QUADS).map(k => { const t = at[k] * Math.PI / 180; return `<text class="ql" data-q="${k}" x="${(32.5 * Math.sin(t)).toFixed(1)}" y="${(-32.5 * Math.cos(t) + 3).toFixed(1)}" text-anchor="middle">${k}</text>`; }).join('')}
+    <circle class="hub" r="15"/><text class="hub-t" y="4.5" text-anchor="middle">3D</text>
+  </svg><div class="cmp-cap"><span>Compass</span><b id="cmp-q"></b></div>`;
+})();
+function renderCompass(s) {
+  const q = s && !state.booth && QUAD_OF[s.brand];
+  compass.hidden = !q;
+  if (!q) return;
+  compass.querySelectorAll('[data-q]').forEach(e => e.classList.toggle('on', e.dataset.q === q));
+  $('cmp-q').textContent = QUADS[q];
 }
 
 /* ---------- media from a folder on this computer: step videos, logos and persona photos ----------
@@ -1294,7 +1460,7 @@ $('player').addEventListener('close', () => $('player-video').pause());
 $('player').addEventListener('click', e => { if (e.target === $('player')) closePlayer(); });
 
 let tt;
-function toast(msg) { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(tt); tt = setTimeout(() => t.hidden = true, 2600); }
+function toast(msg, ms) { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(tt); tt = setTimeout(() => t.hidden = true, ms || 2600); }
 
 // Next and Back walk through the intro slides first, then the steps.
 function advance(d) {
@@ -1310,11 +1476,11 @@ $('mode-guided').addEventListener('click', () => { state.mode = 'guided'; render
 $('mode-explore').addEventListener('click', () => { state.mode = 'explore'; state.sel = null; render(true); });
 document.addEventListener('keydown', e => {
   if (state.mode !== 'guided' || state.booth || e.target.closest('input,textarea,select') || $('player').open) return;
-  if (e.key === 'ArrowRight') advance(1);
-  if (e.key === 'ArrowLeft') advance(-1);
+  if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); advance(1); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); advance(-1); }
 });
 
-const perf = { n: 0, k: 0, sum: 0, last: 0, done: false };
+const perf = { n: 0, k: 0, sum: 0, last: 0, done: false, warm: 0 };
 const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 renderer.setAnimationLoop(() => {
   if (fly) {
@@ -1332,7 +1498,14 @@ renderer.setAnimationLoop(() => {
   controls.update();
   // Shadows are redrawn every third frame; a slow machine drops them after a few seconds rather than stutter
   perf.n++; if (sun.castShadow && perf.n % 3 === 0) renderer.shadowMap.needsUpdate = true;
-  const now = performance.now(); if (perf.n > 30 && !perf.done) { perf.sum += now - perf.last; perf.k++; if (perf.k === 120) { perf.done = true; if (perf.sum / perf.k > 45) sun.castShadow = false; } }
+  const now = performance.now();
+  if (!perf.done && model && (!amb.on || amb.sky) && ++perf.warm > 30) {
+    perf.sum += now - perf.last; perf.k++;
+    if (perf.k === 120) {
+      perf.done = true;
+      if (perf.sum / perf.k > 45 && amb.on && !amb.chosen) { setAmbiance(false); toast('This computer draws the plant slowly, so ambiance is off. Turn it back on with the Ambiance button.', 6000); }
+    }
+  }
   perf.last = now;
   renderer.render(scene, camera);
   for (const pn of pins) place(pn, pn.hide);
@@ -1340,6 +1513,8 @@ renderer.setAnimationLoop(() => {
 });
 
 goTo('intro');
+$('amb').setAttribute('aria-pressed', amb.on); $('amb').textContent = amb.on ? 'Ambiance on' : 'Ambiance off';
+if (amb.on) loadLandscape().then(setBg);   // fetch the landscape while the plant loads
 // Open at a step from the address, e.g. index.html#step=3; a link from an Iterop task can bring you back here
 function stepFromHash() { const m = location.hash.match(/^#step=?(10|[0-9])$/i); return m ? +m[1] : null; }
 function goHash() { const n = stepFromHash(); if (n !== null) { state.mode = 'guided'; state.step = n; } }

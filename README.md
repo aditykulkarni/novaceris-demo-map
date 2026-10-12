@@ -1,13 +1,20 @@
 # Novaceris factory map
 
-Clickable 3D map of the Novaceris sanitaryware plant for the "Perfect Production for Sanitaryware" demo. Guided mode opens with three intro slides (the company, its business challenge, and how Perfect Production answers it), then walks through ten persona steps; Explore mode shows the finished plant. Each step has an Experience card over the plant: the Experience, the business challenge, the brand, and what is live or on video.
+Clickable 3D map of the Novaceris sanitaryware plant for the "Perfect Production for Sanitaryware" demo. Guided mode opens with four intro slides (the company, its business challenge, how Perfect Production answers it, and the team), then walks through ten persona steps; Explore mode shows the finished plant. Each step has an Experience card over the plant: the Experience, the business challenge, the brand, and what is live or on video. A 3DEXPERIENCE compass in the top-left corner of the plant lights the quadrant the step works in: Information Intelligence for Elena's steps (NETVIBES), Content & Simulation for the DELMIA steps, 3D Modeling for Tomás (CATIA). It is drawn in neutral colours, not the platform's own.
 
-The plant is at work: WCs ride the glazing lines, kiln cars and the packing conveyor, frames ride the frame line, the glazing robots move, the small weld-cell robots weld with sparks while the big ones pick and place the frame, forklifts drive the warehouse and the area by glazing, and people walk the aisles. The kilns glow, stack lights pulse by the cells, and a low sun casts shadows; a slow machine drops the shadows after a few seconds instead of stuttering. **Booth mode** (or **Full screen** on the plant) fills the screen with the finished plant and tours its cells on its own; Esc or **Exit booth mode** leaves it. With reduced motion set in the operating system, the plant only moves in booth mode.
+**Present the intro full screen** with the **Full screen** button on the intro, or **Present the intro full screen** on the right. The slides fill the screen over the slowly turning plant. Next, Back, the arrow keys and a presentation clicker (Page Up / Page Down) move through them; starting Step 1 or pressing Esc returns to the normal view.
+
+The plant is at work: WCs ride the glazing lines, kiln cars and the packing conveyor, frames ride the frame line, the glazing robots move, the small weld-cell robots weld with sparks while the big ones pick and place the frame, forklifts drive the warehouse and the area by glazing, and people walk the aisles.
+
+**Ambiance** (the switch in the header) puts the plant in a landscape with sunlight and shadows, kiln glow and people. Turn it off on a slower laptop: the plant then stands on a plain sky gradient without shadows, and the machines still move. The choice is remembered on that computer. If nobody has chosen and the computer draws the plant slowly, the page turns ambiance off by itself and says so. The landscape is [Rooitou Park](https://polyhaven.com/a/rooitou_park) from Poly Haven (CC0), in `env/`.
+
+**Booth mode** (or **Full screen** on the plant) fills the screen with the finished plant and tours its cells on its own; Esc or **Exit booth mode** leaves it. With reduced motion set in the operating system, the plant only moves in booth mode.
 
 The plant changes twice. At Step 3 the raw-material racks move into the mill room in slip preparation, the experience room moves out next to the office, and the frame line (including the frame packaging machine) appears where they stood. At Step 7 the glazing cell becomes robotic, with two manual booths kept for quality control. The experience room is the one in the model, which the page shows inside the plant until Step 3; the racks are simple shapes drawn by the page. The striped ground from the model is replaced with a plain surface.
 
 - `index.html`: the page (three.js from jsDelivr)
 - `factory.glb`: the plant model, compressed with meshopt and WebP textures
+- `env/rooitou_park_1k.hdr`: the landscape around the plant (1.6 MB, loaded only with ambiance on)
 
 ## Step videos, logos and persona photos
 
@@ -20,8 +27,7 @@ Images are matched by file name (PNG, JPG, WebP or SVG); anything missing falls 
 | `novaceris-logo` | Header and booth mode, in place of the drawn N mark |
 | `3dexperience-logo` | Next to "Powered by Dassault Systèmes 3DEXPERIENCE platform" |
 | `brand-delmia`, `brand-catia`, `brand-netvibes` | Experience card, in place of the text badge |
-| `persona-elena`, `persona-marco`, `persona-priya`, `persona-tomas`, `persona-kenji`, `persona-sara` | Round photo on the step card (square crops work best) |
-
+| `persona-elena`, `persona-marco`, `persona-priya`, `persona-tomas`, `persona-kenji`, `persona-sara`, `persona-aisha` | Round photo on the step card and the team slide (square crops work best) |
 
 - Any file name works. Each step card has a **Video for this step** list with every video found (subfolders included, two levels deep); the pick is remembered.
 - Files named after their step (`step3.mp4`, `Step 4 - fixture.mp4`, `step10.mp4`) are placed automatically.
