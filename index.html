@@ -149,8 +149,10 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 14px; al
 .booth .booth-cap span { color: var(--muted); font-size: 15px; }
 .booth .overlay, .booth .hint { display: none; }
 .booth .xcard { top: 20px; right: 24px; width: 380px; }
-.booth-exit { position: absolute; right: 24px; bottom: 24px; z-index: 3; display: none; }
-.booth .booth-exit { display: block; }
+.booth-ctl { position: absolute; right: 24px; bottom: 24px; z-index: 3; display: none; gap: 8px; }
+.booth .booth-ctl { display: flex; }
+.booth-ctl .btn { font-size: 15px; padding: 10px 18px; }
+.booth .booth-cap .booth-n { display: block; font: 500 12px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
 /* 3DEXPERIENCE compass: the quadrant the current step works in glows. Drawn neutral; no brand colours. */
 .compass { position: absolute; left: 12px; top: 12px; z-index: 2; display: flex; align-items: center; gap: 10px; pointer-events: none; }
 .compass svg { width: 96px; height: 96px; flex: none; overflow: visible; filter: drop-shadow(0 3px 8px rgba(0,0,0,.22)); }
@@ -168,12 +170,12 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 14px; al
 @media (max-width: 760px) { .compass svg { width: 64px; height: 64px; } .cmp-cap b { font-size: 15px; } }
 #amb[aria-pressed="true"] { border-color: var(--good); color: var(--good); }
 /* The team, introduced before Step 1 */
-.team { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
-.mate { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; align-items: center; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--bg); }
-.mate .avatar { width: 54px; height: 54px; font-size: 24px; grid-row: span 2; }
+.team { display: grid; gap: 10px; }
+.mate { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--bg); }
+.mate .avatar { width: 64px; height: 64px; font-size: 28px; }
 .mate b { font-family: var(--f-display); font-weight: 700; font-size: 22px; line-height: 1; }
 .mate small { display: block; color: var(--muted); font-size: 12.5px; margin-top: 2px; }
-.mate p { grid-column: 1 / -1; font-size: 13px; }
+.mate p { font-size: 13.5px; margin-top: 4px; }
 .intro-tools { display: flex; gap: 8px; align-items: center; }
 /* Present mode: the intro full screen, over the plant */
 .present .overlay, .present .hint, .present .xcard, .intro-on .hint { display: none; }
@@ -189,11 +191,12 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 14px; al
 .present .intro .stepno { font-size: clamp(12px, .9vw, 16px); }
 .present .fact b { font-size: clamp(26px, 2.6vw, 46px); }
 .present .fact span { font-size: clamp(12px, .95vw, 17px); }
-.present .team { grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 1.4vh 1vw; }
-.present .mate .avatar { width: clamp(54px, 5vw, 92px); height: clamp(54px, 5vw, 92px); font-size: clamp(24px, 2.2vw, 40px); }
-.present .mate b { font-size: clamp(22px, 1.9vw, 34px); }
+.present .team { gap: 2vh; }
+.present .mate { padding: 1.6vh 1.4vw; gap: 1.4vw; }
+.present .mate .avatar { width: clamp(64px, 6.5vw, 120px); height: clamp(64px, 6.5vw, 120px); font-size: clamp(28px, 2.8vw, 52px); }
+.present .mate b { font-size: clamp(24px, 2.2vw, 40px); }
 .present .mate small { font-size: clamp(12.5px, .95vw, 17px); }
-.present .mate p { font-size: clamp(13px, 1vw, 18px); }
+.present .mate p { font-size: clamp(14px, 1.2vw, 22px); }
 .present .intro-foot .btn { font-size: clamp(13px, 1vw, 18px); padding: 1vh 1.4vw; }
 .present #intro-fs { display: none; }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 14px; min-width: 0; }
@@ -267,7 +270,7 @@ dialog#player::backdrop { background: rgba(10, 16, 22, .72); }
           </div>
           <div class="booth-brand"><span class="logo" data-img="novaceris-logo"><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="1" y="1" width="42" height="42" rx="11" fill="currentColor"/><path d="M13 31V13l18 18V13" fill="none" stroke="#fff" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><div class="company">Novaceris</div><div class="bt"><span>Perfect Production</span> for Sanitaryware</div><div class="powered"><span>Powered by</span><span data-img="3dexperience-logo" hidden></span><b>Dassault Systèmes 3DEXPERIENCE</b><span>platform</span></div></div></div>
           <div class="booth-cap" id="booth-cap"></div>
-          <button type="button" class="btn booth-exit" id="booth-exit">Exit booth mode</button>
+          <div class="booth-ctl"><button type="button" class="btn" id="booth-prev">‹ Back</button><button type="button" class="btn primary" id="booth-next">Next ›</button><button type="button" class="btn" id="booth-exit">Exit booth mode</button></div>
         </div>
         <aside class="xcard" id="xcard" aria-live="polite" hidden></aside>
         <section class="intro" id="intro" aria-live="polite" hidden></section>
@@ -339,36 +342,36 @@ const STEPS = [
     quote:"The board wants 600,000 units a year and a modular wall-hung WC. I need to know what it costs and when it pays back.",
     does:"Data Perspective: today's output, the gap, and the options framed as an open question. No answer yet.",
     kpis:["1,190 vs 1,681 units/day","68 s vs 48 s per unit","+175,000 units/yr"], done:"gap +491/day",
-    hand:"Two asks: the new product to Marco first, then capacity.", focus:["office"] },
-  { n:2, video:true, tab:"What exactly are we building?", who:"Marco", role:"Manufacturing Engineer", at:[29, 17, -7], view:['office', 1.0],
+    hand:"Two asks for Priya: the new product first, then capacity.", focus:["office"] },
+  { n:2, video:true, tab:"What exactly are we building?", who:"Priya", role:"Industrialization Engineer", at:[29, 17, -7], view:['office', 1.0],
     exp:"Manufacturing Definition Experience", brand:"DELMIA", show:{ live:"EBOM and MBOM loading", video:"MBOM creation" },
     chal:"A product the plant has never built: a wall-hung WC with its own steel frame and flush tank.",
     quote:"Engineering released the wall-hung WC. I have to turn it into something this plant can build.",
     does:"EBOM to MBOM, with the frame-height option applied. The MBOM shows two operations the plant has never done.",
     kpis:["Frame welding","Frame + tank assembly","No floor space for either"], done:"2 new ops",
-    hand:"Two operations with nowhere to run, to Priya.", focus:["office"] },
-  { n:3, video:true, tab:"Where does the frame line go?", who:"Priya", role:"Plant Layout Engineer", at:[-27, 6.5, -9], view:['plant', 1.0],
+    hand:"Two operations with nowhere to run. Next, Priya finds them floor space.", focus:["office"] },
+  { n:3, video:true, tab:"Where does the frame line go?", who:"Priya", role:"Industrialization Engineer", at:[-27, 6.5, -9], view:['plant', 1.0],
     exp:"Virtual Factory Experience", brand:"DELMIA", show:{ video:"Plant layout and catalog reuse" },
     chal:"No free floor space for a new frame line, and no budget for a new building.",
     quote:"The space is already in the plant. It's full of racks that sit in the wrong place.",
     does:"Plant Layout Design: the raw-material racks move into slip preparation, next to the mills that use them, and the modular experience room moves next to the office. IP Classify and Reuse inserts the company's standard robotic arc welding cell.",
     kpis:["Racks at point of use","Experience room by the office","Standard weld cell reused"], done:"frame line placed",
-    hand:"The weld cell, to Tomás for the fixture.", focus:["cut","weld","asm"] },
-  { n:4, video:true, tab:"Will the fixture hold the frame?", who:"Tomás", role:"Tooling Engineer", at:[-8.6, 5.5, -11], view:['weld', 1.0],
+    hand:"The weld cell, to Kenji for the fixture and the weld paths.", focus:["cut","weld","asm"] },
+  { n:4, video:true, tab:"Will the fixture hold the frame?", who:"Kenji", role:"Robotics Engineer", at:[-8.6, 5.5, -11], view:['weld', 1.0],
     exp:"Equipment Design Experience", brand:"CATIA", show:{ video:"Fixture kinematics and clamp sequence" },
     chal:"A new weld fixture has to hold the frame right the first time; a wrong fixture means every weld is wrong.",
     quote:"If the frame isn't held right, every weld is wrong.",
     does:"Equipment Design: the frame holding fixture with forward kinematics, and the clamp and positioning sequence simulated.",
     kpis:["Fixture kinematics","Clamp sequence collision-free","Frame positioned for welding"], done:"fixture proven",
-    hand:"A fixture that holds the frame, to Kenji for the weld paths.", focus:["weld"] },
+    hand:"A fixture that holds the frame. Next, the weld paths on it.", focus:["weld"] },
   { n:5, video:true, tab:"Can the robot weld it in takt?", who:"Kenji", role:"Robotics Engineer", at:[-4.4, 5.5, -6.2], view:['weld', 1.0],
     exp:"Robot Programming Experience", brand:"DELMIA", show:{ video:"Arc welding robot programming" },
     chal:"Prove the catalog weld cell welds this frame in takt before a single robot is bought.",
     quote:"The cell came from the catalog. I still have to prove it welds this frame.",
-    does:"DELMIA arc welding: weld paths on the frame held by Tomás's fixture, reach and collisions checked, and the cycle time against frame takt.",
+    does:"DELMIA arc welding: weld paths on the frame held by Kenji's fixture, reach and collisions checked, and the cycle time against frame takt.",
     kpis:["Weld paths reachable","No collisions with the fixture","[weld cycle vs frame takt]"], done:"weld cell proven",
     hand:"A proven frame line, before a single robot is bought. Now the second ask: capacity.", focus:["weld"] },
-  { n:6, video:true, tab:"Where does the line break?", who:"Priya", role:"Industrial Engineer", at:[-25, 6, 0], view:['line', 1.0],
+  { n:6, video:true, tab:"Where does the line break?", who:"Priya", role:"Industrialization Engineer", at:[-25, 6, 0], view:['line', 1.0],
     exp:"Factory Simulation Experience", brand:"DELMIA", show:{ video:"Factory flow simulation, today's plant" },
     chal:"Find the real constraint before spending on capacity, instead of buying what everyone assumes is needed.",
     quote:"Everyone says buy robots. I want proof of where the line actually breaks.",
@@ -384,20 +387,20 @@ const STEPS = [
     kpis:["4 independent robots, 2 QC booths","155 s per WC per robot","≈2,090 glazed a day"], done:"155 s per WC",
     hand:"Robot cycle times, to Priya's simulation.", focus:["glaze"],
     aisha:"Robots take the spraying. Aisha moves to quality control, where her judgement matters most." },
-  { n:8, video:true, tab:"Does it clear 1,681?", who:"Priya", role:"Industrial Engineer", at:[-27, 6, 9], view:['line', 1.0],
+  { n:8, video:true, tab:"Does it clear 1,681?", who:"Priya", role:"Industrialization Engineer", at:[-27, 6, 9], view:['line', 1.0],
     exp:"Factory Simulation Experience", brand:"DELMIA", show:{ video:"Factory flow simulation, re-run" },
     chal:"Prove the plant reaches 1,681 good WCs a day before the robots are ordered.",
     quote:"Same model, real robot cycle times. Now the plant has to prove it.",
     does:"Factory Flow Simulation re-run with the robotic glazing cell: throughput and utilization by area, next to today's result.",
     kpis:["1,750 units/day","Robots 87% busy","Glazing no longer the limit"], done:"1,750/day",
-    hand:"Throughput, to Elena's business case. The new line's people, to Sara.", focus:["glaze","kiln","cast","slip"] },
-  { n:9, video:true, tab:"Ready on day one?", who:"Sara", role:"Process Planner", at:[15.7, 5, 3.5], view:['asm', 1.0],
+    hand:"Throughput, for Elena's business case. First, Priya gets the new line's operators ready.", focus:["glaze","kiln","cast","slip"] },
+  { n:9, video:true, tab:"Ready on day one?", who:"Priya", role:"Industrialization Engineer", at:[15.7, 5, 3.5], view:['asm', 1.0],
     exp:"Work Instruction Experience", brand:"DELMIA", show:{ live:"Work instruction review", video:"Work instruction creation" },
     chal:"Operators have to be trained on a line that does not exist yet.",
     quote:"New operators start before the line exists. They need to be right on day one.",
-    does:"3D work instructions for the frame and flush tank assembly, built from the operations Marco defined.",
+    does:"3D work instructions for the frame and flush tank assembly, built from the operations Priya defined in Step 2.",
     kpis:["[number of steps]","[training time]"], done:"instructions ready",
-    hand:"A line ready to staff.", focus:["asm"],
+    hand:"A line ready to staff, and the numbers to Elena.", focus:["asm"],
     aisha:"Two of Aisha's former colleagues move to the new assembly line and learn it here." },
   { n:10, tab:"Is it worth it?", who:"Elena", role:"VP Manufacturing", at:[27, 23, -22], view:['plant', 1.0],
     exp:"Business Insight Experience", brand:"NETVIBES", show:{ live:"Data Perspective scenario comparison" },
@@ -415,6 +418,7 @@ const LAST = STEPS.length;
 const VIEWS = {
   plant:  { t: [0, 0, 0],      o: [-38, 58, -62] },
   intro:  { t: [15, 0, -9],    o: [-52, 62, -58] },   // the plant sits to the right of the intro card
+  present: { t: [27, 0, -20],  o: [-58, 66, -64] },   // full-screen intro: the card is wider, so the plant sits further right
   office: { t: [33, 9, -14],   o: [-34, 20, -26] },
   line:   { t: [-16, 1, 3],    o: [4, 26, -29] },
   glaze:  { t: [-19, 1, 3.5],  o: [2, 13, -15] },
@@ -746,7 +750,8 @@ const WC_LINES = [
   { along: 'x', fix: [1.4, 4.8], from: -10, to: -.4, v: .05 },                                 // kiln cars through the tunnel kilns
 ];
 const KILN_TO_PACK = [[2, 3.25], [7.6, 3.25], [8.6, 3.6], [9.25, 4.6], [9.25, 14.6], [9.7, 15.8], [10.6, 16.25], [16.5, 16.25]];
-const FRAME_BELT = [[-3.4, -7.25], [9.5, -7.25], [11, -6.3], [12.4, -4.8], [13.3, -3], [13.75, -1.5], [13.75, 9.5], [14.5, 10.8], [15.5, 11.25], [19.5, 11.25]];
+// Centreline fitted to the model's frame conveyors (the blue belt from the weld cell, the straight run past assembly, the last bend)
+const FRAME_BELT = [[-3.4, -7.35], [9, -7.3], [10.06, -6.99], [11.09, -6.47], [11.94, -5.77], [12.6, -4.95], [13.08, -4.02], [13.35, -3.02], [13.47, -2], [13.5, -1], [13.5, 7.4], [13.56, 8.2], [13.68, 9], [14.06, 9.9], [14.69, 10.62], [15.52, 11.14], [16.5, 11.39], [17.5, 11.43], [20.4, 11.43]];
 const FORKLIFTS = [
   { pts: [[28, 13.2], [37, 13.2], [37, 20.3], [28, 20.3]], v: 1.5, n: 2 },   // packed WCs to the warehouse racks
   { pts: [[-31.6, -1.2], [-31.6, 8.6], [-29.4, 8.6], [-29.4, -1.2]], v: 1.1, n: 1 },   // green ware to glazing
@@ -912,15 +917,34 @@ const WALKERS = [
 const STANDING = [[15.4, 2.05, Math.PI / 2, 0x3d6fb6], [15.4, 8.3, Math.PI / 2, 0x3d6fb6]];   // frame and tank assembly benches
 const STACKS = [[-27.6, -2.2], [-12.4, -2.2], [-11.6, 9.4], [1.3, 9.4], [-2.6, -3.0], [-10.8, -3.0], [12, -2.4], [22.8, 9.6]];
 function person(vest) {
-  const g = new THREE.Group(), m = c => new THREE.MeshStandardMaterial({ color: c, roughness: .8 });
-  const trousers = m(0x2d3640), skin = m(0xd9b08c), hat = m(0xf4f4f0), v = m(vest);
-  const limb = (w, h, d, mt, x, y) => { const pivot = new THREE.Group(); pivot.position.set(x, y, 0); const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mt); o.position.y = -h / 2; o.castShadow = true; pivot.add(o); g.add(pivot); return pivot; };
-  const legL = limb(.15, .86, .17, trousers, -.1, .9), legR = limb(.15, .86, .17, trousers, .1, .9);
-  const body = new THREE.Mesh(new THREE.BoxGeometry(.44, .62, .26), v); body.position.y = 1.22; body.castShadow = true; g.add(body);
-  const armL = limb(.11, .62, .13, v, -.29, 1.5), armR = limb(.11, .62, .13, v, .29, 1.5);
-  const head = new THREE.Mesh(new THREE.SphereGeometry(.12, 14, 10), skin); head.position.y = 1.67; g.add(head);
-  const helmet = new THREE.Mesh(new THREE.SphereGeometry(.14, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2), hat); helmet.position.y = 1.71; g.add(helmet);
-  g.userData = { legL, legR, armL, armR };
+  // Rounded shapes, jointed at hips, knees, shoulders and elbows; facing +z
+  const g = new THREE.Group(), m = (c, r) => new THREE.MeshStandardMaterial({ color: c, roughness: r || .75 });
+  const trousers = m(0x2b3440), shirt = m(0x3b4b5e), skin = m(0xc99a78, .6), hat = m(0xf2f2ee, .4), shoe = m(0x1d1f22), v = m(vest, .6), stripe = m(0xdfe4e8, .3);
+  const part = (geo, mt, x, y, z, parent) => { const o = new THREE.Mesh(geo, mt); o.position.set(x, y, z); o.castShadow = true; (parent || g).add(o); return o; };
+  const cap = (r, l) => new THREE.CapsuleGeometry(r, l, 4, 12);
+  const joint = (x, y, parent) => { const j = new THREE.Group(); j.position.set(x, y, 0); (parent || g).add(j); return j; };
+  const leg = x => {
+    const hip = joint(x, .93); part(cap(.07, .32), trousers, 0, -.22, 0, hip);
+    const knee = joint(0, -.45, hip); part(cap(.057, .32), trousers, 0, -.21, 0, knee);
+    part(cap(.048, .13), shoe, 0, -.43, .05, knee).rotation.x = Math.PI / 2;
+    return { hip, knee };
+  };
+  const arm = x => {
+    const sh = joint(x, 1.49); part(cap(.052, .22), shirt, 0, -.14, 0, sh);
+    const el = joint(0, -.28, sh); part(cap(.044, .2), shirt, 0, -.13, 0, el);
+    part(new THREE.SphereGeometry(.047, 12, 10), skin, 0, -.27, 0, el);
+    return { sh, el };
+  };
+  const L = leg(-.095), R = leg(.095), AL = arm(-.225), AR = arm(.225);
+  const flat = o => { o.scale.z = .7; return o; };
+  flat(part(cap(.13, .16), trousers, 0, .96, 0)).rotation.z = Math.PI / 2;   // hips
+  flat(part(cap(.175, .3), v, 0, 1.27, 0));                                    // torso in a safety vest
+  for (const y of [1.17, 1.31]) flat(part(new THREE.CylinderGeometry(.178, .178, .035, 20, 1, true), stripe, 0, y, 0));
+  part(new THREE.CylinderGeometry(.048, .055, .1, 12), skin, 0, 1.63, 0);
+  part(new THREE.SphereGeometry(.105, 18, 14), skin, 0, 1.74, 0).scale.set(.92, 1.08, .98);
+  part(new THREE.SphereGeometry(.12, 18, 9, 0, Math.PI * 2, 0, Math.PI / 2), hat, 0, 1.775, 0);
+  part(new THREE.CylinderGeometry(.14, .14, .012, 20), hat, 0, 1.775, .01);
+  g.userData = { legL: L.hip, legR: R.hip, kneeL: L.knee, kneeR: R.knee, armL: AL.sh, armR: AR.sh, elL: AL.el, elR: AR.el };
   g.position.y = FLOOR; scene.add(g); return g;
 }
 function ambiance() {
@@ -956,13 +980,15 @@ function stepAmbiance(t) {
   const o = {};
   for (const p of life.people) {
     const u = p.g.userData;
-    if (p.still) { const a = Math.sin(t * 1.8 + p.ph) * .35; u.armL.rotation.x = -.6 + a; u.armR.rotation.x = -.6 - a; u.legL.rotation.x = u.legR.rotation.x = 0; continue; }
+    if (p.still) { const a = Math.sin(t * 1.8 + p.ph) * .25; u.armL.rotation.x = -.45 + a; u.armR.rotation.x = -.45 - a; u.elL.rotation.x = u.elR.rotation.x = -.9; u.legL.rotation.x = u.legR.rotation.x = u.kneeL.rotation.x = u.kneeR.rotation.x = 0; continue; }
     pathAt(p.path, p.d0 + p.v * t, o);
     if (p.h === null) p.h = o.h;
     let dh = o.h - p.h; dh = Math.atan2(Math.sin(dh), Math.cos(dh)); p.h += dh * .15;
     p.g.position.set(o.x, FLOOR + Math.abs(Math.sin(t * p.v * 5.5)) * .03, o.z); p.g.rotation.y = p.h;
     const sw = Math.sin(t * p.v * 5.5) * .55;
-    u.legL.rotation.x = sw; u.legR.rotation.x = -sw; u.armL.rotation.x = -sw * .8; u.armR.rotation.x = sw * .8;
+    u.legL.rotation.x = sw; u.legR.rotation.x = -sw; u.armL.rotation.x = -sw * .7; u.armR.rotation.x = sw * .7;
+    u.kneeL.rotation.x = .08 + Math.max(0, sw) * 1.1; u.kneeR.rotation.x = .08 + Math.max(0, -sw) * 1.1;   // the trailing leg bends
+    u.elL.rotation.x = -.25 - Math.max(0, sw) * .5; u.elR.rotation.x = -.25 - Math.max(0, -sw) * .5;
   }
 }
 
@@ -1087,7 +1113,7 @@ const tour = { i: 0, t0: 0, hold: 0 };
 const stagebox = $('stagebox');
 function showTour() {
   const it = TOUR[tour.i];
-  $('booth-cap').innerHTML = `<b>${esc(it.title)}</b><span>${esc(it.sub)}</span>`;
+  $('booth-cap').innerHTML = `<span class="booth-n">${tour.i + 1} of ${TOUR.length}</span><b>${esc(it.title)}</b><span>${esc(it.sub)}</span>`;
   renderCard(null); goTo(it.view);
 }
 async function boothOn() {
@@ -1113,7 +1139,15 @@ document.addEventListener('fullscreenchange', () => {
   if (state.booth) boothOff();
   if (state.present) presentOff();
 });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { if (state.booth) boothOff(); if (state.present) presentOff(); } });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { if (state.booth) boothOff(); if (state.present) presentOff(); }
+  if (state.booth && (e.key === 'ArrowRight' || e.key === 'PageDown')) { e.preventDefault(); tourStep(1); }
+  if (state.booth && (e.key === 'ArrowLeft' || e.key === 'PageUp')) { e.preventDefault(); tourStep(-1); }
+});
+// Back and Next move the tour by hand; it carries on by itself from there
+function tourStep(d) { tour.i = (tour.i + d + TOUR.length) % TOUR.length; tour.t0 = performance.now(); tour.hold = 0; showTour(); }
+$('booth-prev').addEventListener('click', () => tourStep(-1));
+$('booth-next').addEventListener('click', () => tourStep(1));
 $('booth').addEventListener('click', boothOn);
 $('amb').addEventListener('click', () => setAmbiance(!amb.on, true));
 $('fs').addEventListener('click', boothOn);
@@ -1124,7 +1158,7 @@ renderer.domElement.addEventListener('pointerdown', () => { if (state.booth) { t
 function current() { return state.mode === 'guided' ? state.step : (state.sel || 0); }
 function currentView() {
   const s = STEPS.find(x => x.n === current());
-  return s ? s.view[0] : (state.mode === 'guided' && stage.clientWidth > 760 ? 'intro' : 'plant');
+  return s ? s.view[0] : state.present ? 'present' : (state.mode === 'guided' && stage.clientWidth > 760 ? 'intro' : 'plant');
 }
 function select(n) { if (state.mode === 'guided') state.step = n; else state.sel = n; state.card = true; render(true); }
 
@@ -1262,13 +1296,9 @@ function renderCard(s) {
 
 /* ---------- intro, before Step 1: the customer, the challenge, the answer and the team (no steps) ---------- */
 const PEOPLE = [
-  ['Elena', 'VP Manufacturing', 'Owns the plant\u2019s output and the business case for growth.'],
-  ['Marco', 'Manufacturing Engineer', 'Turns engineering\u2019s new wall-hung WC into something the plant can build.'],
-  ['Priya', 'Plant Layout and Industrial Engineer', 'Plans the plant floor and finds where the line really breaks.'],
-  ['Tomás', 'Tooling Engineer', 'Designs the fixtures that hold the parts for welding.'],
-  ['Kenji', 'Robotics Engineer', 'Programs the welding and glazing robots.'],
-  ['Sara', 'Process Planner', 'Writes the work instructions operators build from.'],
-  ['Aisha', 'Glazing operator', 'Sprays every WC by hand today; her pace is the line\u2019s pace.'],
+  ['Elena', 'VP Manufacturing', 'Owns the plant\u2019s output and the business case for growth. She asks the question and makes the decision.'],
+  ['Priya', 'Industrialization Engineer', 'Turns a new product into a running line: the manufacturing BOM, the floor space, the flow simulation and the work instructions.'],
+  ['Kenji', 'Robotics Engineer', 'Designs and programs the robot cells: the weld fixture, the arc welding and the robotic glazing.'],
 ];
 const SLIDES = [
   () => `<div class="stepno">Meet the customer</div>
@@ -1298,8 +1328,8 @@ const SLIDES = [
       <li><b>Robots, fixtures and floor space proven before money is spent.</b></li>
     </ul>`,
   () => `<div class="stepno">Meet the team</div>
-    <h2>The people who make this decision</h2>
-    <div class="team">${PEOPLE.map(([n, r, t]) => `<div class="mate">${avatar(n)}<div><b>${esc(n)}</b><small>${esc(r)}</small></div><p>${esc(t)}</p></div>`).join('')}</div>`,
+    <h2>Three people, one decision</h2>
+    <div class="team">${PEOPLE.map(([n, r, t]) => `<div class="mate">${avatar(n)}<div><b>${esc(n)}</b><small>${esc(r)}</small><p>${esc(t)}</p></div></div>`).join('')}</div>`,
 ];
 function renderIntro(on) {
   const el = $('intro'); el.hidden = !on; stagebox.classList.toggle('intro-on', on);
@@ -1316,13 +1346,13 @@ async function presentOn() {
   state.present = true; stagebox.classList.add('present');
   if (stagebox.requestFullscreen) { try { await stagebox.requestFullscreen(); } catch (e) { stagebox.classList.add('fs'); } }
   else stagebox.classList.add('fs');
-  render(false); goTo('intro');
+  render(false); goTo('present');
 }
 function presentOff() {
   if (!state.present) return;
   state.present = false; stagebox.classList.remove('present', 'fs');
   if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
-  render(false);
+  render(state.step === 0);
 }
 
 /* ---------- 3DEXPERIENCE compass: the quadrant of the current step's apps glows ----------
@@ -1475,7 +1505,7 @@ $('back').addEventListener('click', () => advance(-1));
 $('mode-guided').addEventListener('click', () => { state.mode = 'guided'; render(true); });
 $('mode-explore').addEventListener('click', () => { state.mode = 'explore'; state.sel = null; render(true); });
 document.addEventListener('keydown', e => {
-  if (state.mode !== 'guided' || state.booth || e.target.closest('input,textarea,select') || $('player').open) return;
+  if (state.mode !== 'guided' || state.booth || (e.target.closest && e.target.closest('input,textarea,select')) || $('player').open) return;
   if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); advance(1); }
   if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); advance(-1); }
 });
