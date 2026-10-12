@@ -11,7 +11,7 @@
 /* Layout: 3D plant on the left with persona pins floating over it, persona card on the right, throughput meter under the plant. Stacks at phone width. */
 :root {
   --bg: #EDF0F3; --surface: #FFFFFF; --ink: #15212B; --muted: #5B6B78; --line: #C6CFD7;
-  --stage: #DCE2E8; --accent: #1E5DA6; --accent-soft: rgba(30,93,166,.12);
+  --stage: #DCE2E8; --ground: #CCD3D9; --accent: #1E5DA6; --accent-soft: rgba(30,93,166,.12);
   --bad: #BE3F2E; --warn: #A9721A; --good: #2C7A4C;
   --f-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
   --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
@@ -20,13 +20,13 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0F161C; --surface: #17212A; --ink: #E5EBF0; --muted: #93A3B0; --line: #2D3B47;
-    --stage: #18222B; --accent: #6EA2E0; --accent-soft: rgba(110,162,224,.16);
+    --stage: #18222B; --ground: #212C35; --accent: #6EA2E0; --accent-soft: rgba(110,162,224,.16);
     --bad: #E2705F; --warn: #D7A445; --good: #5CB37D; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0F161C; --surface: #17212A; --ink: #E5EBF0; --muted: #93A3B0; --line: #2D3B47;
-  --stage: #18222B; --accent: #6EA2E0; --accent-soft: rgba(110,162,224,.16);
+  --stage: #18222B; --ground: #212C35; --accent: #6EA2E0; --accent-soft: rgba(110,162,224,.16);
   --bad: #E2705F; --warn: #D7A445; --good: #5CB37D; color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -195,13 +195,15 @@ const ZONES = {
   asm:     { box: [11.8, 19.6, -2.6, 9.6],   label: 'Frame and tank assembly' },
   pack:    { box: [19.5, 30, 9.5, 18.5],     label: 'Packing' },
 };
-// Hidden until Step 3: the frame line (cutting, arc welding, conveyor, frame and tank assembly).
-const FRAME_BOXES = [[-33.6, -12.4, -14.2, -3.3], [-10.4, -2.9, -14.2, -3.3], [-3.5, 12, -9, -1.6], [11.8, 19.6, -2.6, 9.6]];
+// Hidden until Step 3: the frame line (cutting, arc welding, conveyor, frame and tank assembly, frame packaging).
+const FRAME_BOXES = [[-33.6, -12.4, -14.2, -3.3], [-10.4, -2.9, -14.2, -3.3], [-3.5, 12, -9, -1.6], [11.8, 19.6, -2.6, 9.6], [12, 31, 9.7, 14]];
 // Hidden until Step 6: the robots and controllers of the second double robot booth (today it is a manual booth).
 const GLAZE_BOXES = [[-20.4, -18.8, 2.6, 5.6], [-15.4, -13.8, 2.6, 5.6], [-19.2, -16.0, 5.3, 6.8]];
-// Today's layout in the frame-line space, and where each piece goes at Step 3: [x, z, rotation about Y]
-const RACKS_AT = { before: [-23, -8.8, 0], after: [-5.0, 18.7, Math.PI / 2] };   // after: beside the four mills
-const ROOM_AT  = { before: [-6.6, -8.8, 0], after: [17.5, -22, Math.PI] };       // after: outside, in front of the office
+// Today's layout in the frame-line space, and where each piece goes at Step 3.
+const RACKS_AT = { before: [-23, -8.8, 0], after: [-13.7, 23.4, 0] };   // [x, z, rotation about Y]; after: in the mill room, behind its racks
+// The modular experience room is modelled where it ends up, outside by the office. Today it stands where the arc welding cell goes.
+const ROOM_SRC = [13.5, 20.6, -16.3, -9.2];   // its footprint in the model
+const ROOM_TODAY = [-23.65, 3.9];             // shift from the model to today's spot, in the frame-line space
 
 const STEPS = [
   { n:1, tab:"Can we reach 600,000?", who:"Elena", role:"VP Manufacturing", at:[37, 23, -14], view:['office', 1.0],
@@ -283,7 +285,8 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true; controls.maxPolarAngle = Math.PI * 0.47; controls.minDistance = 6; controls.maxDistance = 220;
 
 function cssVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
-function setBg() { scene.background = new THREE.Color(cssVar('--stage') || '#DCE2E8'); paintZones(); }
+function setBg() { scene.background = new THREE.Color(cssVar('--stage') || '#DCE2E8'); groundMat.color.set(cssVar('--ground') || '#CCD3D9'); paintZones(); }
+const groundMat = new THREE.MeshBasicMaterial({ color: 0xCCD3D9 });   // plain site surface in place of the model's striped ground
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setBg);
 new MutationObserver(setBg).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
@@ -337,8 +340,8 @@ const T = {
   wip: tag('WIP queue before glazing', 'bad', [-29, 3.5, 3]),
   aisha: tag('Aisha', 'plain', [-15.5, 3.6, -1.6]),
   weld: tag('', 'plain', [-12, 5, -14]),
-  racks: tag('Raw materials at point of use, beside the mills', 'good', [-5, 5.5, 14]),
-  room: tag('Experience room, next to the office', 'good', [17.5, 5, -22]),
+  racks: tag('Raw materials at point of use, beside the mills', 'good', [-13.7, 6.5, 23.4]),
+  room: tag('Experience room, next to the office', 'good', [17, 6, -12.7]),
   asm: tag('', 'plain', [15.7, 4.5, -3]),
 };
 
@@ -366,6 +369,8 @@ $('reframe').addEventListener('click', () => goTo(currentView()));
 /* ---------- model ---------- */
 let model = null;
 const hideMeshes = [], hideInst = [];      // each entry carries grp: 'frame' or 'glaze'
+const roomParts = [], roomInst = [];        // the experience room, moved as one piece
+let ground = null;
 const inAny = (boxes, x, z) => boxes.some(([x0, x1, z0, z1]) => x >= x0 && x <= x1 && z >= z0 && z <= z1);
 function boxGroup(x, z) { return inAny(FRAME_BOXES, x, z) ? 'frame' : inAny(GLAZE_BOXES, x, z) ? 'glaze' : null; }
 
@@ -399,12 +404,16 @@ fetchModel('factory.glb')
         for (let i = 0; i < o.count; i++) {
           o.getMatrixAt(i, m); p.setFromMatrixPosition(m.premultiply(o.matrixWorld));
           const grp = boxGroup(p.x, p.z); if (grp) { const orig = new THREE.Matrix4(); o.getMatrixAt(i, orig); hideInst.push({ o, i, orig, grp }); }
+          if (inAny([ROOM_SRC], p.x, p.z)) { const orig = new THREE.Matrix4(); o.getMatrixAt(i, orig); roomInst.push({ o, i, orig }); o.frustumCulled = false; }
         }
       } else {
         box.setFromObject(o); box.getCenter(c); box.getSize(s);
         const grp = Math.max(s.x, s.z) < 25 && boxGroup(c.x, c.z); if (grp) { o.userData.grp = grp; hideMeshes.push(o); }
+        if (Math.max(s.x, s.z) < 14 && inAny([ROOM_SRC], c.x, c.z)) roomParts.push({ o, pad: Math.max(s.x, s.z) > 9 });   // pad: the slab it stands on outside
+        if (Math.max(s.x, s.z) > 60 && box.max.y < FLOOR + .2) ground = o;   // the site around the building
       }
     });
+    initRoom(); plainGround();
     $('loading').hidden = true;
     setBg(); render(true);
   })
@@ -422,13 +431,12 @@ function showBuilt(grp, on) {
 
 /* ---------- today's layout in the frame-line space: raw-material racks and the experience room ---------- */
 function mat(c, extra) { return new THREE.MeshStandardMaterial(Object.assign({ color: c, roughness: .8, metalness: .05 }, extra)); }
-const M = { upright: mat(0x2f5d8a), beam: mat(0xe07b28), bagA: mat(0xd2c19a), bagB: mat(0xb9a27a), pallet: mat(0x9a7a52),
-  wall: mat(0xf1f0ec), floor: mat(0xc9a77c), glass: mat(0x9fc7e0, { transparent: true, opacity: .35 }), white: mat(0xffffff, { roughness: .3 }), trim: mat(0x3d4650) };
+const M = { upright: mat(0x2f5d8a), beam: mat(0xe07b28), bagA: mat(0xd2c19a), bagB: mat(0xb9a27a), pallet: mat(0x9a7a52) };
 function box(w, h, d, m, x, y, z, parent) { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); o.position.set(x, y, z); parent.add(o); return o; }
 function makeRacks() {
-  // two rows of pallet racking, 10.8 m x 1.1 m x 4.6 m, loaded with bagged clay-body raw materials
-  const g = new THREE.Group(), bays = 4, bay = 2.7, len = bays * bay, levels = [0.15, 1.6, 3.05];
-  [-1.5, 1.5].forEach((rz, r) => {
+  // two rows of pallet racking, 5.4 m x 1.1 m x 4.6 m, loaded with bagged clay-body raw materials; sized to fit the mill room
+  const g = new THREE.Group(), bays = 2, bay = 2.7, len = bays * bay, levels = [0.15, 1.6, 3.05];
+  [-1.2, 1.2].forEach((rz, r) => {
     for (let i = 0; i <= bays; i++) for (const dz of [-.5, .5]) box(.1, 4.6, .1, M.upright, -len / 2 + i * bay, 2.3, rz + dz, g);
     for (const ly of levels.slice(1)) for (const dz of [-.5, .5]) box(len, .12, .08, M.beam, 0, ly, rz + dz, g);
     for (let i = 0; i < bays; i++) levels.forEach((ly, l) => {
@@ -441,27 +449,45 @@ function makeRacks() {
   });
   return g;
 }
-function makeRoom() {
-  // a modular showroom, 6.4 m x 8.6 m: a finished bathroom customers walk into; the long side facing the aisle is glass
-  const g = new THREE.Group(), W = 6.4, D = 8.6, H = 3, t = .12;
-  box(W, .08, D, M.floor, 0, .04, 0, g);
-  box(t, H, D, M.wall, -W / 2, H / 2, 0, g); box(t, H, D, M.glass, W / 2, H / 2, 0, g);
-  box(W, H, t, M.wall, 0, H / 2, -D / 2, g); box(W, H, t, M.wall, 0, H / 2, D / 2, g);
-  for (const [w, d, x, z] of [[W + .2, .14, 0, -D / 2], [W + .2, .14, 0, D / 2], [.14, D, -W / 2, 0], [.14, D, W / 2, 0]]) box(w, .14, d, M.trim, x, H, z, g);   // open top, so the bathroom shows from above
-  // a wall-hung WC with its frame behind the wall, a basin on a vanity, a shower tray
-  box(.38, .38, .55, M.white, -W / 2 + .35, .55, -1.2, g); box(.42, .9, .12, M.trim, -W / 2 + .12, .8, -1.2, g);
-  box(.5, .55, 1.0, mat(0x6b7a88), -W / 2 + .3, .45, 1.2, g); box(.45, .12, .7, M.white, -W / 2 + .3, .78, 1.2, g);
-  box(1.2, .06, 1.2, M.white, W / 2 - .9, .11, -D / 2 + .9, g);
-  return g;
-}
-const legacy = { racks: makeRacks(), room: makeRoom() };
-for (const o of Object.values(legacy)) { o.position.y = FLOOR; scene.add(o); }
-function poseLegacy(k) {   // k = 0: today's layout; 1: moved at Step 3. Pieces lift and arc over the plant as they move.
-  for (const [o, at] of [[legacy.racks, RACKS_AT], [legacy.room, ROOM_AT]]) {
-    const [x0, z0, r0] = at.before, [x1, z1, r1] = at.after;
-    o.position.set(x0 + (x1 - x0) * k, FLOOR + Math.sin(Math.PI * k) * 9, z0 + (z1 - z0) * k);
-    o.rotation.y = r0 + (r1 - r0) * k;
+const legacy = { racks: makeRacks() };
+legacy.racks.position.y = FLOOR; scene.add(legacy.racks);
+function plainGround() { if (ground) ground.material = groundMat; }
+// The experience room: each part keeps its modelled transform; k = 0 shifts it to today's spot, k = 1 leaves it by the office.
+const TMP = { m: new THREE.Matrix4(), v: new THREE.Vector3() };
+function initRoom() {
+  const parts = new Set(roomParts.map(r => r.o));
+  for (let i = roomParts.length - 1; i >= 0; i--) {   // move a part once, not again through a parent that also moves
+    let a = roomParts[i].o.parent; while (a && !parts.has(a)) a = a.parent;
+    if (a) roomParts.splice(i, 1);
   }
+  for (const r of roomParts) {
+    const par = r.o.parent, w0 = par.localToWorld(r.o.position.clone());
+    r.base = r.o.position.clone();
+    r.shift = par.worldToLocal(w0.clone().add(new THREE.Vector3(ROOM_TODAY[0], 0, ROOM_TODAY[1]))).sub(r.base);
+    r.up = par.worldToLocal(w0.clone().add(new THREE.Vector3(0, 1, 0))).sub(r.base);
+  }
+  for (const r of roomInst) { r.mw = r.o.matrixWorld.clone(); r.inv = r.mw.clone().invert(); }
+  poseLegacy(layoutK);
+}
+function poseRoom(k) {
+  const back = 1 - k, lift = Math.sin(Math.PI * k) * 9;
+  for (const r of roomParts) {
+    r.o.position.copy(r.base).addScaledVector(r.shift, back).addScaledVector(r.up, lift);
+    if (r.pad) r.o.visible = k === 1;
+  }
+  const touched = new Set();
+  for (const r of roomInst) {
+    TMP.m.makeTranslation(ROOM_TODAY[0] * back, lift, ROOM_TODAY[1] * back);
+    r.o.setMatrixAt(r.i, TMP.m.multiply(r.mw).premultiply(r.inv).multiply(r.orig).clone());
+    touched.add(r.o);
+  }
+  for (const o of touched) o.instanceMatrix.needsUpdate = true;
+}
+function poseLegacy(k) {   // k = 0: today's layout; 1: moved at Step 3. Pieces lift and arc over the plant as they move.
+  const [x0, z0, r0] = RACKS_AT.before, [x1, z1, r1] = RACKS_AT.after, o = legacy.racks;
+  o.position.set(x0 + (x1 - x0) * k, FLOOR + Math.sin(Math.PI * k) * 9, z0 + (z1 - z0) * k);
+  o.rotation.y = r0 + (r1 - r0) * k;
+  poseRoom(k);
 }
 let layoutK = 0, relayout = null;   // relayout = { t0, dur, from, to }
 poseLegacy(0);

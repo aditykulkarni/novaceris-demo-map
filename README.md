@@ -2,7 +2,7 @@
 
 Clickable 3D map of the Novaceris sanitaryware plant for the "Perfect Production for Sanitaryware" demo. Guided mode walks through nine persona steps; Explore mode shows the finished plant.
 
-The plant changes twice. At Step 3 the raw-material racks move into slip preparation, the experience room moves next to the office, and the frame line appears where they stood. At Step 6 the glazing cell becomes robotic, with two manual booths kept for quality control. The racks and the experience room are simple shapes drawn by the page; they are not in the model file.
+The plant changes twice. At Step 3 the raw-material racks move into the mill room in slip preparation, the experience room moves out next to the office, and the frame line (including the frame packaging machine) appears where they stood. At Step 6 the glazing cell becomes robotic, with two manual booths kept for quality control. The experience room is the one in the model, which the page shows inside the plant until Step 3; the racks are simple shapes drawn by the page. The striped ground from the model is replaced with a plain surface.
 
 - `index.html`: the page (three.js from jsDelivr)
 - `factory.glb`: the plant model, compressed with meshopt and WebP textures
