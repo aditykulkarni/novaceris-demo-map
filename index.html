@@ -126,7 +126,7 @@ dialog#player::backdrop { background: rgba(10, 16, 22, .72); }
   <header>
     <div class="brand">
       <div class="eyebrow">Novaceris · Perfect Production for Sanitaryware</div>
-      <h1>Nine steps, one constraint, 600,000 WCs</h1>
+      <h1>Ten steps, one constraint, 600,000 WCs</h1>
     </div>
     <div class="controls">
       <div class="seg" role="group" aria-label="Mode">
@@ -159,7 +159,7 @@ dialog#player::backdrop { background: rgba(10, 16, 22, .72); }
         <div class="track"><div class="fill" id="meter-fill"></div><div class="target" style="left: 84.05%"><span>Target 1,681</span></div></div>
         <div class="scale"><span>0</span><span>500</span><span>1,000</span><span>1,500</span><span>2,000</span></div>
       </div>
-      <div class="note"><span>The frame line appears at Step 3 and the robotic glazing cell at Step 6; before that the plant is as it is today.</span><span>1,750 is the design target, not a simulation result.</span></div>
+      <div class="note"><span>The frame line appears at Step 3 and the robotic glazing cell at Step 7; before that the plant is as it is today.</span><span>1,750 is the design target, not a simulation result.</span></div>
     </section>
     <aside class="panel" id="panel" aria-live="polite"></aside>
   </main>
@@ -197,7 +197,7 @@ const ZONES = {
 };
 // Hidden until Step 3: the frame line (cutting, arc welding, conveyor, frame and tank assembly, frame packaging).
 const FRAME_BOXES = [[-33.6, -12.4, -14.2, -3.3], [-10.4, -2.9, -14.2, -3.3], [-3.5, 12, -9, -1.6], [11.8, 19.6, -2.6, 9.6], [12, 31, 9.7, 14]];
-// Hidden until Step 6: the robots and controllers of the second double robot booth (today it is a manual booth).
+// Hidden until Step 7: the robots and controllers of the second double robot booth (today it is a manual booth).
 const GLAZE_BOXES = [[-20.4, -18.8, 2.6, 5.6], [-15.4, -13.8, 2.6, 5.6], [-19.2, -16.0, 5.3, 6.8]];
 // Today's layout in the frame-line space, and where each piece goes at Step 3.
 const RACKS_AT = { before: [-23, -8.8, 0], after: [-13.7, 23.4, 0] };   // [x, z, rotation about Y]; after: in the mill room, behind its racks
@@ -220,38 +220,43 @@ const STEPS = [
     quote:"The space is already in the plant. It's full of racks that sit in the wrong place.",
     does:"Plant Layout Design: the raw-material racks move into slip preparation, next to the mills that use them, and the modular experience room moves next to the office. IP Classify and Reuse inserts the company's standard robotic arc welding cell.",
     kpis:["Racks at point of use","Experience room by the office","Standard weld cell reused"], done:"frame line placed",
-    hand:"The weld cell, to Tomás and Kenji.", focus:["cut","weld","asm"] },
-  { n:4, video:true, tab:"Will the weld cell work?", who:"Tomás and Kenji", role:"Tooling and Robotics", at:[-6.6, 5.5, -8.5], view:['weld', 1.0],
+    hand:"The weld cell, to Tomás for the fixture.", focus:["cut","weld","asm"] },
+  { n:4, video:true, tab:"Will the fixture hold the frame?", who:"Tomás", role:"Tooling Engineer", at:[-8.6, 5.5, -11], view:['weld', 1.0],
     quote:"If the frame isn't held right, every weld is wrong.",
-    does:"Equipment Design: the frame fixture with kinematics and the clamp sequence. DELMIA arc welding: weld paths on the held frame, reach and cycle time.",
-    kpis:["Clamp sequence collision-free","Weld paths reachable","[weld cycle vs frame takt]"], done:"weld cell proven",
-    hand:"A proven frame line. Now the second ask: capacity.", focus:["weld"] },
-  { n:5, video:true, tab:"Where does the line break?", who:"Priya", role:"Industrial Engineer", at:[-25, 6, 0], view:['line', 1.0],
+    does:"Equipment Design: the frame holding fixture with forward kinematics, and the clamp and positioning sequence simulated.",
+    kpis:["Fixture kinematics","Clamp sequence collision-free","Frame positioned for welding"], done:"fixture proven",
+    hand:"A fixture that holds the frame, to Kenji for the weld paths.", focus:["weld"] },
+  { n:5, video:true, tab:"Can the robot weld it in takt?", who:"Kenji", role:"Robotics Engineer", at:[-4.4, 5.5, -6.2], view:['weld', 1.0],
+    quote:"The cell came from the catalog. I still have to prove it welds this frame.",
+    does:"DELMIA arc welding: weld paths on the frame held by Tomás's fixture, reach and collisions checked, and the cycle time against frame takt.",
+    kpis:["Weld paths reachable","No collisions with the fixture","[weld cycle vs frame takt]"], done:"weld cell proven",
+    hand:"A proven frame line, before a single robot is bought. Now the second ask: capacity.", focus:["weld"] },
+  { n:6, video:true, tab:"Where does the line break?", who:"Priya", role:"Industrial Engineer", at:[-25, 6, 0], view:['line', 1.0],
     quote:"Everyone says buy robots. I want proof of where the line actually breaks.",
     does:"Factory Flow Simulation of today's plant at the 1,681 load. Casting, drying and firing have headroom. Glazing does not, and inside glazing the manual glazers are the limit.",
     kpis:["1,190 units/day","Manual glazers at 100%","Other areas with headroom"], done:"glazing is the limit",
     hand:"The constraint, to Kenji.", focus:["glaze","kiln","cast","slip"],
     aisha:"Aisha and three colleagues spray every unit by hand at 100% utilization. The line runs at their pace because there is no slack." },
-  { n:6, video:true, tab:"Can robots glaze it?", who:"Kenji", role:"Robotics Engineer", at:[-14.5, 6, 6], view:['glaze', 1.0],
+  { n:7, video:true, tab:"Can robots glaze it?", who:"Kenji", role:"Robotics Engineer", at:[-14.5, 6, 6], view:['glaze', 1.0],
     quote:"48 seconds a unit: exterior, interior and rim. The robots hit it on screen before they hit it on the floor.",
     does:"Robot glazing for two double booths: spray paths on the exterior, interior and rim, coverage and cycle time. Two booths stay manual, for quality control only.",
     kpis:["4 robots, 2 QC booths","Glazing ≤48 s per unit","[robot cycle per unit]"], done:"≤48 s/unit",
     hand:"Robot cycle times, to Priya's simulation.", focus:["glaze"],
     aisha:"Robots take the spraying. Aisha moves to quality control, where her judgement matters most." },
-  { n:7, tab:"Does it clear 1,681?", who:"Priya", role:"Industrial Engineer", at:[-27, 6, 9], view:['line', 1.0],
+  { n:8, tab:"Does it clear 1,681?", who:"Priya", role:"Industrial Engineer", at:[-27, 6, 9], view:['line', 1.0],
     quote:"Same model, real robot cycle times. Now the plant has to prove it.",
     does:"Factory Flow Simulation re-run with the robotic glazing cell: throughput and utilization by area, next to today's result.",
     kpis:["[1,750] units/day","Glazing below 100%","[utilization by area]"], done:"[1,750]/day",
     hand:"Throughput, to Elena's business case. The new line's people, to Sara.", focus:["glaze","kiln","cast","slip"] },
-  { n:8, tab:"Ready on day one?", who:"Sara", role:"Process Planner", at:[15.7, 5, 3.5], view:['asm', 1.0],
+  { n:9, tab:"Ready on day one?", who:"Sara", role:"Process Planner", at:[15.7, 5, 3.5], view:['asm', 1.0],
     quote:"New operators start before the line exists. They need to be right on day one.",
     does:"3D work instructions for the frame and flush tank assembly, built from the operations Marco defined.",
     kpis:["[number of steps]","[training time]"], done:"instructions ready",
     hand:"A line ready to staff.", focus:["asm"],
     aisha:"Two of Aisha's former colleagues move to the new assembly line and learn it here." },
-  { n:9, tab:"Is it worth it?", who:"Elena", role:"VP Manufacturing", at:[27, 23, -22], view:['plant', 1.0],
+  { n:10, tab:"Is it worth it?", who:"Elena", role:"VP Manufacturing", at:[27, 23, -22], view:['plant', 1.0],
     quote:"Now the numbers are simulated, not assumed. Show me payback.",
-    does:"Scenario comparison: the breakeven built from the throughput in Step 7 and the cycle times in Steps 4 and 6. It answers the question from Step 1.",
+    does:"Scenario comparison: the breakeven built from the throughput in Step 8 and the cycle times in Steps 5 and 7. It answers the question from Step 1.",
     kpis:["[capex]","[contribution per year]","[breakeven month]"], done:"payback [x] mo",
     hand:"Decision.", focus:["office"] }
 ];
@@ -337,7 +342,7 @@ const T = {
   kiln: tag('Kiln: headroom', 'good', [-5, 7, 3]),
   cast: tag('Casting and drying: headroom', 'good', [-23, 5, 18]),
   slip: tag('Slip prep: headroom', 'good', [-3, 5, 19]),
-  wip: tag('WIP queue before glazing', 'bad', [-29, 3.5, 3]),
+  wip: tag('WIP queue before glazing', 'bad', [-31, 2.5, -1]),
   aisha: tag('Aisha', 'plain', [-15.5, 3.6, -1.6]),
   weld: tag('', 'plain', [-12, 5, -14]),
   racks: tag('Raw materials at point of use, beside the mills', 'good', [-13.7, 6.5, 23.4]),
@@ -516,12 +521,12 @@ function render(move) {
   const framed = g >= 3;
   if (model) {
     setLayout(framed, guided && g === 3 && prevG === 2 && !matchMedia('(prefers-reduced-motion: reduce)').matches);
-    showBuilt('glaze', g >= 6);
+    showBuilt('glaze', g >= 7);
   }
   prevG = g;
 
-  const gs = g < 5 ? 'none' : g === 5 ? 'bad' : g === 6 ? 'warn' : 'good';
-  const sim = guided && (g === 5 || g === 7);
+  const gs = g < 6 ? 'none' : g === 6 ? 'bad' : g === 7 ? 'warn' : 'good';
+  const sim = guided && (g === 6 || g === 8);
   // Zones
   const focus = s ? s.focus : [];
   for (const [id, z] of Object.entries(zoneObjs)) {
@@ -536,9 +541,9 @@ function render(move) {
   T.glaze.el.textContent = { none: '', bad: 'Glazing: 4 manual booths at 100%', warn: 'Robotic glazing: ≤48 s per unit', good: 'Re-run: glazing no longer the limit' }[gs];
   T.glaze.el.className = 'tag ' + gs; T.glaze.hide = gs === 'none';
   for (const k of ['kiln', 'cast', 'slip']) T[k].hide = !sim;
-  T.wip.hide = !(guided && g === 5);
-  T.aisha.hide = !(guided && (g === 5 || g === 6));
-  T.aisha.el.textContent = g >= 6 ? 'Aisha: quality control' : 'Aisha: manual spraying';
+  T.wip.hide = !(guided && g === 6);
+  T.aisha.hide = !(guided && (g === 6 || g === 7));
+  T.aisha.el.textContent = g >= 7 ? 'Aisha: quality control' : 'Aisha: manual spraying';
   T.weld.el.textContent = framed ? 'New: frame line, cutting and arc welding' : 'Raw-material racks and the experience room';
   T.weld.hide = !(guided ? g >= 2 : true);
   T.asm.el.textContent = framed ? 'New: frame and tank assembly' : 'Open floor, unused';
@@ -558,7 +563,7 @@ function render(move) {
 
   // Meter
   let val = 1190, lbl = 'today', col = cssVar('--bad');
-  if (g >= 7) { val = 1750; lbl = 're-run with robot cycle times'; col = cssVar('--good'); }
+  if (g >= 8) { val = 1750; lbl = 're-run with robot cycle times'; col = cssVar('--good'); }
   $('meter-val').innerHTML = val.toLocaleString('en-US') + '<small>' + lbl + '</small>';
   $('meter-fill').style.width = (val / 2000 * 100) + '%';
   $('meter-fill').style.background = col;
@@ -585,7 +590,7 @@ function renderPanel(s, guided) {
     panel.innerHTML = guided ? `
       <div class="stepno">Intro</div>
       <h2>From 425,000 to 600,000 WCs a year</h2>
-      <p>The plant makes 1,190 units a day and needs 1,681. Follow nine steps through the plant to find what limits it, fix it, and prove the payback.</p>
+      <p>The plant makes 1,190 units a day and needs 1,681. Follow ten steps through the plant to find what limits it, fix it, and prove the payback.</p>
       <div><div class="label">Planning basis</div><div class="chips"><span class="chip">357 days/yr</span><span class="chip">22.5 h/day</span><span class="chip">takt 48 s</span></div></div>
       <div class="panel-actions"><button class="btn primary" type="button" id="start">Start with Elena</button></div>` : `
       <div class="stepno">Explore</div>
@@ -612,7 +617,7 @@ function renderPanel(s, guided) {
 }
 
 /* ---------- step videos from a folder on this computer ----------
-   A file is matched to a step by its name ("step3.mp4", "Step 5 - fixture.mp4") or by picking it in the step's
+   A file is matched to a step by its name ("step3.mp4", "Step 4 - fixture.mp4") or by picking it in the step's
    "Video for this step" list; picks are remembered by file name. The files never leave the computer. */
 const videos = new Map();          // step number -> File
 let allVideos = [];                // every video found in the folder
@@ -622,7 +627,7 @@ function loadAssign() { try { return JSON.parse(localStorage.getItem(ASSIGN_KEY)
 function saveAssign(a) { try { localStorage.setItem(ASSIGN_KEY, JSON.stringify(a)); } catch (e) {} }
 function matchVideos() {
   videos.clear();
-  for (const f of allVideos) { const m = f.name.match(/^step[\s_-]*0?([1-9])(?!\d)/i); if (m) videos.set(+m[1], f); }
+  for (const f of allVideos) { const m = f.name.match(/^step[\s_-]*0?(10|[1-9])(?!\d)/i); if (m) videos.set(+m[1], f); }
   const a = loadAssign();
   for (const [n, name] of Object.entries(a)) {
     if (name === '') { videos.delete(+n); continue; }
@@ -734,7 +739,7 @@ renderer.setAnimationLoop(() => {
 
 goTo('intro');
 // Open at a step from the address, e.g. index.html#step=3; a link from an Iterop task can bring you back here
-function stepFromHash() { const m = location.hash.match(/^#step=?([0-9])$/i); return m ? +m[1] : null; }
+function stepFromHash() { const m = location.hash.match(/^#step=?(10|[0-9])$/i); return m ? +m[1] : null; }
 function goHash() { const n = stepFromHash(); if (n !== null) { state.mode = 'guided'; state.step = n; } }
 window.addEventListener('hashchange', () => { if (stepFromHash() !== null) { goHash(); render(true); } });
 goHash();
