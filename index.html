@@ -846,8 +846,11 @@ function initLife() {
   const ARMS = [
     { re: /^mesh_(26[0-6])(?:_\d+)?(?:_instance_(\d+))?$/, turret: 260, shoulder: 261, elbow: 263, tip: 266, lv: n => n <= 261 ? 1 : n === 262 ? 2 : 3,
       tools: /^mesh_(279|28[01])(?:_\d+)?(?:_instance_\d+)?$/, weld: true, amp: [.16, .07, .12], f: .55 },
-    { re: /^mesh_(269|27[0-5])(?:_\d+)?(?:_instance_(\d+))?$/, turret: 269, shoulder: 270, elbow: 272, tip: 274, lv: n => n <= 270 ? 1 : n === 271 ? 2 : 3,
-      weld: false, amp: [.85, .22, .3], f: .42 },
+    { re: /^mesh_(269|27[0-5])(?:_\d+)?(?:_instance_(\d+))?$/, turret: 269, shoulder: 270, elbow: 272, tip: 274, wrist: 274, flange: 275,
+      lv: n => n <= 270 ? 1 : n === 271 ? 2 : n <= 273 ? 3 : 4,
+      // End effectors: gripper 1 (plate 316, cups 317, four pins) and gripper 2 (the pin plate 290 with seven pins),
+      // plus the outer robot's gripper 318-319. Each hangs off the flange it sits beyond; the fixture's own plate and pins stay put.
+      grip: /^mesh_(29[0-4]|31[6-9])(?:_\d+)?(?:_instance_\d+)?$/, weld: false, amp: [.85, .22, .3, .25], f: .42 },
   ];
   for (const A of ARMS) {
     const groups = {};
@@ -865,13 +868,17 @@ function initLife() {
       if (!base || !shoulder || !elbow || !tip) continue;
       const reach = new THREE.Vector3(tip.x - base.x, 0, tip.z - base.z).normalize(), axis = new THREE.Vector3(-reach.z, 0, reach.x);
       const ph = base.x * 1.3 + base.z, dwell = !A.weld;
-      const r = robot(base, [
+      const joints = [
         { p: base.clone(), axis: L4.up.clone(), amp: A.amp[0], f: A.f, ph, dwell },
         { p: shoulder.clone(), axis: axis.clone(), amp: A.amp[1], f: A.f * (dwell ? 1 : 1.6), ph: ph + (dwell ? .6 : 1), dwell },
         { p: elbow.clone(), axis: axis.clone(), amp: A.amp[2], f: A.f * (dwell ? 1 : 1.3), ph: ph + (dwell ? .9 : 2), dwell },
-      ]);
+      ];
+      // The model's big robots hold their grippers out sideways; the wrist turns them to face down, as in the real cell
+      const wrist = A.wrist && avg(A.wrist), flange = A.flange && avg(A.flange);
+      if (wrist) joints.push({ p: wrist.clone(), axis: axis.clone(), off: -Math.PI / 2, amp: A.amp[3], f: A.f, ph: ph + 1.2, dwell });
+      const r = robot(base, joints);
       for (const x of list) part(r, x.o, 0, A.lv(x.n));
-      made.push({ r, list, tip });
+      made.push({ r, list, tip, flange, out: flange && flange.clone().sub(elbow).normalize() });
     }
     if (A.tools) {
       for (const [name, list] of Object.entries(byName)) {
@@ -880,6 +887,16 @@ function initLife() {
           const c = centerOf(o, 0); let best = null, bd = .9;
           for (const mm of made) for (const x of mm.list) { const d = x.c.distanceTo(c); if (d < bd) { bd = d; best = mm; } }
           if (best) { part(best.r, o, 0, 3); if (/^mesh_280/.test(name)) best.torch = c; }
+        }
+      }
+    }
+    if (A.grip) {
+      for (const [name, list] of Object.entries(byName)) {
+        if (!A.grip.test(name)) continue;
+        for (const o of list) for (let i = 0; i < (o.isInstancedMesh ? o.count : 1); i++) {
+          const c = centerOf(o, i); let best = null, bd = .8;
+          for (const mm of made) { if (!mm.flange) continue; const d = c.distanceTo(mm.flange); if (d < bd && L4.w.subVectors(c, mm.flange).dot(mm.out) > 0) { bd = d; best = mm; } }
+          if (best) part(best.r, o, i, 4);
         }
       }
     }
@@ -1058,7 +1075,7 @@ function stepLife(t) {
   for (const r of life.robots) {
     r.joints.forEach((j, k) => {
       const w = Math.sin(t * j.f + j.ph);
-      PIV.makeTranslation(j.p.x, j.p.y, j.p.z).multiply(RISE.makeRotationAxis(j.axis, j.amp * (j.dwell ? Math.tanh(3 * w) / Math.tanh(3) : w))).multiply(L4.c.makeTranslation(-j.p.x, -j.p.y, -j.p.z));
+      PIV.makeTranslation(j.p.x, j.p.y, j.p.z).multiply(RISE.makeRotationAxis(j.axis, (j.off || 0) + j.amp * (j.dwell ? Math.tanh(3 * w) / Math.tanh(3) : w))).multiply(L4.c.makeTranslation(-j.p.x, -j.p.y, -j.p.z));
       if (k) r.mats[k].multiplyMatrices(r.mats[k - 1], PIV); else r.mats[k].copy(PIV);
     });
     r.on = false;
