@@ -11,7 +11,7 @@
 /* Layout: 3D plant on the left with persona pins floating over it, persona card on the right, throughput meter under the plant. Stacks at phone width. */
 :root {
   --bg: #EDF0F3; --surface: #FFFFFF; --ink: #15212B; --muted: #5B6B78; --line: #C6CFD7;
-  --stage: #DCE2E8; --ground: #CCD3D9; --accent: #1E5DA6; --accent-soft: rgba(30,93,166,.12);
+  --stage: #DCE2E8; --sky-top: #B9CCDD; --sky-bottom: #E9EEF2; --ground: #B9C2B0; --accent: #1E5DA6; --accent-soft: rgba(30,93,166,.12);
   --bad: #BE3F2E; --warn: #A9721A; --good: #2C7A4C;
   --f-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
   --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
@@ -20,13 +20,13 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0F161C; --surface: #17212A; --ink: #E5EBF0; --muted: #93A3B0; --line: #2D3B47;
-    --stage: #18222B; --ground: #212C35; --accent: #6EA2E0; --accent-soft: rgba(110,162,224,.16);
+    --stage: #18222B; --sky-top: #070C12; --sky-bottom: #1D2A36; --ground: #1F2A25; --accent: #6EA2E0; --accent-soft: rgba(110,162,224,.16);
     --bad: #E2705F; --warn: #D7A445; --good: #5CB37D; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0F161C; --surface: #17212A; --ink: #E5EBF0; --muted: #93A3B0; --line: #2D3B47;
-  --stage: #18222B; --ground: #212C35; --accent: #6EA2E0; --accent-soft: rgba(110,162,224,.16);
+  --stage: #18222B; --sky-top: #070C12; --sky-bottom: #1D2A36; --ground: #1F2A25; --accent: #6EA2E0; --accent-soft: rgba(110,162,224,.16);
   --bad: #E2705F; --warn: #D7A445; --good: #5CB37D; color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -61,9 +61,10 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 14px; al
 @media (max-width: 960px) { main { grid-template-columns: minmax(0, 1fr); } }
 
 .plantcol { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px; display: grid; gap: 10px; min-width: 0; }
-.stage { position: relative; aspect-ratio: 16 / 10; background: var(--stage); border-radius: 8px; overflow: hidden; min-width: 0; }
+.stage { position: relative; aspect-ratio: 16 / 10; background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom) 70%); border-radius: 8px; overflow: hidden; min-width: 0; }
+.stage::after { content: ""; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 120px rgba(8, 16, 24, .28); z-index: 1; }
 .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
-.overlay { position: absolute; inset: 0; pointer-events: none; }
+.overlay { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
 
 .loading { position: absolute; inset: 0; display: grid; place-content: center; gap: 10px; text-align: center; background: var(--stage); z-index: 5; padding: 16px; }
 .loading .mono { font-family: var(--f-mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -88,7 +89,7 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 14px; al
 .tag.warn { color: var(--warn); border-color: var(--warn); }
 .tag.plain { color: var(--muted); }
 
-.hint { position: absolute; left: 10px; bottom: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 3px 8px; font-size: 11.5px; color: var(--muted); pointer-events: auto; display: flex; gap: 8px; align-items: center; }
+.hint { z-index: 2; position: absolute; left: 10px; bottom: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 3px 8px; font-size: 11.5px; color: var(--muted); pointer-events: auto; display: flex; gap: 8px; align-items: center; }
 .hint button { border: 0; background: none; color: var(--accent); font: 500 11.5px var(--f-body); cursor: pointer; padding: 0; }
 
 .meter { display: grid; gap: 6px; padding: 14px 6px 2px; }
@@ -264,6 +265,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const FLOOR = 1.15;
 // Plant areas in model coordinates (metres): [xMin, xMax, zMin, zMax]
@@ -386,20 +388,37 @@ const state = { mode: 'guided', step: 0, sel: null, slide: 0, card: true, booth:
 
 /* ---------- three.js scene ---------- */
 const stage = $('stage');
-const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.shadowMap.autoUpdate = false;
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 stage.prepend(renderer.domElement);
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(38, 16 / 10, 0.5, 2000);
-scene.add(new THREE.HemisphereLight(0xffffff, 0x8899aa, 1.7));
-const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(30, 80, 40); scene.add(sun);
+// Light: a soft sky, a warm low sun with shadows across the whole plant, and a studio environment for the metals
+const hemi = new THREE.HemisphereLight(0xdfeaff, 0x6b6250, 0.9); scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xfff1dc, 2.6); sun.position.set(42, 70, 30); scene.add(sun, sun.target);
+sun.castShadow = true; sun.shadow.mapSize.set(3072, 3072); sun.shadow.bias = -0.0004; sun.shadow.normalBias = .04;
+Object.assign(sun.shadow.camera, { left: -62, right: 62, top: 50, bottom: -50, near: 10, far: 220 }); sun.shadow.camera.updateProjectionMatrix();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), .04).texture;
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true; controls.maxPolarAngle = Math.PI * 0.47; controls.minDistance = 6; controls.maxDistance = 220;
 
 function cssVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
-function setBg() { scene.background = new THREE.Color(cssVar('--stage') || '#DCE2E8'); groundMat.color.set(cssVar('--ground') || '#CCD3D9'); paintZones(); }
-const groundMat = new THREE.MeshBasicMaterial({ color: 0xCCD3D9 });   // plain site surface in place of the model's striped ground
+let envK = .7;
+function applyEnv() { if (model) model.traverse(o => { if (o.isMesh) for (const mt of [].concat(o.material)) if ('envMapIntensity' in mt) mt.envMapIntensity = envK; }); }
+function setBg() {
+  const dark = cssVar('--sky-top').toUpperCase() === '#070C12';
+  scene.background = null;
+  scene.fog = new THREE.Fog(cssVar('--sky-bottom') || '#E9EEF2', 140, 380);
+  groundMat.color.set(cssVar('--ground') || '#B9C2B0');
+  hemi.intensity = dark ? .55 : .9; sun.intensity = dark ? 1.3 : 2.6; renderer.toneMappingExposure = dark ? .9 : 1.05;
+  envK = dark ? .35 : .7; applyEnv();
+  paintZones();
+}
+const groundMat = new THREE.MeshStandardMaterial({ color: 0xB9C2B0, roughness: 1 });   // plain site surface in place of the model's striped ground
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setBg);
 new MutationObserver(setBg).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
@@ -513,6 +532,7 @@ fetchModel('factory.glb')
       if (!o.isMesh) return;
       const mats = Array.isArray(o.material) ? o.material : [o.material];
       for (const mt of mats) if (mt.transmission > 0) { mt.transmission = 0; mt.transparent = true; mt.opacity = .35; }
+      o.receiveShadow = true; o.castShadow = !mats.some(mt => mt.transparent);
       if (o.isInstancedMesh) {
         for (let i = 0; i < o.count; i++) {
           o.getMatrixAt(i, m); p.setFromMatrixPosition(m.premultiply(o.matrixWorld));
@@ -526,7 +546,7 @@ fetchModel('factory.glb')
         if (Math.max(s.x, s.z) > 60 && box.max.y < FLOOR + .2) ground = o;   // the site around the building
       }
     });
-    initRoom(); plainGround();
+    initRoom(); plainGround(); ground && (ground.receiveShadow = true);
     try { initLife(); } catch (e) { console.warn('Plant motion is off:', e); }
     $('loading').hidden = true;
     setBg(); render(true);
@@ -625,9 +645,9 @@ const WC_LINES = [
   { along: 'x', fix: [1.4, 4.8], from: -10, to: -.4, v: .05 },                                 // kiln cars through the tunnel kilns
 ];
 const KILN_TO_PACK = [[2, 3.25], [7.6, 3.25], [8.6, 3.6], [9.25, 4.6], [9.25, 14.6], [9.7, 15.8], [10.6, 16.25], [16.5, 16.25]];
-const FRAME_BELT = [[-2.7, -6.9], [8.5, -6.5], [12.2, -5.7], [13.4, -2.3], [13.6, 8], [15.1, 10.8], [20.6, 11.3]];
+const FRAME_BELT = [[-3.4, -7.25], [9.5, -7.25], [11, -6.3], [12.4, -4.8], [13.3, -3], [13.75, -1.5], [13.75, 9.5], [14.5, 10.8], [15.5, 11.25], [19.5, 11.25]];
 const FORKLIFTS = [
-  { pts: [[24.5, 14.2], [37, 14.2], [37, 20.3], [24.5, 20.3]], v: 1.5, n: 2 },   // packed WCs to the warehouse racks
+  { pts: [[28, 13.2], [37, 13.2], [37, 20.3], [28, 20.3]], v: 1.5, n: 2 },   // packed WCs to the warehouse racks
   { pts: [[-31.6, -1.2], [-31.6, 8.6], [-29.4, 8.6], [-29.4, -1.2]], v: 1.1, n: 1 },   // green ware to glazing
 ];
 
@@ -715,29 +735,49 @@ function initLife() {
       if (best) life.mists.push({ bot: best, at: new THREE.Vector3(x, 2.25, 4.2), pts: puff(0xe9f1f7, .055, .55) });
     }
   }
-  // Arc welding robots: meshes 269 to 275 under _instance_0 and _instance_1; 269-270 turret, 271 lower arm, 272-275 forearm and torch
-  const weld = {};
-  for (const [name, list] of Object.entries(byName)) {
-    const m = name.match(/^mesh_(269|27[0-5])(?:_\d+)?(?:_instance_(\d+))?$/); if (!m) continue;
-    for (const o of list) {
-      const k = m[2] ?? (o.parent && (o.parent.name.match(/_instance_(\d+)/) || [])[1]); if (k == null) continue;
-      (weld[k] = weld[k] || []).push({ o, n: +m[1] });
+  // Arc welding cell (and the same robot models elsewhere). The small robots carry the weld guns: meshes 260-266,
+  // plus torch and wire feeder 279-281. The big robots, 269-275, pick and place the frame, as does the outer one.
+  const ARMS = [
+    { re: /^mesh_(26[0-6])(?:_\d+)?(?:_instance_(\d+))?$/, turret: 260, shoulder: 261, elbow: 263, tip: 266, lv: n => n <= 261 ? 1 : n === 262 ? 2 : 3,
+      tools: /^mesh_(279|28[01])(?:_\d+)?(?:_instance_\d+)?$/, weld: true, amp: [.16, .07, .12], f: .55 },
+    { re: /^mesh_(269|27[0-5])(?:_\d+)?(?:_instance_(\d+))?$/, turret: 269, shoulder: 270, elbow: 272, tip: 274, lv: n => n <= 270 ? 1 : n === 271 ? 2 : 3,
+      weld: false, amp: [.85, .22, .3], f: .42 },
+  ];
+  for (const A of ARMS) {
+    const groups = {};
+    for (const [name, list] of Object.entries(byName)) {
+      const m = name.match(A.re); if (!m) continue;
+      for (const o of list) {
+        const k = m[2] ?? (o.parent && (o.parent.name.match(/_instance_(\d+)/) || [])[1]); if (k == null) continue;
+        (groups[k] = groups[k] || []).push({ o, n: +m[1], c: centerOf(o, 0) });
+      }
     }
-  }
-  for (const list of Object.values(weld)) {
-    const avg = (n) => { const v = new THREE.Vector3(); const l = list.filter(x => x.n === n); l.forEach(x => v.add(centerOf(x.o, 0))); return l.length ? v.divideScalar(l.length) : null; };
-    const base = avg(269), shoulder = avg(270), elbow = avg(272), tool = avg(274);
-    if (!base || !shoulder || !elbow || !tool) continue;
-    const reach = new THREE.Vector3(tool.x - base.x, 0, tool.z - base.z).normalize(), axis = new THREE.Vector3(-reach.z, 0, reach.x);
-    const ph = base.x;
-    const r = robot(base, [
-      { p: base.clone(), axis: L4.up.clone(), amp: .32, f: 1.1, ph },
-      { p: shoulder.clone(), axis: axis.clone(), amp: .12, f: 1.7, ph: ph + 1 },
-      { p: elbow.clone(), axis: axis.clone(), amp: .2, f: 1.3, ph: ph + 2 },
-    ]);
-    for (const x of list) part(r, x.o, 0, x.n <= 270 ? 1 : x.n === 271 ? 2 : 3);
-    const torch = list.filter(x => x.n === 275).map(x => centerOf(x.o, 0))[0] || tool;
-    life.sparks.push({ r, tip: torch, pts: puff(0xffb347, .045, .9) });
+    const made = [];
+    for (const list of Object.values(groups)) {
+      const avg = (n) => { const v = new THREE.Vector3(); const l = list.filter(x => x.n === n); l.forEach(x => v.add(x.c)); return l.length ? v.divideScalar(l.length) : null; };
+      const base = avg(A.turret), shoulder = avg(A.shoulder), elbow = avg(A.elbow), tip = avg(A.tip);
+      if (!base || !shoulder || !elbow || !tip) continue;
+      const reach = new THREE.Vector3(tip.x - base.x, 0, tip.z - base.z).normalize(), axis = new THREE.Vector3(-reach.z, 0, reach.x);
+      const ph = base.x * 1.3 + base.z, dwell = !A.weld;
+      const r = robot(base, [
+        { p: base.clone(), axis: L4.up.clone(), amp: A.amp[0], f: A.f, ph, dwell },
+        { p: shoulder.clone(), axis: axis.clone(), amp: A.amp[1], f: A.f * (dwell ? 1 : 1.6), ph: ph + (dwell ? .6 : 1), dwell },
+        { p: elbow.clone(), axis: axis.clone(), amp: A.amp[2], f: A.f * (dwell ? 1 : 1.3), ph: ph + (dwell ? .9 : 2), dwell },
+      ]);
+      for (const x of list) part(r, x.o, 0, A.lv(x.n));
+      made.push({ r, list, tip });
+    }
+    if (A.tools) {
+      for (const [name, list] of Object.entries(byName)) {
+        if (!A.tools.test(name)) continue;
+        for (const o of list) {
+          const c = centerOf(o, 0); let best = null, bd = .9;
+          for (const mm of made) for (const x of mm.list) { const d = x.c.distanceTo(c); if (d < bd) { bd = d; best = mm; } }
+          if (best) { part(best.r, o, 0, 3); if (/^mesh_280/.test(name)) best.torch = c; }
+        }
+      }
+    }
+    if (A.weld) for (const mm of made) life.sparks.push({ r: mm.r, tip: mm.torch || mm.tip, pts: puff(0xffb347, .045, .9) });
   }
 
   // 3. Fired WCs from the kiln to packing, and welded frames from the weld cell to assembly
@@ -757,7 +797,72 @@ function initLife() {
     const path = makePath(f.pts, true);
     for (let k = 0; k < f.n; k++) { const g = forklift(k); scene.add(g); life.lifts.push({ g, path, v: f.v, d0: k * path.len / f.n, h: null }); }
   }
+  ambiance();
   life.ready = true;
+}
+
+/* ---------- ambiance: glowing kilns, stack lights, people at work ---------- */
+const WALKERS = [
+  { pts: [[20.5, 22.2], [40, 22.2]], v: .9, vest: 0xf28c28 },           // along the warehouse racks
+  { pts: [[39, 21.6], [21, 21.6]], v: .75, vest: 0x3d6fb6 },
+  { pts: [[-34, -3], [-34, 10]], v: .8, vest: 0xf28c28 },               // beside the glazing cell
+  { pts: [[-32.8, 10], [-32.8, -2.5]], v: .7, vest: 0x2f8f5b },
+];
+const STANDING = [[15.4, 2.05, Math.PI / 2, 0x3d6fb6], [15.4, 8.3, Math.PI / 2, 0x3d6fb6]];   // frame and tank assembly benches
+const STACKS = [[-27.6, -2.2], [-12.4, -2.2], [-11.6, 9.4], [1.3, 9.4], [-2.6, -3.0], [-10.8, -3.0], [12, -2.4], [22.8, 9.6]];
+function person(vest) {
+  const g = new THREE.Group(), m = c => new THREE.MeshStandardMaterial({ color: c, roughness: .8 });
+  const trousers = m(0x2d3640), skin = m(0xd9b08c), hat = m(0xf4f4f0), v = m(vest);
+  const limb = (w, h, d, mt, x, y) => { const pivot = new THREE.Group(); pivot.position.set(x, y, 0); const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mt); o.position.y = -h / 2; o.castShadow = true; pivot.add(o); g.add(pivot); return pivot; };
+  const legL = limb(.15, .86, .17, trousers, -.1, .9), legR = limb(.15, .86, .17, trousers, .1, .9);
+  const body = new THREE.Mesh(new THREE.BoxGeometry(.44, .62, .26), v); body.position.y = 1.22; body.castShadow = true; g.add(body);
+  const armL = limb(.11, .62, .13, v, -.29, 1.5), armR = limb(.11, .62, .13, v, .29, 1.5);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(.12, 14, 10), skin); head.position.y = 1.67; g.add(head);
+  const helmet = new THREE.Mesh(new THREE.SphereGeometry(.14, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2), hat); helmet.position.y = 1.71; g.add(helmet);
+  g.userData = { legL, legR, armL, armR };
+  g.position.y = FLOOR; scene.add(g); return g;
+}
+function ambiance() {
+  // Tunnel kilns: a warm glow inside the tunnels and a flickering light
+  life.glow = [];
+  for (const z of [1.4, 4.8]) {
+    const gl = new THREE.Mesh(new THREE.BoxGeometry(9.2, .9, 1.1), new THREE.MeshBasicMaterial({ color: 0xff7a1a, transparent: true, opacity: .3, blending: THREE.AdditiveBlending, depthWrite: false }));
+    gl.position.set(-5.2, FLOOR + .85, z); scene.add(gl); life.glow.push(gl);
+  }
+  life.kilnLight = new THREE.PointLight(0xff8a3a, 30, 14, 1.6); life.kilnLight.position.set(-5.2, FLOOR + 2.4, 3.1); scene.add(life.kilnLight);
+  // Stack lights by the cells, green while the cell runs
+  life.stacks = [];
+  const pole = new THREE.MeshStandardMaterial({ color: 0x3b4148, roughness: .6 });
+  for (const [x, z] of STACKS) {
+    const g = new THREE.Group(); g.position.set(x, FLOOR, z);
+    const p = new THREE.Mesh(new THREE.CylinderGeometry(.03, .03, 2.4, 8), pole); p.position.y = 1.2; g.add(p);
+    const lamp = (c, y) => { const o = new THREE.Mesh(new THREE.CylinderGeometry(.07, .07, .14, 14), new THREE.MeshBasicMaterial({ color: c })); o.position.y = y; g.add(o); return o; };
+    lamp(0x5a2a26, 2.47); lamp(0x5b4a1e, 2.61); const green = lamp(0x39e27a, 2.75);
+    scene.add(g); life.stacks.push(green);
+  }
+  // People
+  life.people = [];
+  for (const w of WALKERS) { const path = makePath([w.pts[0], w.pts[1]], true); life.people.push({ g: person(w.vest), path, v: w.v, d0: Math.random() * path.len, h: null }); }
+  for (const [x, z, h, vest] of STANDING) { const g = person(vest); g.position.set(x, FLOOR, z); g.rotation.y = h; life.people.push({ g, still: true, ph: x + z }); }
+  for (const f of life.lifts) f.g.traverse(o => { if (o.isMesh) o.castShadow = true; });
+  for (const b of life.belts) b.im.castShadow = true;
+}
+function stepAmbiance(t) {
+  const k = .75 + .15 * Math.sin(t * 2.1) + .1 * Math.sin(t * 7.3);
+  for (const g of life.glow) g.material.opacity = .22 + .12 * k;
+  life.kilnLight.intensity = 26 * k;
+  life.stacks.forEach((s, i) => s.material.color.setHSL(.39, .75, .5 + .12 * Math.sin(t * 2 + i)));
+  const o = {};
+  for (const p of life.people) {
+    const u = p.g.userData;
+    if (p.still) { const a = Math.sin(t * 1.8 + p.ph) * .35; u.armL.rotation.x = -.6 + a; u.armR.rotation.x = -.6 - a; u.legL.rotation.x = u.legR.rotation.x = 0; continue; }
+    pathAt(p.path, p.d0 + p.v * t, o);
+    if (p.h === null) p.h = o.h;
+    let dh = o.h - p.h; dh = Math.atan2(Math.sin(dh), Math.cos(dh)); p.h += dh * .15;
+    p.g.position.set(o.x, FLOOR + Math.abs(Math.sin(t * p.v * 5.5)) * .03, o.z); p.g.rotation.y = p.h;
+    const sw = Math.sin(t * p.v * 5.5) * .55;
+    u.legL.rotation.x = sw; u.legR.rotation.x = -sw; u.armL.rotation.x = -sw * .8; u.armR.rotation.x = sw * .8;
+  }
 }
 
 function belt(pts, geo, mat, unit, half, gap, v, fallbackY, grp) {
@@ -825,7 +930,8 @@ function stepLife(t) {
   const touched = new Set();
   for (const r of life.robots) {
     r.joints.forEach((j, k) => {
-      PIV.makeTranslation(j.p.x, j.p.y, j.p.z).multiply(RISE.makeRotationAxis(j.axis, j.amp * Math.sin(t * j.f + j.ph))).multiply(L4.c.makeTranslation(-j.p.x, -j.p.y, -j.p.z));
+      const w = Math.sin(t * j.f + j.ph);
+      PIV.makeTranslation(j.p.x, j.p.y, j.p.z).multiply(RISE.makeRotationAxis(j.axis, j.amp * (j.dwell ? Math.tanh(3 * w) / Math.tanh(3) : w))).multiply(L4.c.makeTranslation(-j.p.x, -j.p.y, -j.p.z));
       if (k) r.mats[k].multiplyMatrices(r.mats[k - 1], PIV); else r.mats[k].copy(PIV);
     });
     r.on = false;
@@ -844,6 +950,7 @@ function stepLife(t) {
     s.pts.visible = vis;
     if (vis) scatter(s.pts, L4.w.copy(s.tip).applyMatrix4(r.mats[r.mats.length - 1]), .16, t * 1.6, true);
   }
+  stepAmbiance(t);
   // Belts: WCs to packing, frames to assembly
   const o = {};
   for (const b of life.belts) {
@@ -1207,6 +1314,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft') advance(-1);
 });
 
+const perf = { n: 0, k: 0, sum: 0, last: 0, done: false };
 const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 renderer.setAnimationLoop(() => {
   if (fly) {
@@ -1222,6 +1330,10 @@ renderer.setAnimationLoop(() => {
   if (life.ready && (state.booth || !matchMedia('(prefers-reduced-motion: reduce)').matches)) stepLife(performance.now() / 1000);
   if (state.booth) boothTick();
   controls.update();
+  // Shadows are redrawn every third frame; a slow machine drops them after a few seconds rather than stutter
+  perf.n++; if (sun.castShadow && perf.n % 3 === 0) renderer.shadowMap.needsUpdate = true;
+  const now = performance.now(); if (perf.n > 30 && !perf.done) { perf.sum += now - perf.last; perf.k++; if (perf.k === 120) { perf.done = true; if (perf.sum / perf.k > 45) sun.castShadow = false; } }
+  perf.last = now;
   renderer.render(scene, camera);
   for (const pn of pins) place(pn, pn.hide);
   for (const t of Object.values(T)) place(t, t.hide);
