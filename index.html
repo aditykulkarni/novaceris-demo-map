@@ -18,6 +18,7 @@
   --stage: #DCE2E8; --sky-top: #B9CCDD; --sky-bottom: #E9EEF2; --ground: #B9C2B0;
   --accent: #1E5DA6; --accent-band: #7DB3F0; --accent-soft: rgba(30,93,166,.12);
   --bad: #BE3F2E; --warn: #A9721A; --good: #2C7A4C;
+  --logo-ink: #004778;
   --radius: 3px; --shadow: 0 1px 2px rgba(10,20,30,.06), 0 8px 24px rgba(10,20,30,.07);
   --f-sans: "Inter", "Segoe UI", system-ui, sans-serif;
   --f-display: var(--f-sans); --f-body: var(--f-sans); --f-mono: var(--f-sans);
@@ -27,14 +28,14 @@
     --bg: #0B131A; --surface: #131E27; --ink: #E6ECF1; --muted: #93A3B0; --line: #26343F;
     --band: #0E1E2C; --band-muted: #95A7B7;
     --stage: #18222B; --sky-top: #070C12; --sky-bottom: #1D2A36; --ground: #1F2A25; --accent: #6EA2E0; --accent-band: #8CC0F5; --accent-soft: rgba(110,162,224,.16);
-    --bad: #E2705F; --warn: #D7A445; --good: #5CB37D; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25); color-scheme: dark;
+    --bad: #E2705F; --warn: #D7A445; --good: #5CB37D; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25); --logo-ink: #E6ECF1; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0B131A; --surface: #131E27; --ink: #E6ECF1; --muted: #93A3B0; --line: #26343F;
   --band: #0E1E2C; --band-muted: #95A7B7;
   --stage: #18222B; --sky-top: #070C12; --sky-bottom: #1D2A36; --ground: #1F2A25; --accent: #6EA2E0; --accent-band: #8CC0F5; --accent-soft: rgba(110,162,224,.16);
-  --bad: #E2705F; --warn: #D7A445; --good: #5CB37D; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25); color-scheme: dark;
+  --bad: #E2705F; --warn: #D7A445; --good: #5CB37D; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25); --logo-ink: #E6ECF1; color-scheme: dark;
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-sans); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
@@ -47,9 +48,11 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f
 .nav { background: var(--surface); border-bottom: 1px solid var(--line); }
 .nav .in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; min-height: 68px; padding-top: 10px; padding-bottom: 10px; }
 .lockup { display: flex; align-items: center; gap: 12px; min-width: 0; }
-.logo { width: 40px; height: 40px; flex: none; color: var(--accent); display: grid; place-items: center; }
+.logo { width: 54px; height: 44px; flex: none; color: var(--logo-ink); display: grid; place-items: center; }
 .logo svg, .logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
-.company { font-weight: 700; font-size: 20px; letter-spacing: .18em; text-transform: uppercase; line-height: 1.1; }
+.company { color: var(--logo-ink); line-height: 0; }
+.nv-word { height: 17px; width: auto; aspect-ratio: 594 / 79; display: block; }
+.booth-brand .logo, .booth-brand .company { color: var(--band-ink); }
 .powered { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); margin-top: 2px; }
 .powered b { color: var(--ink); font-weight: 600; }
 .powered img { height: 16px; width: auto; display: block; }
@@ -195,8 +198,8 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; al
 .booth .booth-brand, .present .booth-brand { display: flex; position: absolute; z-index: 3; align-items: center; gap: 16px; background: var(--band); color: var(--band-ink); border-radius: var(--radius); padding: 14px 22px; box-shadow: 0 10px 30px rgba(0,0,0,.28); }
 .booth .booth-brand { left: 24px; top: 20px; }
 .present .booth-brand { right: 28px; top: 24px; }
-.booth-brand .logo { width: 56px; height: 56px; color: var(--accent-band); }
-.booth-brand .company { font-size: 26px; }
+.booth-brand .logo { width: 70px; height: 57px; }
+.booth-brand .nv-word { height: 20px; margin-bottom: 4px; }
 .booth-brand .bt { font-weight: 300; font-size: clamp(22px, 2.2vw, 34px); line-height: 1.1; margin-top: 2px; }
 .booth-brand .bt span { font-weight: 600; color: var(--accent-band); }
 .booth-brand .powered { color: var(--band-muted); }
@@ -229,8 +232,8 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; al
 #amb[aria-pressed="true"] { color: var(--good); }
 /* Present mode: the intro full screen, over the plant */
 .present .overlay, .present .hint, .present .xcard, .intro-on .hint { display: none; }
-.present .booth-brand .logo { width: 48px; height: 48px; }
-.present .booth-brand .company { font-size: 20px; }
+.present .booth-brand .logo { width: 60px; height: 49px; }
+.present .booth-brand .nv-word { height: 16px; }
 .present .booth-brand .bt { font-size: clamp(18px, 1.7vw, 30px); }
 .present .intro { left: 4vw; top: 6vh; bottom: 6vh; width: min(1000px, 52vw); padding: 5vh 3.4vw 3vh; gap: 2.2vh; }
 .present .intro h2 { font-size: clamp(40px, 4.2vw, 80px); }
@@ -280,12 +283,13 @@ dialog#player::backdrop { background: rgba(10, 16, 22, .78); }
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><g id="nv-logo" transform="translate(0,407) scale(0.1,-0.1)"><path d="M2010 3891 c-100 -33 -165 -107 -196 -226 -21 -78 -20 -1941 1 -2012 30 -102 117 -176 223 -190 93 -12 207 51 255 141 22 41 22 45 25 701 l3 660 32 -60 c27 -50 113 -235 163 -350 91 -211 180 -392 236 -480 130 -206 337 -404 520 -497 173 -89 310 -122 503 -122 145 0 228 15 362 64 355 131 620 454 679 825 19 127 18 171 -6 195 -20 20 -33 20 -845 20 -468 0 -825 -4 -825 -9 0 -5 12 -34 26 -65 l25 -56 755 0 c711 0 754 -1 754 -17 -1 -41 -42 -177 -77 -255 -122 -271 -308 -428 -556 -469 -63 -10 -94 -11 -165 0 -191 27 -332 102 -492 261 -172 171 -306 391 -437 717 -24 61 -25 66 -21 285 4 197 7 231 26 290 46 139 134 209 272 216 67 3 81 0 130 -25 60 -30 118 -97 140 -161 9 -25 14 -122 17 -297 5 -297 7 -305 73 -305 66 0 70 15 70 230 0 310 -27 445 -110 548 -59 73 -134 117 -237 139 -76 16 -85 16 -158 0 -42 -10 -97 -29 -121 -43 -132 -78 -213 -227 -231 -428 l-6 -69 -72 149 c-118 245 -246 437 -379 568 -95 93 -164 128 -259 132 -40 2 -83 0 -97 -5z m149 -141 c83 -38 184 -146 296 -315 110 -167 215 -384 379 -783 25 -59 60 -142 80 -185 20 -42 36 -79 36 -81 0 -21 192 -340 220 -366 3 -3 18 -23 35 -45 91 -124 291 -286 437 -354 68 -32 58 -37 -38 -20 -196 34 -376 133 -532 292 -182 185 -246 290 -437 722 -158 356 -240 513 -315 598 -46 52 -73 59 -108 27 l-22 -21 0 -747 c0 -464 -4 -761 -10 -783 -29 -105 -178 -121 -224 -24 -14 29 -16 145 -16 987 0 536 4 970 10 992 11 50 37 84 80 107 44 24 74 24 129 -1z M3100 3886 c-81 -19 -154 -51 -223 -98 -109 -74 -207 -190 -207 -245 0 -25 47 -93 65 -93 8 0 34 31 58 68 74 114 185 195 317 231 252 70 517 -42 645 -274 64 -116 68 -139 74 -473 6 -285 7 -304 25 -318 31 -22 93 -18 107 7 7 15 9 108 6 313 -3 238 -7 303 -22 356 -67 245 -232 428 -457 506 -60 21 -97 26 -203 30 -87 2 -148 -1 -185 -10z M1135 963 c-227 -70 -304 -400 -133 -573 76 -78 122 -95 248 -95 94 0 110 3 156 27 63 33 119 94 151 166 22 46 26 69 25 148 0 87 -3 99 -34 161 -77 151 -243 218 -413 166z m236 -110 c24 -15 57 -49 74 -73 28 -43 30 -50 30 -145 0 -92 -2 -103 -27 -142 -53 -81 -137 -121 -232 -108 -126 16 -206 116 -206 253 1 155 107 258 257 248 47 -3 71 -10 104 -33z M3340 963 c-145 -52 -225 -171 -223 -333 1 -94 28 -171 85 -234 61 -70 124 -99 228 -104 97 -5 148 6 206 44 63 41 69 57 33 92 l-31 30 -44 -33 c-113 -87 -291 -41 -354 92 -18 39 -21 60 -18 134 3 78 6 92 33 131 17 23 51 56 75 73 41 27 53 30 125 30 74 0 84 -3 128 -33 26 -17 51 -32 56 -32 4 0 19 13 34 28 l28 29 -27 26 c-14 14 -47 36 -72 49 -61 29 -196 35 -262 11z M5667 965 c-89 -34 -131 -91 -131 -181 -1 -109 46 -149 224 -195 47 -12 100 -33 118 -46 30 -23 33 -29 30 -70 -4 -61 -35 -85 -118 -91 -73 -5 -142 11 -193 44 -22 14 -40 24 -42 22 -1 -2 -10 -18 -19 -36 -16 -31 -16 -35 -1 -52 9 -10 40 -29 68 -42 44 -20 68 -23 162 -23 125 0 155 11 209 78 38 48 48 134 21 191 -26 55 -61 72 -248 127 -117 33 -150 93 -89 159 46 52 162 56 253 10 l36 -19 19 41 c18 39 18 41 -1 54 -51 38 -230 55 -298 29z M172 633 l3 -338 43 -3 42 -3 0 245 c0 135 3 246 8 246 4 0 43 -49 87 -108 285 -380 286 -382 327 -382 23 0 38 5 39 13 1 14 1 62 0 415 l-1 253 -47 -3 -48 -3 -5 -237 -5 -237 -170 227 c-93 125 -175 233 -182 240 -6 6 -30 12 -52 12 l-41 0 2 -337z M1675 948 c7 -21 73 -185 95 -233 22 -49 90 -214 90 -219 0 -3 11 -29 24 -58 14 -29 34 -75 45 -101 20 -48 21 -48 63 -45 33 2 45 8 55 28 17 33 61 134 83 190 26 65 96 231 140 330 60 136 60 130 2 130 -57 0 -50 11 -126 -177 -25 -62 -52 -128 -60 -145 -8 -18 -30 -71 -48 -116 -19 -46 -38 -85 -43 -85 -4 -1 -27 45 -50 103 -70 175 -157 384 -166 403 -7 13 -22 17 -60 17 -48 0 -50 -1 -44 -22z M2614 935 c-7 -19 -14 -37 -14 -39 0 -3 -11 -29 -24 -58 -14 -29 -61 -138 -106 -243 -44 -104 -91 -212 -104 -240 -13 -27 -22 -53 -19 -57 2 -5 24 -8 47 -8 50 0 58 8 96 108 l25 62 166 0 c189 0 165 12 213 -105 l24 -60 51 -3 c58 -3 60 0 32 61 -10 23 -28 63 -40 89 -11 26 -21 49 -21 52 0 2 -16 39 -35 80 -19 42 -35 78 -35 80 0 3 -13 33 -29 68 -15 35 -45 105 -67 156 l-38 92 -54 0 c-51 0 -54 -1 -68 -35z m93 -131 c7 -21 20 -53 28 -71 15 -32 75 -176 75 -180 0 -2 -58 -3 -129 -3 l-129 0 55 133 c30 72 57 140 60 150 8 27 25 15 40 -29z M3882 633 l3 -338 228 -3 227 -2 0 50 0 50 -180 0 -180 0 0 105 0 105 156 0 155 0 -3 43 -3 42 -152 3 -153 3 0 94 0 95 173 2 172 3 3 43 3 42 -226 0 -225 0 2 -337z M4532 633 l3 -338 45 0 45 0 3 103 3 102 97 0 97 0 44 -73 c79 -130 86 -137 136 -137 24 0 46 3 48 8 3 4 -26 54 -65 111 -38 57 -67 108 -66 112 2 4 19 18 38 31 50 34 90 116 90 187 0 83 -39 156 -104 196 l-49 30 -184 3 -183 4 2 -339z m348 232 c65 -34 91 -136 50 -202 -34 -57 -62 -68 -187 -72 l-113 -3 0 146 0 146 110 0 c78 0 119 -4 140 -15z M5242 633 l3 -338 45 0 45 0 3 338 2 337 -50 0 -50 0 2 -337z" fill="currentColor"/><path d="M4444 2316 c-11 -8 -37 -49 -58 -90 -20 -42 -61 -102 -90 -134 -68 -74 -76 -89 -64 -122 13 -40 49 -56 87 -40 72 30 222 252 221 329 -1 53 -55 86 -96 57z M4082 1934 c-27 -18 -31 -84 -6 -108 20 -21 78 -21 95 0 19 23 16 80 -6 104 -22 24 -52 26 -83 4z" fill="#54D4D3"/></g></defs></svg>
 <header class="nav">
   <div class="in">
     <div class="lockup">
-      <span class="logo" data-img="novaceris-logo" title="Novaceris logo: put novaceris-logo.png (or .svg) in the Media folder"><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="1" y="1" width="42" height="42" rx="11" fill="currentColor"/><path d="M13 31V13l18 18V13" fill="none" stroke="#fff" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="logo" data-img="novaceris-logo"><svg class="nv-mark" viewBox="174 12 315 255" aria-hidden="true"><use href="#nv-logo"/></svg></span>
       <div>
-        <div class="company">Novaceris</div>
+        <div class="company"><svg class="nv-word" viewBox="12 304 594 79" role="img" aria-label="Novaceris"><use href="#nv-logo"/></svg></div>
         <div class="powered"><span data-img="3dexperience-logo" hidden></span><span>Powered by <b>The 3DEXPERIENCE Platform</b></span></div>
       </div>
     </div>
@@ -293,6 +297,10 @@ dialog#player::backdrop { background: rgba(10, 16, 22, .78); }
       <div class="seg" role="group" aria-label="Mode">
         <button id="mode-guided" type="button" aria-pressed="true">Guided</button>
         <button id="mode-explore" type="button" aria-pressed="false">Explore</button>
+      </div>
+      <div class="seg" role="group" aria-label="Theme">
+        <button id="theme-day" type="button" aria-pressed="true" title="Light page">Day</button>
+        <button id="theme-night" type="button" aria-pressed="false" title="Dark page">Night</button>
       </div>
       <button id="vid-folder" class="btn ghost" type="button" title="Pick the folder on this computer that holds the step videos, logos, photos and brand.css">Media folder</button>
       <input id="vid-input" type="file" webkitdirectory multiple hidden>
@@ -331,7 +339,7 @@ dialog#player::backdrop { background: rgba(10, 16, 22, .78); }
             <div class="mono" id="load-text">Loading the plant…</div>
             <div class="lbar"><div id="load-bar"></div></div>
           </div>
-          <div class="booth-brand"><span class="logo" data-img="novaceris-logo"><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="1" y="1" width="42" height="42" rx="11" fill="currentColor"/><path d="M13 31V13l18 18V13" fill="none" stroke="#fff" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><div class="company">Novaceris</div><div class="bt"><span>Perfect Production</span> for Sanitaryware</div><div class="powered"><span data-img="3dexperience-logo" hidden></span><span>Powered by <b>The 3DEXPERIENCE Platform</b></span></div></div></div>
+          <div class="booth-brand"><span class="logo" data-img="novaceris-logo"><svg class="nv-mark" viewBox="174 12 315 255" aria-hidden="true"><use href="#nv-logo"/></svg></span><div><div class="company"><svg class="nv-word" viewBox="12 304 594 79" role="img" aria-label="Novaceris"><use href="#nv-logo"/></svg></div><div class="bt"><span>Perfect Production</span> for Sanitaryware</div><div class="powered"><span data-img="3dexperience-logo" hidden></span><span>Powered by <b>The 3DEXPERIENCE Platform</b></span></div></div></div>
           <div class="booth-cap" id="booth-cap"></div>
           <div class="booth-ctl"><button type="button" class="btn" id="booth-prev">‹ Back</button><button type="button" class="btn primary" id="booth-next">Next ›</button><button type="button" class="btn" id="booth-exit">Exit booth mode</button></div>
         </div>
@@ -1475,6 +1483,7 @@ function presentOff() {
    east Information Intelligence (NETVIBES). The quadrant follows the step's brand. */
 const QUADS = { N: 'Social & Collaborative', E: 'Information Intelligence', S: 'Content & Simulation', W: '3D Modeling' };
 const QUAD_OF = { NETVIBES: 'E', DELMIA: 'S', CATIA: 'W' };
+const SHOW_COMPASS = false;   // hidden for now (Aditya, 2026-10-12); set true to bring it back
 const compass = $('compass');
 compass.innerHTML = (() => {
   const wedge = a => {
@@ -1490,7 +1499,7 @@ compass.innerHTML = (() => {
   </svg><div class="cmp-cap"><span>Compass</span><b id="cmp-q"></b></div>`;
 })();
 function renderCompass(s) {
-  const q = s && !state.booth && QUAD_OF[s.brand];
+  const q = SHOW_COMPASS && s && !state.booth && QUAD_OF[s.brand];
   compass.hidden = !q;
   if (!q) return;
   compass.querySelectorAll('[data-q]').forEach(e => e.classList.toggle('on', e.dataset.q === q));
@@ -1683,6 +1692,18 @@ renderer.setAnimationLoop(() => {
   for (const t of Object.values(T)) place(t, t.hide);
 });
 
+// Day / night: the page follows the computer's setting until someone picks one here; the pick is remembered
+const THEME_KEY = 'novaceris-theme', darkMQ = matchMedia('(prefers-color-scheme: dark)');
+function applyTheme(t) {
+  document.documentElement.dataset.theme = t;
+  $('theme-day').setAttribute('aria-pressed', t === 'light'); $('theme-night').setAttribute('aria-pressed', t === 'dark');
+}
+function pickTheme(t) { try { localStorage.setItem(THEME_KEY, t); } catch (e) {} applyTheme(t); render(false); }
+let savedTheme = null; try { savedTheme = localStorage.getItem(THEME_KEY); } catch (e) {}
+applyTheme(savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : darkMQ.matches ? 'dark' : 'light');
+darkMQ.addEventListener('change', () => { let t = null; try { t = localStorage.getItem(THEME_KEY); } catch (e) {} if (!t) { applyTheme(darkMQ.matches ? 'dark' : 'light'); render(false); } });
+$('theme-day').addEventListener('click', () => pickTheme('light'));
+$('theme-night').addEventListener('click', () => pickTheme('dark'));
 goTo('intro');
 $('amb').setAttribute('aria-pressed', amb.on); $('amb').textContent = amb.on ? 'Ambiance on' : 'Ambiance off';
 if (amb.on) loadLandscape().then(setBg);   // fetch the landscape while the plant loads

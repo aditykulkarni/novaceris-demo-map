@@ -1,8 +1,8 @@
 # Novaceris factory map
 
-Clickable 3D map of the Novaceris sanitaryware plant for the "Perfect Production for Sanitaryware" demo. Guided mode opens with four intro slides (the company, its business challenge, how Perfect Production answers it, and the team), then walks through ten steps played by three people (Elena, VP Manufacturing; Priya, Industrialization Engineer; Kenji, Robotics Engineer); Explore mode shows the finished plant. Each step has an Experience card over the plant: the Experience, the business challenge, the brand, and what is live or on video. A 3DEXPERIENCE compass in the top-left corner of the plant lights the quadrant the step works in: Information Intelligence for Elena's steps (NETVIBES), Content & Simulation for the DELMIA steps, 3D Modeling for Kenji's fixture (CATIA). It is drawn in neutral colours, not the platform's own.
+Clickable 3D map of the Novaceris sanitaryware plant for the "Perfect Production for Sanitaryware" demo. Guided mode opens with four intro slides (the company, its business challenge, how Perfect Production answers it, and the team), then walks through ten steps played by three people (Elena, VP Manufacturing; Priya, Industrialization Engineer; Kenji, Robotics Engineer); Explore mode shows the finished plant. Each step has an Experience card over the plant: the Experience, the business challenge, the brand, and what is live or on video. The 3DEXPERIENCE compass over the plant is switched off for now (`SHOW_COMPASS` in `index.html` brings it back).
 
-The page follows the layout of the Dassault Systèmes web site: a white top bar with Novaceris and "Powered by The 3DEXPERIENCE Platform", a dark title band with Back and Next and a rail of every step (click one to jump to it), flat cards with small spaced capitals for labels, and large light headings. The colours and the font (Inter) are neutral stand-ins; see **Brand style** below for the real ones.
+The page follows the layout of the Dassault Systèmes web site: a white top bar with Novaceris and "Powered by The 3DEXPERIENCE Platform", a dark title band with Back and Next and a rail of every step (click one to jump to it), flat cards with small spaced capitals for labels, and large light headings. The colours and the font (Inter) are neutral stand-ins; see **Brand style** below for the real ones. **Day** and **Night** in the top bar switch between a light and a dark page; until one is picked the page follows the computer's setting, and the pick is remembered.
 
 **Present the intro full screen** with the **Full screen** button on the intro, or **Present the intro full screen** on the right. The slides fill the screen over the slowly turning plant. Next, Back, the arrow keys and a presentation clicker (Page Up / Page Down) move through them; starting Step 1 or pressing Esc returns to the normal view.
 
@@ -26,7 +26,7 @@ Images are matched by file name (PNG, JPG, WebP or SVG); anything missing falls 
 
 | File name | Where it shows |
 |---|---|
-| `novaceris-logo` | Header and booth mode, in place of the drawn N mark |
+| `novaceris-logo` | Optional: header and booth mode, in place of the built-in Novaceris logo |
 | `3dexperience-logo` | Next to "Powered by The 3DEXPERIENCE Platform" |
 | `brand-delmia`, `brand-catia`, `brand-netvibes` | Experience card, in place of the text badge |
 | `persona-elena`, `persona-priya`, `persona-kenji` | Round photo on the step card and the team slide (square crops work best) |
