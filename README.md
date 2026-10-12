@@ -13,3 +13,7 @@ Videos stay on the presenting laptop; the page only plays them. Click **Videos f
 - Files named after their step (`step3.mp4`, `Step 5 - fixture.mp4`) are placed automatically.
 - MP4 (H.264), WebM, M4V, MOV, MKV, AVI or WMV; what plays depends on the browser, and H.264 MP4 is the safe choice.
 - In Chrome or Edge the page remembers the folder; on the next visit, one click on **Reconnect videos** re-grants access. Other browsers ask for the folder on each visit.
+
+## Opening at a step
+
+Add `#step=N` to the address (N from 0 to 8), for example `index.html#step=3`. The address follows the step as you click through, so a link in an Iterop task can bring the presenter back to that step on the map.

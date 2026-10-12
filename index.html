@@ -473,6 +473,8 @@ function render(move) {
   $('next').textContent = state.step === 0 ? 'Start' : 'Next';
   $('progress').textContent = state.step === 0 ? 'Intro' : `Step ${state.step} of 8`;
   $('mode-guided').setAttribute('aria-pressed', guided);
+  const h = guided && state.step ? `#step=${state.step}` : '';   // the address always names the step, so a link can open it
+  if (location.hash !== h) history.replaceState(null, '', h || location.pathname + location.search);
   $('mode-explore').setAttribute('aria-pressed', !guided);
 
   renderPanel(s, guided);
@@ -629,6 +631,11 @@ renderer.setAnimationLoop(() => {
 });
 
 goTo('intro');
+// Open at a step from the address, e.g. index.html#step=3; a link from an Iterop task can bring you back here
+function stepFromHash() { const m = location.hash.match(/^#step=?([0-8])$/i); return m ? +m[1] : null; }
+function goHash() { const n = stepFromHash(); if (n !== null) { state.mode = 'guided'; state.step = n; } }
+window.addEventListener('hashchange', () => { if (stepFromHash() !== null) { goHash(); render(true); } });
+goHash();
 render(false);
 window.__demo = { go: n => { state.mode = 'guided'; state.step = n; render(true); }, ready: () => !!model && !fly };
 </script>
