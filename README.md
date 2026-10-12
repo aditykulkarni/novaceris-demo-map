@@ -2,6 +2,8 @@
 
 Clickable 3D map of the Novaceris sanitaryware plant for the "Perfect Production for Sanitaryware" demo. Guided mode opens with four intro slides (the company, its business challenge, how Perfect Production answers it, and the team), then walks through ten steps played by three people (Elena, VP Manufacturing; Priya, Industrialization Engineer; Kenji, Robotics Engineer); Explore mode shows the finished plant. Each step has an Experience card over the plant: the Experience, the business challenge, the brand, and what is live or on video. A 3DEXPERIENCE compass in the top-left corner of the plant lights the quadrant the step works in: Information Intelligence for Elena's steps (NETVIBES), Content & Simulation for the DELMIA steps, 3D Modeling for Kenji's fixture (CATIA). It is drawn in neutral colours, not the platform's own.
 
+The page follows the layout of the Dassault Systèmes web site: a white top bar with Novaceris and "Powered by The 3DEXPERIENCE Platform", a dark title band with Back and Next and a rail of every step (click one to jump to it), flat cards with small spaced capitals for labels, and large light headings. The colours and the font (Inter) are neutral stand-ins; see **Brand style** below for the real ones.
+
 **Present the intro full screen** with the **Full screen** button on the intro, or **Present the intro full screen** on the right. The slides fill the screen over the slowly turning plant. Next, Back, the arrow keys and a presentation clicker (Page Up / Page Down) move through them; starting Step 1 or pressing Esc returns to the normal view.
 
 The plant is at work: WCs ride the glazing lines, kiln cars and the packing conveyor, frames ride the frame line, the glazing robots move, the small weld-cell robots weld with sparks while the big ones pick and place the frame, forklifts drive the warehouse and the area by glazing, and people walk the aisles.
@@ -25,9 +27,23 @@ Images are matched by file name (PNG, JPG, WebP or SVG); anything missing falls 
 | File name | Where it shows |
 |---|---|
 | `novaceris-logo` | Header and booth mode, in place of the drawn N mark |
-| `3dexperience-logo` | Next to "Powered by Dassault Systèmes 3DEXPERIENCE platform" |
+| `3dexperience-logo` | Next to "Powered by The 3DEXPERIENCE Platform" |
 | `brand-delmia`, `brand-catia`, `brand-netvibes` | Experience card, in place of the text badge |
 | `persona-elena`, `persona-priya`, `persona-kenji` | Round photo on the step card and the team slide (square crops work best) |
+| `intro-customer`, `intro-challenge`, `intro-answer` | Photo filling the lower part of intro slides 1 to 3 (landscape works best) |
+
+Until a file is found, its place shows a placeholder: the intro slides and the team slide name the file to add, and the other placeholders name it when you point at them. After you pick the folder, the message lists the images still missing.
+
+### Brand style
+
+A file named `brand.css` in the media folder restyles the page on that laptop only, so brand colours and fonts are never published with the public page. It can set any of the page's variables, and `url(...)` in it loads a font file from the same folder. For example:
+
+```css
+@font-face { font-family: "Brand"; src: url(brand-regular.woff2); font-weight: 400; }
+:root { --f-sans: "Brand", sans-serif; --accent: #...; --band: #...; --accent-band: #...; }
+```
+
+The main variables are `--accent` (buttons, labels), `--band` (title band, intro, card heads), `--accent-band` (accent on the dark band), `--ink`, `--bg`, `--surface` and `--f-sans`.
 
 - Any file name works. Each step card has a **Video for this step** list with every video found (subfolders included, two levels deep); the pick is remembered.
 - Files named after their step (`step3.mp4`, `Step 4 - fixture.mp4`, `step10.mp4`) are placed automatically.
