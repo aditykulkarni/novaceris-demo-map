@@ -76,6 +76,9 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .menu-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 8px 0; font-size: 13px; color: var(--muted); }
 .menu-row + .menu-row { border-top: 1px solid var(--line); }
 .menu-row .btn { min-width: 128px; }
+a.btn { text-decoration: none; text-align: center; }
+#who { border-top: 1px solid var(--line); }
+#who b { color: var(--ink); font-weight: 600; }
 .menu.attn summary::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--warn); margin-right: 7px; vertical-align: 1px; }
 /* Hero band: the demo's title, the step controls, and a rail of the steps */
 .hero { background: var(--band); color: var(--band-ink); }
@@ -358,6 +361,7 @@ dialog#player::backdrop { background: rgba(10, 16, 22, .78); }
           <div class="menu-row"><span>Landscape and people</span><button id="amb" class="btn" type="button" aria-pressed="true" title="Landscape, sunlight and shadows, kiln glow and people. Turn it off on a slower laptop; the choice is remembered.">Ambiance on</button></div>
           <div class="menu-row"><span>Videos, logos, photos</span><button id="vid-folder" class="btn" type="button" title="Pick the folder on this computer that holds the step videos, logos, photos and brand.css">Media folder</button></div>
           <input id="vid-input" type="file" webkitdirectory multiple hidden>
+          <div class="menu-row" id="who" hidden><span>Signed in as <b id="who-name"></b></span><a class="btn" href="auth/logout">Sign out</a></div>
         </div>
       </details>
     </div>
@@ -1804,8 +1808,15 @@ if (amb.on) loadLandscape().then(setBg);   // fetch the landscape while the plan
 function stepFromHash() { const m = location.hash.match(/^#step=?(10|[0-9])$/i); return m ? +m[1] : null; }
 function goHash() { const n = stepFromHash(); if (n !== null) { state.mode = 'guided'; state.step = n; } }
 window.addEventListener('hashchange', () => { if (stepFromHash() !== null) { goHash(); render(true); } });
+// Back from sign-in: reopen the step the link pointed at (the sign-in page kept it)
+try { const h = sessionStorage.getItem('nv-return'); sessionStorage.removeItem('nv-return'); if (h && !location.hash) history.replaceState(null, '', h); } catch (e) {}
 goHash();
 render(false);
+// Signed in through the laptop's server (Start demo.bat with sign-in on): show who, with a way out
+if (location.protocol !== 'file:') fetch('auth/me', { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(me => {
+  if (!me || !me.user || me.local) return;
+  $('who-name').textContent = me.user; $('who').hidden = false;
+}).catch(() => {});
 window.__demo = { go: n => { state.mode = 'guided'; state.step = n; render(true); }, ready: () => !!model && !fly && !relayout };
 </script>
 </body>
