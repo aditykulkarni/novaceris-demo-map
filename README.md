@@ -35,6 +35,13 @@ Your own browser still opens `http://localhost:8080`, which is the one to use in
 
 `Start demo.bat` runs `serve.ps1` with the PowerShell built into Windows; nothing is installed. If your laptop blocks PowerShell scripts, any local web server in this folder works, for example `python -m http.server 8080`.
 
+If the page does not load:
+
+- Use the exact address printed in the window. When another program (a local Tomcat, for example) already holds 8080, the demo runs on 8081 or higher and `localhost:8080` shows that other program.
+- Keep the window open, and do not worry about clicking in it: the script switches off Windows' QuickEdit, which used to freeze the server when the window was clicked.
+- Look at `server.log` in this folder. It records the start, the port, every missing file (`404 …`) and every error, including a company policy that runs scripts in constrained mode, which blocks the server.
+- With Python as a fallback server, check that `.js` files arrive as JavaScript (F12 → Console). Some Windows setups make Python send them as `text/plain`, and the browser then refuses to run the 3D code.
+
 - `index.html`: the page
 - `factory.glb`: the plant model, compressed with meshopt and WebP textures
 - `env/rooitou_park_1k.hdr`: the landscape around the plant (1.6 MB, loaded only with ambiance on)
