@@ -14,9 +14,24 @@ The plant is at work: WCs ride the glazing lines, kiln cars and the packing conv
 
 The plant changes twice. At Step 3 the raw-material racks move into the mill room in slip preparation, the experience room moves out next to the office, and the frame line (including the frame packaging machine) appears where they stood. At Step 7 the glazing cell becomes robotic, with two manual booths kept for quality control. The experience room is the one in the model, which the page shows inside the plant until Step 3; the racks are simple shapes drawn by the page. The striped ground from the model is replaced with a plain surface.
 
-- `index.html`: the page (three.js from jsDelivr)
+## Run it on your laptop (localhost)
+
+The demo runs entirely from this folder and needs no internet: three.js and the Inter font are included.
+
+1. Download the folder (or **Code → Download ZIP** on GitHub and unzip it).
+2. Double-click **`Start demo.bat`**. A small window opens and the browser shows the demo at http://localhost:8080. If that port is busy it takes the next free one (8081, 8082 …) and says so in the window.
+3. Close the window to stop the demo.
+
+Step links work the same way: `http://localhost:8080/#step=5` opens Step 5, so Iterop tasks can point there. Double-clicking `index.html` does not work, because browsers will not load the 3D code from a file; the page says so.
+
+`Start demo.bat` runs `serve.ps1` with the PowerShell built into Windows; nothing is installed. If your laptop blocks PowerShell scripts, any local web server in this folder works, for example `python -m http.server 8080`.
+
+- `index.html`: the page
 - `factory.glb`: the plant model, compressed with meshopt and WebP textures
 - `env/rooitou_park_1k.hdr`: the landscape around the plant (1.6 MB, loaded only with ambiance on)
+- `vendor/three/`: three.js 0.160.0 (MIT licence, in that folder)
+- `fonts/InterVariable.woff2`: the Inter font (SIL Open Font License, `fonts/Inter-LICENSE.txt`)
+- `Start demo.bat`, `serve.ps1`: the local web server for Windows
 
 ## Step videos, logos and persona photos
 

@@ -4,9 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Novaceris Factory Map</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+<style>@font-face { font-family: "Inter"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("fonts/InterVariable.woff2") format("woff2"); }</style>
 <style>
 /* Look modelled on the Dassault Systèmes web site's layout: white top bar, a dark hero band with light large type,
    flat cards with square corners, small spaced capitals for labels, one accent colour. The colours here are neutral
@@ -421,10 +419,14 @@ dialog#player::backdrop { background: rgba(10, 16, 22, .78); }
   <video id="player-video" controls playsinline></video>
 </dialog>
 
+<script>
+// Opened by double-clicking index.html: browsers do not load the 3D code from a file, so point to the start script
+if (location.protocol === 'file:') document.getElementById('load-text').textContent = 'Start the demo with "Start demo.bat" in this folder (it opens http://localhost:8080). Double-clicking index.html cannot load the 3D plant.';
+</script>
 <script type="importmap">
 { "imports": {
-  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  "three": "./vendor/three/build/three.module.js",
+  "three/addons/": "./vendor/three/examples/jsm/"
 } }
 </script>
 <script type="module">
