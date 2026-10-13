@@ -40,8 +40,9 @@
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-sans); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
 [hidden] { display: none !important; }
-.in { max-width: 1440px; margin: 0 auto; padding: 0 24px; }
-.wrap { max-width: 1440px; margin: 0 auto; padding: 20px 24px 40px; display: grid; gap: 16px; }
+.in { max-width: 2560px; margin: 0 auto; padding: 0 24px; }
+.wrap { max-width: 2560px; margin: 0 auto; padding: 20px 24px 40px; display: grid; gap: 16px; }
+@media (min-width: 1700px) { .in { padding: 0 40px; } .wrap { padding: 24px 40px 40px; } }
 @media (max-width: 760px) { .in { padding: 0 16px; } .wrap { padding: 16px 16px 32px; } }
 
 /* Top bar: Novaceris, and what it runs on */
@@ -69,6 +70,15 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f
 .btn:disabled { opacity: .4; cursor: default; }
 button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
+.menu { position: relative; }
+.menu summary { list-style: none; }
+.menu summary::-webkit-details-marker { display: none; }
+.menu summary::after { content: " ▾"; font-size: 11px; color: var(--muted); }
+.menu-pop { position: absolute; right: 0; top: calc(100% + 6px); z-index: 40; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 12px 32px rgba(0,0,0,.18); padding: 8px 14px; display: grid; min-width: 330px; }
+.menu-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 8px 0; font-size: 13px; color: var(--muted); }
+.menu-row + .menu-row { border-top: 1px solid var(--line); }
+.menu-row .btn { min-width: 128px; }
+.menu.attn summary::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--warn); margin-right: 7px; vertical-align: 1px; }
 /* Hero band: the demo's title, the step controls, and a rail of the steps */
 .hero { background: var(--band); color: var(--band-ink); }
 .hero .top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 32px; padding-top: 20px; padding-bottom: 16px; }
@@ -94,10 +104,11 @@ h1 span { font-weight: 600; color: var(--accent-band); }
 .rail i { font-style: normal; }
 
 main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; align-items: start; }
+@media (min-width: 1700px) { main { grid-template-columns: minmax(0, 1fr) 400px; gap: 24px; } }
 @media (max-width: 960px) { main { grid-template-columns: minmax(0, 1fr); } }
 
 .plantcol { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); padding: 0 0 14px; display: grid; gap: 10px; min-width: 0; }
-.stage { position: relative; aspect-ratio: 16 / 10; background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom) 70%); border-radius: var(--radius) var(--radius) 0 0; overflow: hidden; min-width: 0; }
+.stage { position: relative; aspect-ratio: 16 / 10; max-height: calc(100vh - 150px); min-height: 380px; background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom) 70%); border-radius: var(--radius) var(--radius) 0 0; overflow: hidden; min-width: 0; }
 .stage::after { content: ""; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 120px rgba(8, 16, 24, .28); z-index: 1; }
 .stage.land::after { box-shadow: inset 0 0 90px rgba(8, 16, 24, .16); }
 .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
@@ -120,11 +131,19 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; al
 @keyframes pulse { 0% { opacity: .7; transform: scale(1); } 100% { opacity: 0; transform: scale(1.9); } }
 @media (prefers-reduced-motion: reduce) { .pin.current .dot::after { animation: none; } }
 
-.tag { position: absolute; left: 0; top: 0; transform: translate(-50%, -100%); font: 500 11.5px var(--f-sans); padding: 3px 8px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,.15); }
-.tag.good { color: var(--good); border-color: var(--good); }
-.tag.bad { color: var(--bad); border-color: var(--bad); }
-.tag.warn { color: var(--warn); border-color: var(--warn); }
-.tag.plain { color: var(--muted); }
+/* Labels on the plant: dark callouts with a coloured stripe and a leader line down to a dot on the spot */
+.tag { --tone: #A9B8C6; position: absolute; left: 0; top: 0; transform: translate(-50%, calc(-100% - 30px)); font: 600 14px/1.25 var(--f-sans); padding: 8px 14px 8px 12px; border-radius: var(--radius); background: rgba(15, 33, 51, .94); color: #fff; border-left: 4px solid var(--tone); white-space: nowrap; box-shadow: 0 8px 24px rgba(0,0,0,.35); z-index: 1; }
+.tag::before { content: ""; position: absolute; left: 50%; top: 100%; width: 2px; height: 24px; background: var(--tone); transform: translateX(-50%); }
+.tag::after { content: ""; position: absolute; left: 50%; top: calc(100% + 22px); width: 12px; height: 12px; border-radius: 50%; background: var(--tone); border: 2px solid #fff; transform: translateX(-50%); box-shadow: 0 0 0 0 var(--tone); animation: tagping 1.8s ease-out infinite; }
+.tag b { display: inline-block; margin-right: 9px; padding: 2px 7px; border-radius: 2px; background: var(--tone); color: #0E1B26; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; vertical-align: 1px; }
+.tag.good { --tone: #3CC47C; }
+.tag.bad { --tone: #FF6B57; }
+.tag.warn { --tone: #F2B43C; }
+.tag.new { --tone: #FFC21A; }
+.tag.plain { --tone: #A9B8C6; font-weight: 500; }
+.tag.plain::after { animation: none; }
+@keyframes tagping { 0% { box-shadow: 0 0 0 0 var(--tone); } 70%, 100% { box-shadow: 0 0 0 12px transparent; } }
+@media (prefers-reduced-motion: reduce) { .tag::after { animation: none; } }
 
 .hint { z-index: 2; position: absolute; left: 12px; bottom: 12px; background: var(--surface); border-radius: var(--radius); padding: 4px 10px; font-size: 12px; color: var(--muted); pointer-events: auto; display: flex; gap: 10px; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,.12); }
 .hint button { border: 0; background: none; color: var(--accent); font: 600 12px var(--f-sans); cursor: pointer; padding: 0; }
@@ -193,7 +212,7 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; al
 /* Booth mode: the plant fills the screen and tours itself */
 .stagebox:fullscreen, .stagebox.fs { background: var(--stage); width: 100vw; height: 100vh; }
 .stagebox.fs { position: fixed; inset: 0; z-index: 50; }
-.stagebox:fullscreen .stage, .stagebox.fs .stage { aspect-ratio: auto; height: 100%; border-radius: 0; }
+.stagebox:fullscreen .stage, .stagebox.fs .stage { aspect-ratio: auto; height: 100%; max-height: none; border-radius: 0; }
 .booth-brand, .booth-cap { display: none; }
 .booth .booth-brand, .present .booth-brand { display: flex; position: absolute; z-index: 3; align-items: center; gap: 16px; background: var(--band); color: var(--band-ink); border-radius: var(--radius); padding: 14px 22px; box-shadow: 0 10px 30px rgba(0,0,0,.28); }
 .booth .booth-brand { left: 24px; top: 20px; }
@@ -235,20 +254,21 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; al
 .present .booth-brand .logo { width: 60px; height: 49px; }
 .present .booth-brand .nv-word { height: 16px; }
 .present .booth-brand .bt { font-size: clamp(18px, 1.7vw, 30px); }
-.present .intro { left: 4vw; top: 6vh; bottom: 6vh; width: min(1000px, 52vw); padding: 5vh 3.4vw 3vh; gap: 2.2vh; }
-.present .intro h2 { font-size: clamp(40px, 4.2vw, 80px); }
-.present .intro p { font-size: clamp(17px, 1.45vw, 26px); }
-.present .intro ul { font-size: clamp(17px, 1.4vw, 25px); gap: 1.2vh; }
-.present .intro .stepno { font-size: clamp(12px, .9vw, 16px); }
-.present .fact b { font-size: clamp(30px, 3vw, 54px); }
-.present .fact span { font-size: clamp(12px, .95vw, 17px); }
-.present .team { gap: 1.6vh; }
-.present .mate { padding: 1.6vh 0 .4vh; gap: 1.4vw; }
-.present .mate .avatar { width: clamp(64px, 6.5vw, 120px); height: clamp(64px, 6.5vw, 120px); font-size: clamp(28px, 2.8vw, 52px); }
-.present .mate b { font-size: clamp(22px, 2vw, 36px); }
-.present .mate small { font-size: clamp(12px, .9vw, 16px); }
-.present .mate p { font-size: clamp(14px, 1.2vw, 22px); }
-.present .intro-foot .btn { font-size: clamp(13px, 1vw, 18px); padding: 1vh 1.4vw; }
+.present .intro { left: 4vw; top: 50%; bottom: auto; transform: translateY(-50%); width: min(720px, 44vw); max-height: 86vh; padding: 3.4vh 2.4vw 2.4vh; gap: 1.6vh; }
+.present .intro h2 { font-size: clamp(30px, 2.6vw, 52px); }
+.present .intro p { font-size: clamp(15px, 1.05vw, 20px); }
+.present .intro ul { font-size: clamp(15px, 1.02vw, 19px); gap: .9vh; }
+.present .intro .stepno { font-size: clamp(11px, .7vw, 14px); }
+.present .fact b { font-size: clamp(24px, 1.9vw, 38px); }
+.present .fact span { font-size: clamp(11.5px, .75vw, 14px); }
+.present .shot { flex: none; aspect-ratio: 16 / 6; min-height: 0; }
+.present .team { gap: 1vh; }
+.present .mate { padding: 1.2vh 0 .2vh; gap: 1.2vw; }
+.present .mate .avatar { width: clamp(56px, 4.2vw, 84px); height: clamp(56px, 4.2vw, 84px); font-size: clamp(24px, 1.8vw, 36px); }
+.present .mate b { font-size: clamp(18px, 1.3vw, 26px); }
+.present .mate small { font-size: clamp(11px, .7vw, 14px); }
+.present .mate p { font-size: clamp(13.5px, .9vw, 17px); }
+.present .intro-foot .btn { font-size: clamp(13px, .85vw, 16px); padding: .9vh 1.2vw; }
 .present #intro-fs { display: none; }
 
 /* Side panel: the person, their question, and what happens on the platform */
@@ -266,6 +286,10 @@ blockquote { margin: 0; padding-left: 14px; border-left: 3px solid var(--accent)
 .label { margin-bottom: 6px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { font-size: 12.5px; padding: 4px 10px; border-radius: 2px; background: var(--bg); font-variant-numeric: tabular-nums; }
+.notes { border-top: 1px solid var(--line); padding-top: 12px; }
+.notes summary { cursor: pointer; font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.notes-body { display: grid; gap: 14px; padding-top: 14px; }
+.persona .stepno { margin-bottom: 2px; }
 .aisha { background: var(--bg); border-left: 3px solid var(--line); padding: 10px 12px; font-size: 13px; }
 .aisha strong { font-weight: 600; }
 .panel p { margin: 0; }
@@ -280,6 +304,33 @@ dialog#player::backdrop { background: rgba(10, 16, 22, .78); }
 .vidpick { display: grid; gap: 4px; font-size: 12.5px; color: var(--muted); }
 .vidpick select { font: 13px var(--f-sans); padding: 7px 8px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--ink); max-width: 100%; }
 .toast { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); background: var(--ink); color: var(--surface); padding: 10px 16px; border-radius: var(--radius); font-size: 13px; max-width: calc(100% - 32px); box-shadow: 0 6px 20px rgba(0,0,0,.18); z-index: 20; }
+/* Fit mode: on a laptop or desktop the page fits the window at 100% zoom and never scrolls;
+   only the side panel scrolls inside itself when a step has a lot to say. */
+@media (min-width: 961px) and (min-height: 560px) {
+  html, body { height: 100%; }
+  body { display: flex; flex-direction: column; overflow: hidden; }
+  .nav .in { min-height: 56px; padding-top: 6px; padding-bottom: 6px; }
+  .hero .top { padding-top: 12px; padding-bottom: 10px; align-items: center; }
+  .hero .eyebrow { display: none; }
+  h1 { margin: 0; font-size: clamp(24px, 2.1vw, 36px); }
+  .sub { display: none; }
+  .rail button { padding: 7px 8px 9px 0; }
+  .wrap { flex: 1; min-height: 0; width: 100%; display: flex; padding-top: 14px; padding-bottom: 14px; }
+  main { flex: 1; min-height: 0; height: 100%; }
+  .plantcol { height: 100%; display: flex; flex-direction: column; gap: 0; padding: 0; }
+  .stagebox { flex: 1; min-height: 0; display: flex; }
+  .stage { flex: 1; aspect-ratio: auto; height: auto; max-height: none; min-height: 0; }
+  .meter { grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 20px; padding: 22px 20px 12px; }
+  .meter-head { display: contents; }
+  .meter-title { order: 1; }
+  .track { order: 2; }
+  .meter-val { order: 3; font-size: 22px; }
+  .scale, .note { display: none; }
+  .target span { bottom: auto; top: -20px; }
+  .panel { height: 100%; overflow: auto; padding: 20px 22px; gap: 14px; align-content: start; }
+  .panel h2.q { font-size: 24px; }
+  .avatar { width: 60px; height: 60px; font-size: 26px; }
+}
 </style>
 </head>
 <body>
@@ -298,14 +349,19 @@ dialog#player::backdrop { background: rgba(10, 16, 22, .78); }
         <button id="mode-guided" type="button" aria-pressed="true">Guided</button>
         <button id="mode-explore" type="button" aria-pressed="false">Explore</button>
       </div>
-      <div class="seg" role="group" aria-label="Theme">
-        <button id="theme-day" type="button" aria-pressed="true" title="Light page">Day</button>
-        <button id="theme-night" type="button" aria-pressed="false" title="Dark page">Night</button>
-      </div>
-      <button id="vid-folder" class="btn ghost" type="button" title="Pick the folder on this computer that holds the step videos, logos, photos and brand.css">Media folder</button>
-      <input id="vid-input" type="file" webkitdirectory multiple hidden>
-      <button id="amb" class="btn ghost" type="button" aria-pressed="true" title="Landscape, sunlight and shadows, kiln glow and people. Turn it off on a slower laptop; the choice is remembered.">Ambiance on</button>
       <button id="booth" class="btn ghost" type="button" title="Full screen: the plant runs and tours itself, for a booth screen">Booth mode</button>
+      <details class="menu" id="settings">
+        <summary class="btn ghost">Settings</summary>
+        <div class="menu-pop">
+          <div class="menu-row"><span>Page</span><div class="seg" role="group" aria-label="Theme">
+            <button id="theme-day" type="button" aria-pressed="true" title="Light page">Day</button>
+            <button id="theme-night" type="button" aria-pressed="false" title="Dark page">Night</button>
+          </div></div>
+          <div class="menu-row"><span>Landscape and people</span><button id="amb" class="btn" type="button" aria-pressed="true" title="Landscape, sunlight and shadows, kiln glow and people. Turn it off on a slower laptop; the choice is remembered.">Ambiance on</button></div>
+          <div class="menu-row"><span>Videos, logos, photos</span><button id="vid-folder" class="btn" type="button" title="Pick the folder on this computer that holds the step videos, logos, photos and brand.css">Media folder</button></div>
+          <input id="vid-input" type="file" webkitdirectory multiple hidden>
+        </div>
+      </details>
     </div>
   </div>
 </header>
@@ -334,7 +390,7 @@ dialog#player::backdrop { background: rgba(10, 16, 22, .78); }
         <div class="stage" id="stage">
           <div class="compass" id="compass" hidden></div>
           <div class="overlay" id="overlay"></div>
-          <div class="hint"><span>Drag to rotate · scroll to zoom</span><button type="button" id="reframe">Re-center</button><button type="button" id="fs">Full screen</button></div>
+          <div class="hint" title="Drag to rotate, scroll to zoom"><button type="button" id="reframe">Re-center</button><button type="button" id="fs">Full screen</button></div>
           <div class="loading" id="loading">
             <div class="mono" id="load-text">Loading the plant…</div>
             <div class="lbar"><div id="load-bar"></div></div>
@@ -346,7 +402,7 @@ dialog#player::backdrop { background: rgba(10, 16, 22, .78); }
         <aside class="xcard" id="xcard" aria-live="polite" hidden></aside>
         <section class="intro" id="intro" aria-live="polite" hidden></section>
       </div>
-      <div class="meter" aria-live="polite">
+      <div class="meter" aria-live="polite" title="The frame line appears at Step 3 and the robotic glazing cell at Step 7; before that the plant is as it is today. 1,750 is the design target, not a simulation result.">
         <div class="meter-head">
           <span class="meter-title">Throughput, units per day</span>
           <span class="meter-val" id="meter-val">1,190<small>today</small></span>
@@ -634,8 +690,12 @@ const pins = STEPS.map(s => {
   return { el: b, pos: new THREE.Vector3(...s.at), s };
 });
 const tags = [];
+function tagText(e, text) {   // "New: frame line" shows NEW as a badge
+  const m = String(text).match(/^(New|Moved|Re-run|Bottleneck):\s*(.*)$/);
+  e.innerHTML = m ? `<b>${m[1]}</b>${esc(m[2])}` : esc(text);
+}
 function tag(text, cls, at) {
-  const e = document.createElement('div'); e.className = 'tag ' + cls; e.textContent = text; overlay.appendChild(e);
+  const e = document.createElement('div'); e.className = 'tag ' + cls; tagText(e, text); overlay.appendChild(e);
   const t = { el: e, pos: new THREE.Vector3(...at) }; tags.push(t); return t;
 }
 const T = {
@@ -646,8 +706,8 @@ const T = {
   wip: tag('WIP queue before glazing', 'bad', [-31, 2.5, -1]),
   aisha: tag('Aisha', 'plain', [-15.5, 3.6, -1.6]),
   weld: tag('', 'plain', [-12, 5, -14]),
-  racks: tag('Raw materials at point of use, beside the mills', 'good', [-13.7, 6.5, 23.4]),
-  room: tag('Experience room, next to the office', 'good', [17, 6, -12.7]),
+  racks: tag('Moved: raw materials at point of use, beside the mills', 'new', [-13.7, 6.5, 23.4]),
+  room: tag('Moved: experience room, next to the office', 'new', [17, 6, -12.7]),
   asm: tag('', 'plain', [15.7, 4.5, -3]),
 };
 
@@ -820,7 +880,8 @@ const WC_LINES = [
   { along: 'x', fix: [0], from: -26.2, to: -11.4, v: .3 },                                     // collecting conveyor to the kiln
   { along: 'x', fix: [1.4, 4.8], from: -10, to: -.4, v: .05 },                                 // kiln cars through the tunnel kilns
 ];
-const KILN_TO_PACK = [[2, 3.25], [7.6, 3.25], [8.6, 3.6], [9.25, 4.6], [9.25, 14.6], [9.7, 15.8], [10.6, 16.25], [16.5, 16.25]];
+// Centreline of the model's WC conveyor from the kiln to packing (meshes 468 straight, 469 bends of 2.5 m radius)
+const KILN_TO_PACK = [[2.00, 3.25], [6.93, 3.25], [7.32, 3.28], [7.70, 3.37], [8.07, 3.52], [8.40, 3.72], [8.70, 3.98], [8.96, 4.28], [9.16, 4.61], [9.31, 4.98], [9.40, 5.36], [9.43, 5.75], [9.43, 13.80], [9.47, 14.19], [9.56, 14.57], [9.71, 14.93], [9.91, 15.27], [10.17, 15.56], [10.46, 15.82], [10.80, 16.02], [11.16, 16.17], [11.54, 16.26], [11.93, 16.30], [16.50, 16.30]];
 // Centreline fitted to the model's frame conveyors (the blue belt from the weld cell, the straight run past assembly, the last bend)
 const FRAME_BELT = [[-3.4, -7.35], [9, -7.3], [10.06, -6.99], [11.09, -6.47], [11.94, -5.77], [12.6, -4.95], [13.08, -4.02], [13.35, -3.02], [13.47, -2], [13.5, -1], [13.5, 7.4], [13.56, 8.2], [13.68, 9], [14.06, 9.9], [14.69, 10.62], [15.52, 11.14], [16.5, 11.39], [17.5, 11.43], [20.4, 11.43]];
 const FORKLIFTS = [
@@ -1297,15 +1358,17 @@ function render(move) {
   paintZones();
 
   // Tags
-  T.glaze.el.textContent = { none: '', bad: 'Glazing: 4 manual booths at 100%', warn: 'Robotic glazing: 4 robots, 155 s per WC each', good: 'Re-run: glazing no longer the limit' }[gs];
+  tagText(T.glaze.el, { none: '', bad: 'Bottleneck: glazing, 4 manual booths at 100%', warn: 'New: robotic glazing, 4 robots, 155 s per WC each', good: 'Re-run: glazing no longer the limit' }[gs]);
   T.glaze.el.className = 'tag ' + gs; T.glaze.hide = gs === 'none';
   for (const k of ['kiln', 'cast', 'slip']) T[k].hide = !sim;
   T.wip.hide = !(guided && g === 6);
   T.aisha.hide = !(guided && (g === 6 || g === 7));
   T.aisha.el.textContent = g >= 7 ? 'Aisha: quality control' : 'Aisha: manual spraying';
-  T.weld.el.textContent = framed ? 'New: frame line, cutting and arc welding' : 'Raw-material racks and the experience room';
+  tagText(T.weld.el, framed ? 'New: frame line, cutting and arc welding' : 'Raw-material racks and the experience room');
+  T.weld.el.className = 'tag ' + (framed ? 'new' : 'plain');
   T.weld.hide = !(guided ? g >= 2 : true);
-  T.asm.el.textContent = framed ? 'New: frame and tank assembly' : 'Open floor, unused';
+  tagText(T.asm.el, framed ? 'New: frame and tank assembly' : 'Open floor, unused');
+  T.asm.el.className = 'tag ' + (framed ? 'new' : 'plain');
   T.asm.hide = !(guided ? g >= 2 : true);
   T.racks.hide = T.room.hide = !(guided && g === 3);
 
@@ -1365,6 +1428,7 @@ function shot(f) {
   return url ? `<div class="shot" style="background-image:url('${url}')" role="img" aria-label=""></div>`
     : `<div class="shot ph-img"><code>${f}.jpg</code><span>Photo for this slide: add it to the Media folder</span></div>`;
 }
+let notesOpen = false;   // presenter notes stay as the presenter left them from step to step
 function renderPanel(s, guided) {
   const panel = $('panel');
   if (!s) {
@@ -1380,18 +1444,23 @@ function renderPanel(s, guided) {
     const pr = $('present'); if (pr) pr.addEventListener('click', presentOn);
     return;
   }
+  const shown = [s.show.live ? `<span class="mode live">Live: ${esc(s.show.live)}</span>` : '', s.show.video ? `<span class="mode">Video: ${esc(s.show.video)}</span>` : ''].join('');
   panel.innerHTML = `
-    <div class="stepno">Step ${s.n} of ${LAST} · ${esc(s.exp)}</div>
-    <div class="persona">${avatar(s.who)}<div><div class="pname">${esc(s.who)}</div><div class="prole">${esc(s.role)}</div></div></div>
+    <div class="persona">${avatar(s.who)}<div><div class="stepno">Step ${s.n} of ${LAST}</div><div class="pname">${esc(s.who)}</div><div class="prole">${esc(s.role)}</div></div></div>
     <h2 class="q">${esc(s.tab)}</h2>
     <blockquote>${esc(s.quote)}</blockquote>
-    <div><div class="label">On the platform</div><p>${esc(s.does)}</p></div>
-    <div><div class="label">On screen</div><div class="chips">${s.kpis.map(k => `<span class="chip">${esc(k)}</span>`).join('')}</div></div>
-    ${guided && s.aisha ? `<div class="aisha"><strong>Aisha, glazing operator.</strong> ${esc(s.aisha)}</div>` : ''}
-    <div><div class="label">Hands off</div><p>${esc(s.hand)}</p></div>
+    <div class="chips">${shown}</div>
     <div class="panel-actions">${videos.has(s.n) ? `<button class="btn primary" type="button" id="play-vid">Play video</button>` : ''}<button class="btn${videos.has(s.n) ? '' : ' primary'}" type="button" id="open-tab">Open tab</button></div>
-    ${allVideos.length ? `<label class="vidpick"><span>Video for this step</span><select id="vid-assign"><option value="">None</option>${allVideos.map(f => `<option value="${esc(f.name)}"${videos.get(s.n) === f ? ' selected' : ''}>${esc(f.name)}</option>`).join('')}</select></label>`
-      : s.video ? `<p class="vidnote">Pick the media folder to play this step's video.</p>` : ''}`;
+    <details class="notes"${notesOpen ? ' open' : ''}><summary>Presenter notes</summary><div class="notes-body">
+      <div><div class="label">On the platform</div><p>${esc(s.does)}</p></div>
+      <div><div class="label">On screen</div><div class="chips">${s.kpis.map(k => `<span class="chip">${esc(k)}</span>`).join('')}</div></div>
+      ${guided && s.aisha ? `<div class="aisha"><strong>Aisha, glazing operator.</strong> ${esc(s.aisha)}</div>` : ''}
+      <div><div class="label">Hands off</div><p>${esc(s.hand)}</p></div>
+      ${allVideos.length ? `<label class="vidpick"><span>Video for this step</span><select id="vid-assign"><option value="">None</option>${allVideos.map(f => `<option value="${esc(f.name)}"${videos.get(s.n) === f ? ' selected' : ''}>${esc(f.name)}</option>`).join('')}</select></label>`
+        : s.video ? `<p class="vidnote">Pick the media folder (Settings) to play this step's video.</p>` : ''}
+      <p class="xc-gov">${esc(GOVERNANCE)}.</p>
+    </div></details>`;
+  panel.querySelector('.notes').addEventListener('toggle', e => { notesOpen = e.target.open; });
   $('open-tab').addEventListener('click', () => toast(`In the dashboard, this opens the tab "${s.tab}".`));
   const pv = $('play-vid'); if (pv) pv.addEventListener('click', () => playStep(s));
   const va = $('vid-assign'); if (va) va.addEventListener('change', () => assignVideo(s.n, va.value));
@@ -1408,8 +1477,7 @@ function renderCard(s) {
     <div class="xc-top"><div><div class="xc-step">Step ${s.n} · ${esc(s.who)}</div><div class="xc-name">${esc(s.exp)}</div></div>${state.booth ? '' : '<button type="button" class="xc-x" id="xc-x" aria-label="Close">×</button>'}</div>
     <div class="xc-body">
       <div><div class="label">Business challenge</div><div class="xc-chal">${esc(s.chal)}</div></div>
-      <div class="xc-foot">${brandMark(s.brand)}<span class="chips">${modes}</span></div>
-      <div class="xc-gov">${esc(GOVERNANCE)}.</div>
+      <div class="xc-foot">${brandMark(s.brand)}${state.booth ? `<span class="chips">${modes}</span>` : ''}</div>
     </div>`;
   const x = $('xc-x'); if (x) x.addEventListener('click', () => { state.card = false; c.hidden = true; });
 }
@@ -1564,7 +1632,7 @@ async function videosLoaded(source) {
   const branded = await loadBrand().catch(() => false);
   if (branded && typeof setBg === 'function') setBg();
   const missing = imageSlots().filter(f => !images.has(f));
-  const b = $('vid-folder');
+  const b = $('vid-folder'); $('settings').classList.remove('attn');
   b.classList.toggle('ready', allVideos.length + images.size > 0);
   b.textContent = allVideos.length + images.size ? `Media: ${videos.size}/${allVideos.length} videos, ${images.size} images` : 'Media folder';
   b.title = missing.length ? `Images still missing: ${missing.join(', ')}` : 'Every image the page uses was found';
@@ -1621,7 +1689,7 @@ $('vid-input').addEventListener('change', e => {
     if (!dir) return;
     savedDir = dir;
     if (await dir.queryPermission({ mode: 'read' }) === 'granted') { await readDir(dir); videosLoaded(false); }
-    else { needsRegrant = true; $('vid-folder').textContent = 'Reconnect media'; }
+    else { needsRegrant = true; $('vid-folder').textContent = 'Reconnect media'; $('settings').classList.add('attn'); }
   } catch (e) {}
 })();
 
@@ -1704,6 +1772,8 @@ applyTheme(savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : darkMQ
 darkMQ.addEventListener('change', () => { let t = null; try { t = localStorage.getItem(THEME_KEY); } catch (e) {} if (!t) { applyTheme(darkMQ.matches ? 'dark' : 'light'); render(false); } });
 $('theme-day').addEventListener('click', () => pickTheme('light'));
 $('theme-night').addEventListener('click', () => pickTheme('dark'));
+// The settings menu closes on a click anywhere else
+document.addEventListener('click', e => { const m = $('settings'); if (m.open && !m.contains(e.target)) m.open = false; });
 goTo('intro');
 $('amb').setAttribute('aria-pressed', amb.on); $('amb').textContent = amb.on ? 'Ambiance on' : 'Ambiance off';
 if (amb.on) loadLandscape().then(setBg);   // fetch the landscape while the plant loads
