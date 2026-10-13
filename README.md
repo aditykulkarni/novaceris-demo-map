@@ -51,7 +51,7 @@ Images are matched by file name (PNG, JPG, WebP or SVG); anything missing falls 
 | File name | Where it shows |
 |---|---|
 | `novaceris-logo` | Optional: header and booth mode, in place of the built-in Novaceris logo |
-| `3dexperience-logo` | Next to "Powered by The 3DEXPERIENCE Platform" |
+| `3dexperience-compass` | The 3DEXPERIENCE compass, next to "Powered by The 3DEXPERIENCE Platform" at the foot of the side panel and in booth mode (`3dexperience-logo` also works) |
 | `brand-delmia`, `brand-catia`, `brand-netvibes` | Experience card, in place of the text badge |
 | `persona-elena`, `persona-priya`, `persona-kenji` | Round photo on the step card and the team slide (square crops work best) |
 | `intro-customer`, `intro-challenge`, `intro-answer` | Photo filling the lower part of intro slides 1 to 3 (landscape works best) |
