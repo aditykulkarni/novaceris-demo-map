@@ -756,6 +756,7 @@ async function fetchModel(url) {
   return buf.buffer;
 }
 
+const DROP_BOX = [33.6, 34.8, 16.3, 17.5];   // the roof ventilator (meshes 487-494) left floating over the warehouse racks, above 9.5 m
 const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
 fetchModel('factory.glb')
   .then(buf => new Promise((ok, fail) => loader.parse(buf, '', ok, fail)))
@@ -772,11 +773,13 @@ fetchModel('factory.glb')
       if (o.isInstancedMesh) {
         for (let i = 0; i < o.count; i++) {
           o.getMatrixAt(i, m); p.setFromMatrixPosition(m.premultiply(o.matrixWorld));
+          if (p.y > 9.5 && inAny([DROP_BOX], p.x, p.z)) { o.setMatrixAt(i, new THREE.Matrix4().makeScale(0, 0, 0)); o.instanceMatrix.needsUpdate = true; continue; }
           const grp = boxGroup(p.x, p.z); if (grp) { const orig = new THREE.Matrix4(); o.getMatrixAt(i, orig); hideInst.push({ o, i, orig, grp }); }
           if (inAny([ROOM_SRC], p.x, p.z)) { const orig = new THREE.Matrix4(); o.getMatrixAt(i, orig); roomInst.push({ o, i, orig }); o.frustumCulled = false; }
         }
       } else {
         box.setFromObject(o); box.getCenter(c); box.getSize(s);
+        if (c.y > 9.5 && inAny([DROP_BOX], c.x, c.z)) { o.visible = false; return; }
         const grp = Math.max(s.x, s.z) < 25 && boxGroup(c.x, c.z); if (grp) { o.userData.grp = grp; hideMeshes.push(o); }
         if (Math.max(s.x, s.z) < 14 && inAny([ROOM_SRC], c.x, c.z)) roomParts.push({ o, pad: Math.max(s.x, s.z) > 9 });   // pad: the slab it stands on outside
         if (Math.max(s.x, s.z) > 60 && box.max.y < FLOOR + .2) ground = o;   // the site around the building
@@ -876,8 +879,8 @@ const life = { ready: false, wc: null, wcInv: null, bowl: null, bowlInv: null, w
 const L4 = { a: new THREE.Matrix4(), b: new THREE.Matrix4(), c: new THREE.Matrix4(), v: new THREE.Vector3(), w: new THREE.Vector3(), q: new THREE.Quaternion(), up: new THREE.Vector3(0, 1, 0) };
 // WCs in the model that ride a conveyor: along an axis, at a fixed coordinate, from -> to in metres, at v m/s
 const WC_LINES = [
-  { along: 'z', fix: [-25.4, -22.4, -18.6, -15.6], from: 7.9, to: 1.1, v: .2, yMin: 1.75 },   // into the glazing booths and out
-  { along: 'x', fix: [0], from: -26.2, to: -11.4, v: .3 },                                     // collecting conveyor to the kiln
+  { along: 'z', fix: [-25.4, -22.4, -18.6, -15.6], from: 7.9, to: 1.1, v: .35, yMin: 1.75, stop: [4.2], dwell: 5 },   // into the robot booths, held while sprayed, and out
+  { along: 'x', fix: [0], from: -26.2, to: -11.4, v: .5, stop: [-20.56, -13.95], dwell: 5 },              // collecting conveyor through manual booths 1 and 2 to the kiln
   { along: 'x', fix: [1.4, 4.8], from: -10, to: -.4, v: .05 },                                 // kiln cars through the tunnel kilns
 ];
 // Centreline of the model's WC conveyor from the kiln to packing (meshes 468 straight, 469 bends of 2.5 m radius)
@@ -939,10 +942,17 @@ function initLife() {
         const fixed = L.along === 'z' ? c.x : c.z, run = L.along === 'z' ? c.z : c.x, lo = Math.min(L.from, L.to), hi = Math.max(L.from, L.to);
         if (!L.fix.some(f => Math.abs(fixed - f) < .3) || run < lo - .2 || run > hi + .2 || (L.yMin && c.y < L.yMin)) continue;
         const top = bowls.find(b => Math.abs(b.c.x - c.x) < .45 && Math.abs(b.c.z - c.z) < .45 && b.c.y > c.y && b.c.y < c.y + .9);
-        life.wcs.push({ i, w: worldOf(wc, i, new THREE.Matrix4()), j: top ? top.j : -1, wj: top ? worldOf(bowl, top.j, new THREE.Matrix4()) : null, L, s0: (run - L.from) * Math.sign(L.to - L.from) });
+        life.wcs.push({ i, w: worldOf(wc, i, new THREE.Matrix4()), j: top ? top.j : -1, wj: top ? worldOf(bowl, top.j, new THREE.Matrix4()) : null, L, s0: (run - L.from) * Math.sign(L.to - L.from), key: WC_LINES.indexOf(L) + ':' + Math.round(fixed) });
         break;
       }
     }
+  }
+  // Lines with stations index: the WCs sit evenly spaced, move one pitch together, then wait at the stations
+  const lanes = {};
+  for (const e of life.wcs) if (e.L.stop) (lanes[e.key] = lanes[e.key] || []).push(e);
+  for (const list of Object.values(lanes)) {
+    const L = list[0].L, span = Math.abs(L.to - L.from), pitch = span / list.length, at = (L.stop[0] - L.from) * Math.sign(L.to - L.from);
+    list.sort((a, b) => a.s0 - b.s0).forEach((e, k) => { e.slot = at + k * pitch; e.pitch = pitch; });
   }
 
   // 2. Robots. Each part is turned by the joints it hangs from; pivots are taken from the model's rest pose.
@@ -960,7 +970,7 @@ function initLife() {
       bots.push(robot(c, [{ p: c.clone(), axis: L4.up.clone(), amp: .55, f: .9, ph }]));
     }
     for (const [name, list] of Object.entries(byName)) {
-      const m = name.match(/^mesh_(37[7-9]|38[0-4])(_\d+)?$/); if (!m) continue;
+      const m = name.match(/^mesh_(37[7-9]|38[0-3])(_\d+)?$/); if (!m) continue;   // 384 is the cell's name plate overhead: it stays put
       for (const o of list) for (let i = 0; i < (o.count || 1); i++) {
         const c = centerOf(o, i); let best = null, bd = 1.2;
         for (const b of bots) { const d = Math.hypot(c.x - b.base.x, c.z - b.base.z); if (d < bd) { bd = d; best = b; } }
@@ -1042,7 +1052,7 @@ function initLife() {
     if (!bowl.geometry.boundingBox) bowl.geometry.computeBoundingBox();
     const bb = bowl.geometry.boundingBox.clone().applyMatrix4(ref), c0 = bb.getCenter(new THREE.Vector3());
     const unit = new THREE.Matrix4().makeTranslation(-c0.x, -c0.y, -c0.z).multiply(ref);   // the WC centred on the origin
-    belt(KILN_TO_PACK, bowl.geometry, bowl.material, unit, (c0.y - bb.min.y), 1.35, .3, FLOOR + .85, null);
+    belt(KILN_TO_PACK, bowl.geometry, bowl.material, unit, (c0.y - bb.min.y), 1.35, .3, FLOOR + .85, null, FLOOR + 1.22);   // belt top of meshes 468/469; rays miss them
   }
   const frameGeo = frameGeometry(), frameMat = new THREE.MeshStandardMaterial({ color: 0x8f9aa3, metalness: .55, roughness: .45 });
   belt(FRAME_BELT, frameGeo, frameMat, new THREE.Matrix4(), .03, 1.7, .32, FLOOR + .9, 'frame');
@@ -1063,7 +1073,8 @@ const WALKERS = [
   { pts: [[-34, -3], [-34, 10]], v: .8, vest: 0xf28c28 },               // beside the glazing cell
   { pts: [[-32.8, 10], [-32.8, -2.5]], v: .7, vest: 0x2f8f5b },
 ];
-const STANDING = [[15.4, 2.05, -Math.PI / 2, 0x3d6fb6], [15.4, 8.3, -Math.PI / 2, 0x3d6fb6]];   // frame and tank assembly benches, facing the frame belt (-x)
+const STANDING = [[15.4, 2.05, -Math.PI / 2, 0x3d6fb6], [15.4, 8.3, -Math.PI / 2, 0x3d6fb6],   // frame and tank assembly benches, facing the frame belt (-x)
+  [-13.6, -1.0, -.33, 0x2f8f5b, true], [-20.9, -1.0, .33, 0x2f8f5b, true]];                        // manual glazing booths 1 and 2: at the open front, gun in hand, turned to the WC
 const STACKS = [[-27.6, -2.2], [-12.4, -2.2], [-11.6, 9.4], [1.3, 9.4], [-2.6, -3.0], [-10.8, -3.0], [12, -2.4], [22.8, 9.6]];
 function person(vest) {
   // Rounded shapes, jointed at hips, knees, shoulders and elbows; facing +z
@@ -1117,7 +1128,7 @@ function ambiance() {
   // People
   life.people = [];
   for (const w of WALKERS) { const path = makePath([w.pts[0], w.pts[1]], true); life.people.push({ g: person(w.vest), path, v: w.v, d0: Math.random() * path.len, h: null }); }
-  for (const [x, z, h, vest] of STANDING) { const g = person(vest); g.position.set(x, FLOOR, z); g.rotation.y = h; life.people.push({ g, still: true, ph: x + z }); }
+  for (const [x, z, h, vest, spray] of STANDING) { const g = person(vest); g.position.set(x, FLOOR, z); g.rotation.y = h; life.people.push({ g, still: true, spray, h, ph: x + z }); }
   for (const f of life.lifts) f.g.traverse(o => { if (o.isMesh) o.castShadow = true; });
   for (const b of life.belts) b.im.castShadow = true;
 }
@@ -1129,6 +1140,11 @@ function stepAmbiance(t) {
   const o = {};
   for (const p of life.people) {
     const u = p.g.userData;
+    if (p.spray) {   // working the WC in front: right arm sweeps the gun over it, the body turns with it
+      const a = Math.sin(t * 1.3 + p.ph);
+      u.armR.rotation.x = -1.25 + .3 * a; u.elR.rotation.x = -.35; u.armL.rotation.x = -.7 - .15 * a; u.elL.rotation.x = -.8;
+      u.legL.rotation.x = u.legR.rotation.x = u.kneeL.rotation.x = u.kneeR.rotation.x = 0; p.g.rotation.y = p.h + .3 * Math.sin(t * .65 + p.ph); continue;
+    }
     if (p.still) { const a = Math.sin(t * 1.8 + p.ph) * .25; u.armL.rotation.x = -.45 + a; u.armR.rotation.x = -.45 - a; u.elL.rotation.x = u.elR.rotation.x = -.9; u.legL.rotation.x = u.legR.rotation.x = u.kneeL.rotation.x = u.kneeR.rotation.x = 0; continue; }
     pathAt(p.path, p.d0 + p.v * t, o);
     if (p.h === null) p.h = o.h;
@@ -1141,10 +1157,10 @@ function stepAmbiance(t) {
   }
 }
 
-function belt(pts, geo, mat, unit, half, gap, v, fallbackY, grp) {
+function belt(pts, geo, mat, unit, half, gap, v, fallbackY, grp, fixedY) {
   const path = makePath(pts, false), n = Math.floor(path.len / gap);
   const im = new THREE.InstancedMesh(geo, mat, n); im.frustumCulled = false; scene.add(im);
-  life.belts.push({ im, path, n, gap, v, unit, y: beltHeight(path, fallbackY) + half, grp });
+  life.belts.push({ im, path, n, gap, v, unit, y: (fixedY ?? beltHeight(path, fallbackY)) + half, grp });
 }
 function frameGeometry() {
   // A wall-hung WC frame lying flat on the belt: two uprights, three cross members and the feet
@@ -1194,7 +1210,12 @@ function stepLife(t) {
   if (life.wc && life.wcs.length) {
     for (const e of life.wcs) {
       const L = e.L, span = Math.abs(L.to - L.from), dir = Math.sign(L.to - L.from);
-      const d = ((((e.s0 + L.v * t) % span) + span) % span - e.s0) * dir;
+      let s = e.s0 + L.v * t;
+      if (e.pitch) {   // indexing: dwell, then move one pitch with a soft start and stop
+        const move = e.pitch / L.v, cyc = L.dwell + move, n = Math.floor(t / cyc), u = Math.max(0, (t - n * cyc - L.dwell) / move);
+        s = e.slot + (n + u * u * (3 - 2 * u)) * e.pitch;
+      }
+      const d = (((s % span) + span) % span - e.s0) * dir;
       L4.a.makeTranslation(L.along === 'x' ? d : 0, 0, L.along === 'z' ? d : 0).multiply(e.w).premultiply(life.wcInv);
       life.wc.setMatrixAt(e.i, L4.a);
       if (e.j >= 0) { L4.a.makeTranslation(L.along === 'x' ? d : 0, 0, L.along === 'z' ? d : 0).multiply(e.wj).premultiply(life.bowlInv); life.bowl.setMatrixAt(e.j, L4.a); }
