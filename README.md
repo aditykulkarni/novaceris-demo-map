@@ -33,14 +33,6 @@ To let others on the office network open the demo at your laptop's name, for exa
 
 Your own browser still opens `http://localhost:8080`, which is the one to use inside a 3DDashboard: an https page may show `http://localhost` but blocks plain `http://` pages on any other name. If the name does not open on another machine, try the full domain name or the IP address from the window; if none works, the company network or firewall policy blocks incoming connections to laptops. Undo the setup with `netsh http delete urlacl url=http://+:8080/` and removing the firewall rule "Novaceris demo (TCP 8080)".
 
-### Sign-in through your CAS server (3DPassport)
-
-The laptop's server can ask everyone to sign in with their 3DEXPERIENCE ID before the demo opens. Open `auth.config.json` in Notepad and set `casServerUrl` to your CAS server, for example your 3DPassport address ending in `/3dpassport`; leave it empty for no sign-in. Then start the demo as usual. The window lists the return addresses (service URLs) the server uses, such as `http://lz15-aki61-ind:8080/auth/callback`; your CAS server must accept them. Add your own address (a DNS alias for the laptop, for example) under `serviceUrls`.
-
-How it works: an unsigned visitor gets the sign-in page (`login.html`), goes to CAS, and comes back with a ticket that the laptop checks with CAS (`/serviceValidate`, or `/p3/serviceValidate` set in `validatePath`). Only then does it set a session cookie and serve the plant, videos excepted, since those come from the presenter's own folder. If CAS cannot be reached, nobody gets in. `allowedUsers` limits access to named CAS users; `sessionHours` sets how long a sign-in lasts, and restarting the server signs everyone out. **Sign out** is under **Settings**. A step link such as `#step=5` still opens that step after signing in.
-
-With `skipForLocalhost` on (the default), your own browser at `http://localhost:8080` skips sign-in. That also keeps the demo working inside a 3DDashboard, where a sign-in cookie would not stick. Turn it off to try the sign-in yourself.
-
 `Start demo.bat` runs `serve.ps1` with the PowerShell built into Windows; nothing is installed. If your laptop blocks PowerShell scripts, any local web server in this folder works, for example `python -m http.server 8080`.
 
 - `index.html`: the page
@@ -49,7 +41,6 @@ With `skipForLocalhost` on (the default), your own browser at `http://localhost:
 - `vendor/three/`: three.js 0.160.0 (MIT licence, in that folder)
 - `fonts/InterVariable.woff2`: the Inter font (SIL Open Font License, `fonts/Inter-LICENSE.txt`)
 - `Start demo.bat`, `Start demo (network).bat`, `serve.ps1`, `Network setup (admin).bat`, `network-setup.ps1`: the local web server for Windows
-- `login.html`, `auth.config.json`: the sign-in page and its settings
 
 ## Step videos, logos and persona photos
 
