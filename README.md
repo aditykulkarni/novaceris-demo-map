@@ -24,6 +24,15 @@ The demo runs entirely from this folder and needs no internet: three.js and the 
 
 Step links work the same way: `http://localhost:8080/#step=5` opens Step 5, so Iterop tasks can point there. Double-clicking `index.html` does not work, because browsers will not load the 3D code from a file; the page says so.
 
+### Open it from other machines (your laptop's name)
+
+To let others on the office network open the demo at your laptop's name, for example `http://lz15-aki61-ind:8080`:
+
+1. Once: double-click **`Network setup (admin).bat`** and accept the administrator prompt. It allows port 8080 in Windows (a URL reservation and a firewall rule for office and private networks only, not public Wi-Fi).
+2. Each time: start with **`Start demo (network).bat`** instead of `Start demo.bat`. The window lists the addresses others can use: the computer name, the full domain name and the IP address.
+
+Your own browser still opens `http://localhost:8080`, which is the one to use inside a 3DDashboard: an https page may show `http://localhost` but blocks plain `http://` pages on any other name. If the name does not open on another machine, try the full domain name or the IP address from the window; if none works, the company network or firewall policy blocks incoming connections to laptops. Undo the setup with `netsh http delete urlacl url=http://+:8080/` and removing the firewall rule "Novaceris demo (TCP 8080)".
+
 `Start demo.bat` runs `serve.ps1` with the PowerShell built into Windows; nothing is installed. If your laptop blocks PowerShell scripts, any local web server in this folder works, for example `python -m http.server 8080`.
 
 - `index.html`: the page
@@ -31,7 +40,7 @@ Step links work the same way: `http://localhost:8080/#step=5` opens Step 5, so I
 - `env/rooitou_park_1k.hdr`: the landscape around the plant (1.6 MB, loaded only with ambiance on)
 - `vendor/three/`: three.js 0.160.0 (MIT licence, in that folder)
 - `fonts/InterVariable.woff2`: the Inter font (SIL Open Font License, `fonts/Inter-LICENSE.txt`)
-- `Start demo.bat`, `serve.ps1`: the local web server for Windows
+- `Start demo.bat`, `Start demo (network).bat`, `serve.ps1`, `Network setup (admin).bat`, `network-setup.ps1`: the local web server for Windows
 
 ## Step videos, logos and persona photos
 
