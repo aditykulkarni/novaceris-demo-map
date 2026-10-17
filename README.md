@@ -12,7 +12,7 @@ The plant is at work: WCs ride the glazing lines, kiln cars and the packing conv
 
 **Booth mode** (or **Full screen** on the plant) fills the screen with the finished plant and tours its cells on its own. **Back** and **Next** (or the arrow keys and a clicker) move the tour by hand, and it carries on from there; Esc or **Exit booth mode** leaves it. With reduced motion set in the operating system, the plant only moves in booth mode.
 
-The plant changes twice. At Step 3 the raw-material racks move into the mill room in slip preparation, the experience room moves out next to the office, and the frame line (including the frame packaging machine) appears where they stood. At Step 7 the glazing cell becomes robotic, with two manual booths kept for quality control. The experience room is the one in the model, which the page shows inside the plant until Step 3; the racks are simple shapes drawn by the page. The striped ground from the model is replaced with a plain surface.
+The plant changes twice. At Step 3 the raw-material racks move into the mill room in slip preparation, the experience room moves out next to the office, and the frame line (including the frame packaging machine) appears where they stood. Step 4, the flow simulation, plays in three beats on Next: glazing turns red at the target load, the robots go in (two double robot booths, two manual booths kept for quality control), and the re-run turns glazing green with the meter at 1,750. The experience room is the one in the model, which the page shows inside the plant until Step 3; the racks are simple shapes drawn by the page. The striped ground from the model is replaced with a plain surface.
 
 ## Run it on your laptop (localhost)
 
@@ -77,7 +77,7 @@ A file named `brand.css` in the media folder restyles the page on that laptop on
 The main variables are `--accent` (buttons, labels), `--band` (title band, intro, card heads), `--accent-band` (accent on the dark band), `--ink`, `--bg`, `--surface` and `--f-sans`.
 
 - Any file name works. Each step card has a **Video for this step** list with every video found (subfolders included, two levels deep); the pick is remembered.
-- Files named after their step (`step3.mp4`, `Step 4 - fixture.mp4`, `step10.mp4`) are placed automatically.
+- Files named after their step (`step3.mp4`, `Step 5 - weld.mp4`, `step8.mp4`, steps 1 to 8) are placed automatically.
 - MP4 (H.264), WebM, M4V, MOV, MKV, AVI or WMV; what plays depends on the browser, and H.264 MP4 is the safe choice.
 - In Chrome or Edge the page remembers the folder; on the next visit, one click on **Reconnect media** re-grants access. Other browsers ask for the folder on each visit.
 
