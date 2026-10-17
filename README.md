@@ -77,7 +77,7 @@ A file named `brand.css` in the media folder restyles the page on that laptop on
 The main variables are `--accent` (buttons, labels), `--band` (title band, intro, card heads), `--accent-band` (accent on the dark band), `--ink`, `--bg`, `--surface` and `--f-sans`.
 
 - Any file name works. Each step card has a **Video for this step** list with every video found (subfolders included, two levels deep); the pick is remembered.
-- Files named after their step (`step3.mp4`, `Step 5 - weld.mp4`, `step8.mp4`, steps 1 to 8) are placed automatically.
+- Files named after their step (`step3.mp4`, `Step 6 - weld cell.mp4`, `step9.mp4`, steps 1 to 9) are placed automatically.
 - MP4 (H.264), WebM, M4V, MOV, MKV, AVI or WMV; what plays depends on the browser, and H.264 MP4 is the safe choice.
 - In Chrome or Edge the page remembers the folder; on the next visit, one click on **Reconnect media** re-grants access. Other browsers ask for the folder on each visit.
 

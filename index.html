@@ -512,22 +512,29 @@ const STEPS = [
     kpis:["1,190 → 1,750 units/day","Manual glazers at 100%","Target: 155 s per robot"], done:"1,750/day",
     hand:"Two cycle-time targets to Kenji: 155 s per WC per glazing robot, and the weld inside the 241 s frame takt.", focus:["glaze","kiln","cast","slip"],
     aisha:"Aisha and three colleagues spray every unit by hand at 100% utilization. The line runs at their pace because there is no slack." },
-  { n:5, video:true, tab:"Can the robot weld the frame in takt?", who:"Kenji", role:"Robotics Engineer", at:[-6.5, 5.5, -8.6], view:['weld', 1.0],
-    exp:"Robot Programming Experience", brand:"DELMIA", show:{ video:"Weld fixture and arc welding robot programming" },
-    chal:"Prove the catalog weld cell welds this frame inside its takt before a single robot is bought.",
-    quote:"If the frame isn't held right, every weld is wrong. Then the weld has to fit the takt.",
-    does:"Equipment Design for the frame holding fixture (forward kinematics, clamp sequence collision-free), then DELMIA arc welding on the frame in that fixture: weld paths, reach, collisions and cycle time. Runs in parallel with Step 6 in Iterop.",
-    kpis:["[weld cycle] vs 241 s frame takt","No collisions with the fixture","Weld paths reachable"], done:"weld in takt",
-    hand:"Weld cycle confirmed, to the gate.", focus:["weld"] },
-  { n:6, video:true, tab:"Can robots glaze a WC in 155 s?", who:"Kenji", role:"Robotics Engineer", at:[-14.5, 6, 6], view:['glaze', 1.0],
+  { n:5, video:true, tab:"Will the fixture hold the frame?", who:"Kenji", role:"Robotics Engineer", at:[-5.6, 5.5, -4.6], view:['weld', 1.0],
+    exp:"Equipment Design Experience", brand:"CATIA", show:{ video:"Fixture kinematics and clamp sequence" },
+    chal:"A new weld fixture has to hold the frame right the first time; a wrong fixture means every weld is wrong.",
+    quote:"If the frame isn't held right, every weld is wrong.",
+    does:"Equipment Design: the frame holding fixture with forward kinematics, and the clamp and positioning sequence simulated collision-free. Steps 5 and 6 are one weld cell task in Iterop.",
+    kpis:["Fixture kinematics","Clamp sequence collision-free","Frame positioned for welding"], done:"fixture proven",
+    hand:"A fixture that holds the frame. Next, the whole weld cell in takt.", focus:["weld"] },
+  { n:6, video:true, tab:"Can the weld cell build a frame in takt?", who:"Kenji", role:"Robotics Engineer", at:[-4.4, 5.5, -6.2], view:['weld', 1.0],
+    exp:"Robot Programming Experience", brand:"DELMIA", show:{ video:"Weld cell robot programming" },
+    chal:"Prove the catalog weld cell builds this frame inside its takt before a single robot is bought.",
+    quote:"Five robots, one frame every 161 seconds. I have to prove the cell keeps up before anyone orders it.",
+    does:"DELMIA robot programming of the five-robot cell: a loading robot brings the loose frame parts together on fixture 1, two robots arc-weld the frame, one pick-and-place robot turns it onto fixture 2 and the other hands it to the assembly line. Weld paths, reach, collisions and the cell cycle against the frame takt.",
+    kpis:["138 s per frame vs 161 s takt","5 robots, no collisions","Weld paths reachable"], done:"138 s per frame",
+    hand:"The frame cell holds its takt. Now the glazing robots.", focus:["weld"] },
+  { n:7, video:true, tab:"Can robots glaze a WC in 155 s?", who:"Kenji", role:"Robotics Engineer", at:[-14.5, 6, 6], view:['glaze', 1.0],
     exp:"Robot Programming Experience", brand:"DELMIA", show:{ video:"Programming one robot cell", live:"The robot cell in 3DPlay, inside the dashboard" },
     chal:"Glazing skill is scarce and manual spraying caps output; each robot must glaze a whole WC within the 155 s the simulation assumed.",
     quote:"One robot, one WC, start to finish. Program one cell, prove it on screen, and the other three run the same program.",
-    does:"Robot glazing: spray trajectories on the exterior, interior and rim for one robot station, with coverage and cycle time checked; the other three run the same program. Two booths stay manual, for quality control only. Gate at the join with Step 5: both cycle times within Step 4's targets, or back to Kenji.",
-    kpis:["4 robots, 2 QC booths","155 s per WC (limit 178 s)","Gate: both cycles in target"], done:"155 s per WC",
-    hand:"Both cycle times through the gate. Next, the people on the new line.", focus:["glaze"],
+    does:"Robot glazing: spray trajectories on the exterior, interior and rim for one robot station, with coverage and cycle time checked; the other three run the same program. Two booths stay manual, for quality control only. Kenji's weld and glazing work run in parallel in Iterop and meet at a check that both cycle times are within Step 4's targets.",
+    kpis:["4 robots, 2 QC booths","155 s per WC (limit 178 s)","Both cycle times in target"], done:"155 s per WC",
+    hand:"Both cycle times proven. Next, the people on the new line.", focus:["glaze"],
     aisha:"Robots take the spraying. Aisha moves to quality control, where her eye for a glaze defect matters most." },
-  { n:7, video:true, tab:"Can a new operator build it on day one?", who:"Priya", role:"Industrialization Engineer", at:[15.7, 5, 3.5], view:['asm', 1.0],
+  { n:8, video:true, tab:"Can a new operator build it on day one?", who:"Priya", role:"Industrialization Engineer", at:[15.7, 5, 3.5], view:['asm', 1.0],
     exp:"Work Instruction Experience", brand:"DELMIA", show:{ live:"Work instruction review", video:"Work instruction creation" },
     chal:"Operators have to be trained on a line that does not exist yet.",
     quote:"New operators start before the line exists. They need to be right on day one.",
@@ -535,7 +542,7 @@ const STEPS = [
     kpis:["[number of steps]","[training time]"], done:"instructions ready",
     hand:"A line ready to staff, and every number Elena asked for.", focus:["asm"],
     aisha:"Two of Aisha's former colleagues move to the new assembly line and learn it here." },
-  { n:8, tab:"Is it worth it?", who:"Elena", role:"VP Manufacturing", at:[27, 23, -22], view:['plant', 1.0],
+  { n:9, tab:"Is it worth it?", who:"Elena", role:"VP Manufacturing", at:[27, 23, -22], view:['plant', 1.0],
     exp:"Business Insight Experience", brand:"NETVIBES", show:{ live:"Data Perspective, Capacity investment review" },
     chal:"Approve an investment on simulated, proven numbers, and decide whether to bet on modular construction.",
     quote:"Every target I asked for now has a number. Is it worth it?",
@@ -1283,10 +1290,10 @@ function stepLife(t) {
 const TOUR = [
   { view: 'plant', step: 3, title: 'The Novaceris plant, as a virtual twin', sub: 'Layout, lines and flows of the whole plant, before anything moves on the floor' },
   { view: 'line',  step: 4, title: 'From glazing to the kilns', sub: '1,750 WCs a day, proven in simulation before a robot was bought' },
-  { view: 'weld',  step: 5, title: 'Arc welding cell', sub: 'The standard weld cell from the catalog, proven on the new wall-hung frame' },
-  { view: 'glaze', step: 6, title: 'Robotic glazing', sub: 'Four robots, each glazing a whole WC on its own; two booths stay manual for quality control' },
-  { view: 'asm',   step: 7, title: 'Frame and tank assembly', sub: 'Operators trained on 3D work instructions before the line exists' },
-  { view: 'whs',   step: 8, title: 'Packing and dispatch', sub: '600,000 WCs a year, with payback in August 2030' },
+  { view: 'weld',  step: 6, title: 'Arc welding cell', sub: 'Five robots load, weld and hand on a wall-hung frame every 138 seconds' },
+  { view: 'glaze', step: 7, title: 'Robotic glazing', sub: 'Four robots, each glazing a whole WC on its own; two booths stay manual for quality control' },
+  { view: 'asm',   step: 8, title: 'Frame and tank assembly', sub: 'Operators trained on 3D work instructions before the line exists' },
+  { view: 'whs',   step: 9, title: 'Packing and dispatch', sub: '600,000 WCs a year, with payback in August 2030' },
 ];
 const tour = { i: 0, t0: 0, hold: 0 };
 const stagebox = $('stagebox');
@@ -1395,7 +1402,7 @@ function render(move) {
   T.glaze.el.className = 'tag ' + gs; T.glaze.hide = gs === 'none';
   for (const k of ['kiln', 'cast', 'slip']) T[k].hide = !sim;
   T.wip.hide = !(guided && g === SIM && beat === 0);
-  T.aisha.hide = !(guided && (g === SIM || g === 6));
+  T.aisha.hide = !(guided && (g === SIM || g === 7));
   T.aisha.el.textContent = robots ? 'Aisha: quality control' : 'Aisha: manual spraying';
   tagText(T.weld.el, framed ? 'New: frame line, cutting and arc welding' : 'Raw-material racks and the experience room');
   T.weld.el.className = 'tag ' + (framed ? 'new' : 'plain');
@@ -1623,7 +1630,7 @@ function renderCompass(s) {
 }
 
 /* ---------- media from a folder on this computer: step videos, logos and persona photos ----------
-   A video is matched to a step by its name ("step3.mp4", "Step 4 - fixture.mp4") or by picking it in the step's
+   A video is matched to a step by its name ("step3.mp4", "Step 5 - fixture.mp4") or by picking it in the step's
    "Video for this step" list; picks are remembered by file name. Images are matched by name, any of .png .jpg .webp .svg:
    novaceris-logo, 3dexperience-compass, brand-delmia, brand-catia, brand-netvibes, persona-elena, persona-marco, ...
    The files never leave the computer, so logos and photos are not published with the page. */
@@ -1662,7 +1669,7 @@ const imageSlots = () => ['novaceris-logo', '3dexperience-compass', ...new Set(S
 const videos = new Map();          // step number -> File
 let allVideos = [];                // every video found in the folder
 const VIDEO_EXT = /\.(mp4|webm|m4v|mov|mkv|avi|wmv)$/i;
-const ASSIGN_KEY = 'novaceris-video-assign-8';   // picks made for the 10-step order are not carried over
+const ASSIGN_KEY = 'novaceris-video-assign-9';   // picks made for an older step order are not carried over
 function loadAssign() { try { return JSON.parse(localStorage.getItem(ASSIGN_KEY)) || {}; } catch (e) { return {}; } }
 function saveAssign(a) { try { localStorage.setItem(ASSIGN_KEY, JSON.stringify(a)); } catch (e) {} }
 function matchVideos() {
