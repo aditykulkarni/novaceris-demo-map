@@ -1334,7 +1334,7 @@ function render(move) {
   paintZones();
 
   // Tags
-  tagText(T.glaze.el, { none: '', bad: 'Bottleneck: glazing, 4 manual booths at 100%', warn: 'New: robotic glazing, 4 robots, 155 s per WC each', good: 'Re-run: glazing no longer the limit' }[gs]);
+  tagText(T.glaze.el, { none: '', bad: 'Bottleneck: glazing, manual booths at 100%', warn: 'New: robotic glazing, 4 robots, 150 s per WC each', good: 'Re-run: glazing no longer the limit' }[gs]);
   T.glaze.el.className = 'tag ' + gs; T.glaze.hide = gs === 'none';
   for (const k of ['kiln', 'cast', 'slip']) T[k].hide = !sim;
   T.wip.hide = !(guided && g === SIM && beat === 0);
