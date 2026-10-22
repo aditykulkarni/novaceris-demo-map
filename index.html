@@ -80,6 +80,7 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
 .menu-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 8px 0; font-size: 13px; color: var(--muted); }
 .menu-row + .menu-row { border-top: 1px solid var(--line); }
 .menu-row .btn { min-width: 128px; }
+a.btn { display: inline-block; text-align: center; text-decoration: none; }
 .menu.attn summary::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--warn); margin-right: 7px; vertical-align: 1px; }
 /* Hero band: the demo's title, the step controls, and a rail of the steps */
 .hero { background: var(--band); color: var(--band-ink); }
@@ -380,6 +381,7 @@ dialog#player::backdrop { background: rgba(10, 16, 22, .78); }
           </div></div>
           <div class="menu-row"><span>Landscape and people</span><button id="amb" class="btn" type="button" aria-pressed="true" title="Landscape, sunlight and shadows, kiln glow and people. Turn it off on a slower laptop; the choice is remembered.">Ambiance on</button></div>
           <div class="menu-row"><span>Videos, logos, photos</span><button id="vid-folder" class="btn" type="button" title="Pick the folder on this computer that holds the step videos, logos, photos and brand.css">Media folder</button></div>
+          <div class="menu-row"><span>Steps and tab links</span><a class="btn" href="admin.html" target="novaceris-admin" title="Change step texts and set each step's tab link">Edit the demo</a></div>
           <input id="vid-input" type="file" webkitdirectory multiple hidden>
         </div>
       </details>
@@ -454,6 +456,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { STEPS, applyEdits, loadEdits, loadLinks, PREVIEW_KEY } from './steps.js';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
 const FLOOR = 1.15;
@@ -480,76 +483,9 @@ const RACKS_AT = { before: [-23, -8.8, 0], after: [-13.7, 23.4, 0] };   // [x, z
 const ROOM_SRC = [13.5, 20.6, -16.3, -9.2];   // its footprint in the model
 const ROOM_TODAY = [-23.65, 3.9];             // shift from the model to today's spot, in the frame-line space
 
-// exp: the Experience the step delivers. brand: the 3DEXPERIENCE brand behind it. chal: the business challenge it answers.
-// show: what runs live on the platform in the demo and what is on video.
-const STEPS = [
-  { n:1, tab:"Can we reach 600,000?", who:"Elena", role:"VP Manufacturing", at:[37, 23, -14], view:['office', 1.0],
-    exp:"Business Insight Experience", brand:"NETVIBES", show:{ live:"Data Perspective, Plant performance" },
-    chal:"The board wants 41% more output and a new product, and nobody can say yet what it costs or when it pays back.",
-    quote:"The board wants 600,000 units a year and a modular wall-hung WC. I need to know what it costs, what it returns and what could go wrong.",
-    does:"Data Perspective, Plant performance: output 1,190 a day against a demand plan of 1,681, OEE 66.5%, utilization by area. Elena starts the NPI process in Iterop.",
-    kpis:["1,190 vs 1,681 units/day","68 s vs 48 s per unit","175,000 units/yr short"], done:"gap +491/day",
-    hand:"Two asks for Priya: launch the wall-hung WC, and close the capacity gap.", focus:["office"] },
-  { n:2, video:true, tab:"What exactly are we building?", who:"Priya", role:"Industrialization Engineer", at:[29, 17, -7], view:['office', 1.0],
-    exp:"Manufacturing Definition Experience", brand:"DELMIA", show:{ live:"EBOM and MBOM loading", video:"MBOM creation" },
-    chal:"A product the plant has never built: a wall-hung WC with its own steel frame and flush tank.",
-    quote:"Engineering released the wall-hung WC. I have to turn it into something this plant can build.",
-    does:"EBOM to MBOM, with the frame-height option applied. The MBOM shows two operations the plant has never done.",
-    kpis:["Frame welding","Frame + tank assembly","No floor space for either"], done:"2 new ops",
-    hand:"Two operations with nowhere to run. Next, Priya finds them floor space.", focus:["office"] },
-  { n:3, video:true, tab:"Where does the frame line go?", who:"Priya", role:"Industrialization Engineer", at:[-27, 6.5, -9], view:['plant', 1.0],
-    exp:"Virtual Factory Experience", brand:"DELMIA", show:{ video:"Plant layout and catalog reuse" },
-    chal:"No free floor space for a new frame line, and no budget for a new building.",
-    quote:"The space is already in the plant. It's full of racks that sit in the wrong place.",
-    does:"Plant Layout Design: the raw-material racks move into slip preparation, next to the mills that use them, and the modular experience room moves next to the office. IP Classify and Reuse inserts the company's standard robotic arc welding cell.",
-    kpis:["Racks at point of use","Experience room by the office","Standard weld cell reused"], done:"frame line placed",
-    hand:"The new layout, to the flow simulation.", focus:["cut","weld","asm"] },
-  { n:4, video:true, sim:true, tab:"Can the new plant make 1,681 a day?", who:"Priya", role:"Industrialization Engineer", at:[-25, 6, 0], view:['line', 1.0],
-    exp:"Factory Simulation Experience", brand:"DELMIA", show:{ video:"Factory flow simulation: today's plant, then with robotic glazing" },
-    chal:"Prove the plant reaches 1,681 good WCs a day, and find what stops it, before any money is spent.",
-    quote:"Same plant, the target load. Show me where it breaks, then prove the fix before anyone buys a robot.",
-    does:"Factory Flow Simulation in three beats: today's process at the 1,681 load stays at 1,190 a day; glazing is the constraint, with the 4 manual booths at 100%; Glazing v2 (4 robots, 2 QC booths) swapped in and re-run reaches 1,750 good units a day, if QC on a robot-glazed WC takes 50 s or less (150 s on a hand-glazed one), because the robot coat is more even.",
-    kpis:["1,190 → 1,750 units/day","Manual glazers at 100%","Targets: 155 s glazing, 50 s QC"], done:"1,750/day",
-    hand:"Three targets to Kenji: 155 s per WC per glazing robot, the weld cell inside the 161 s frame takt, and a coat even enough for 50 s QC.", focus:["glaze","kiln","cast","slip"],
-    aisha:"Aisha and three colleagues spray every unit by hand at 100% utilization. The line runs at their pace because there is no slack." },
-  { n:5, video:true, tab:"Will the fixture hold the frame?", who:"Kenji", role:"Robotics Engineer", at:[-5.6, 5.5, -4.6], view:['weld', 1.0],
-    exp:"Equipment Design Experience", brand:"CATIA", show:{ video:"Fixture kinematics and clamp sequence" },
-    chal:"A new weld fixture has to hold the frame right the first time; a wrong fixture means every weld is wrong.",
-    quote:"If the frame isn't held right, every weld is wrong.",
-    does:"Equipment Design: the frame holding fixture with forward kinematics, and the clamp and positioning sequence simulated collision-free. Steps 5 and 6 are one weld cell task in Iterop.",
-    kpis:["Fixture kinematics","Clamp sequence collision-free","Frame positioned for welding"], done:"fixture proven",
-    hand:"A fixture that holds the frame. Next, the whole weld cell in takt.", focus:["weld"] },
-  { n:6, video:true, tab:"Can the weld cell build a frame in takt?", who:"Kenji", role:"Robotics Engineer", at:[-4.4, 5.5, -6.2], view:['weld', 1.0],
-    exp:"Robot Programming Experience", brand:"DELMIA", show:{ video:"Weld cell robot programming" },
-    chal:"Prove the catalog weld cell builds this frame inside its takt before a single robot is bought.",
-    quote:"Five robots, one frame every 161 seconds. I have to prove the cell keeps up before anyone orders it.",
-    does:"DELMIA robot programming of the five-robot cell: a loading robot brings the loose frame parts together on fixture 1, two robots arc-weld the frame, one pick-and-place robot turns it onto fixture 2 and the other hands it to the assembly line. Weld paths, reach, collisions and the cell cycle against the frame takt.",
-    kpis:["138 s per frame vs 161 s takt","5 robots, no collisions","Weld paths reachable"], done:"138 s per frame",
-    hand:"The frame cell holds its takt. Now the glazing robots.", focus:["weld"] },
-  { n:7, video:true, tab:"Can robots glaze a WC in 155 s?", who:"Kenji", role:"Robotics Engineer", at:[-14.5, 6, 6], view:['glaze', 1.0],
-    exp:"Robot Programming Experience", brand:"DELMIA", show:{ video:"Programming one robot cell", live:"The robot cell in 3DPlay, inside the dashboard" },
-    chal:"Glazing skill is scarce and manual spraying caps output; each robot must glaze a whole WC within the 155 s the simulation assumed.",
-    quote:"One robot, one WC, start to finish. Program one cell, prove it on screen, and the other three run the same program.",
-    does:"Robot glazing: spray trajectories on the exterior, interior and rim for one robot station, with cycle time checked; Robot Surface Simulation shows a glaze thickness map over the exterior, interior and rim, proving the coat is even enough for 50 s QC. The other three run the same program. Two booths stay manual, for quality control only. Kenji's weld and glazing work run in parallel in Iterop and meet at a check that cycle times and coat uniformity are within Step 4's targets.",
-    kpis:["155 s per WC (limit 178 s)","Even coat: 50 s QC","Cycle times and coat in target"], done:"155 s per WC",
-    hand:"Cycle times and coat proven. Next, the people on the new line.", focus:["glaze"],
-    aisha:"Robots take the spraying. Aisha moves to quality control, where her eye for a glaze defect matters most." },
-  { n:8, video:true, tab:"Can a new operator build it on day one?", who:"Priya", role:"Industrialization Engineer", at:[15.7, 5, 3.5], view:['asm', 1.0],
-    exp:"Work Instruction Experience", brand:"DELMIA", show:{ live:"Work instruction review", video:"Work instruction creation" },
-    chal:"Operators have to be trained on a line that does not exist yet.",
-    quote:"New operators start before the line exists. They need to be right on day one.",
-    does:"3D work instructions for the frame and flush tank assembly, built from the operations Priya defined in Step 2, shown in the operator view.",
-    kpis:["[number of steps]","[training time]"], done:"instructions ready",
-    hand:"A line ready to staff, and every number Elena asked for.", focus:["asm"],
-    aisha:"Two of Aisha's former colleagues move to the new assembly line and learn it here." },
-  { n:9, tab:"Is it worth it?", who:"Elena", role:"VP Manufacturing", at:[27, 23, -22], view:['plant', 1.0],
-    exp:"Business Insight Experience", brand:"NETVIBES", show:{ live:"Data Perspective, Capacity investment review" },
-    chal:"Approve an investment on simulated, proven numbers, and decide whether to bet on modular construction.",
-    quote:"Every target I asked for now has a number. Is it worth it?",
-    does:"Capacity investment review: three options side by side. Glazing v2 with the wall-hung line costs €19.8M, adds €9.2M EBITDA a year and pays back in August 2030 (IRR 37%). A new hall costs €32M and never pays back. The wall-hung edge over glazing alone holds only if the systems sell: at 60,000 a year instead of 120,000 the two are worth the same.",
-    kpis:["€19.8M capex","+€9.2M EBITDA a year","Payback Aug 2030 · IRR 37%"], done:"payback Aug 2030",
-    hand:"Decision: Glazing v2 with the wall-hung line, a bet on modular construction.", focus:["office"] }
-];
+const edits = await loadEdits();
+applyEdits(STEPS, edits.file);
+applyEdits(STEPS, edits.preview);   // edits being tried out in /admin, on this browser only
 // Iterop governs every hand-off between the steps.
 const GOVERNANCE = "Business Process Experience (Iterop) governs every hand-off";
 const LAST = STEPS.length;
@@ -1516,7 +1452,7 @@ function renderPanel(s, guided) {
     </div></details>
   </div>${poweredBy()}`;
   panel.querySelector('.notes').addEventListener('toggle', e => { notesOpen = e.target.open; });
-  $('open-tab').addEventListener('click', () => toast(`In the dashboard, this opens the tab "${s.tab}".`));
+  $('open-tab').addEventListener('click', () => openStepTab(s));
   const pv = $('play-vid'); if (pv) pv.addEventListener('click', () => playStep(s));
   panel.querySelectorAll('[data-beat]').forEach(b => b.addEventListener('click', () => { state.beat = +b.dataset.beat; render(false); }));
   const va = $('vid-assign'); if (va) va.addEventListener('change', () => assignVideo(s.n, va.value));
@@ -1763,6 +1699,25 @@ $('player').addEventListener('close', () => $('player-video').pause());
 $('player').addEventListener('click', e => { if (e.target === $('player')) closePlayer(); });
 
 let tt;
+/* ---------- Open tab: each step's browser tab (a 3DDashboard tab, an app), set in /admin and kept in this browser.
+   The map opens it under a fixed name, so a second click switches to the tab already open instead of opening another.
+   Only tabs the map opened itself can be found again. ---------- */
+const stepTabs = {};
+function openStepTab(s) {
+  const url = (loadLinks()[s.n] || '').trim();
+  if (!url) { toast(`No link for this step yet. Add one under Settings, Edit the demo.`, 4000); return; }
+  const name = 'novaceris-step-' + s.n;
+  let w = stepTabs[s.n];
+  if (!w || w.closed) {
+    w = window.open('', name);            // finds the tab if this map opened it before, even after a reload
+    if (!w) { toast('The browser blocked the new tab. Allow pop-ups for this site and click again.', 5000); return; }
+    let blank = false; try { blank = w.location.href === 'about:blank'; } catch (e) {}   // a tab already on its page is cross-origin
+    if (blank) w.location.href = url;
+    stepTabs[s.n] = w;
+  }
+  w.focus();
+}
+
 function toast(msg, ms) { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(tt); tt = setTimeout(() => t.hidden = true, ms || 2600); }
 
 // Next and Back walk through the intro slides first, then the steps.
@@ -1840,6 +1795,9 @@ function goHash() { const n = stepFromHash(); if (n !== null && n <= LAST) { sta
 window.addEventListener('hashchange', () => { if (stepFromHash() !== null) { goHash(); render(true); } });
 goHash();
 render(false);
+// Edits being tried out in /admin show here at once; tell the presenter they are not saved with the demo yet
+window.addEventListener('storage', e => { if (e.key === PREVIEW_KEY) location.reload(); });
+if (edits.preview && Object.keys(edits.preview.steps || {}).length) setTimeout(() => toast('Showing edits from "Edit the demo" that are saved in this browser only.', 5000), 1500);
 window.__demo = { go: (n, beat) => { state.mode = 'guided'; state.step = n; state.beat = beat || 0; render(true); }, ready: () => !!model && !fly && !relayout };
 </script>
 </body>

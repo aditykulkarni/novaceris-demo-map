@@ -84,3 +84,17 @@ The main variables are `--accent` (buttons, labels), `--band` (title band, intro
 ## Opening at a step
 
 Add `#step=N` to the address (N from 0 to 10), for example `index.html#step=3`. The address follows the step as you click through, so a link in an Iterop task can bring the presenter back to that step on the map.
+
+## Open tab: each step's browser tab
+
+**Open tab** opens the page set for that step, such as its 3DDashboard tab. Click it again later and the browser switches to that tab instead of opening a second one, even after the map was reloaded. Only tabs the map opened itself can be found again, so before the meeting click **Open tab** once on each step and sign in.
+
+Set the links in **Settings, Edit the demo**. They are kept in this browser only and never go into this public repository. **Copy links** and **Paste links** move them to another laptop. To get back to the map from any tab, keep the map as the first tab and press **Ctrl+1**.
+
+## Edit the demo (/admin)
+
+`admin.html` (or `/admin`) changes each step's texts: question, persona, Experience, brand, challenge, quote, live and video lines, presenter notes, on-screen figures and the hand-off. Step order, camera and plant changes stay as built.
+
+- Edits are kept in your browser while you work; **Show in the map** opens the map with them.
+- **Save file** downloads `demo-config.json`. Put it next to `index.html` on the laptop, or upload it to this repository for the web site. Then **Discard edits** so the browser shows the saved demo.
+- Anyone can open `/admin` on the web site, but edits only change their own browser until a `demo-config.json` is uploaded to the repository.

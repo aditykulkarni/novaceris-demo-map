@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edit the demo</title>
+<style>@font-face { font-family: "Inter"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("fonts/InterVariable.woff2") format("woff2"); }</style>
+<style>
+:root { --bg: #f4f5f7; --card: #fff; --ink: #14181f; --muted: #5d6573; --line: #dde1e7; --fill: #eceef2; --accent: #1f5fbf; --accent-ink: #fff; --edited: #b25e00; --r: 12px; color-scheme: light; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #12151b; --card: #1b1f27; --ink: #e9ecf1; --muted: #9aa3b2; --line: #2c323d; --fill: #262b35; --accent: #6b9cf0; --accent-ink: #0d1220; --edited: #f0a24b; color-scheme: dark; } }
+:root[data-theme="dark"] { --bg: #12151b; --card: #1b1f27; --ink: #e9ecf1; --muted: #9aa3b2; --line: #2c323d; --fill: #262b35; --accent: #6b9cf0; --accent-ink: #0d1220; --edited: #f0a24b; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 14.5px/1.5 Inter, system-ui, sans-serif; }
+header { position: sticky; top: 0; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 14px 24px; background: var(--card); border-bottom: 1px solid var(--line); }
+header h1 { margin: 0 auto 0 0; font-size: 18px; font-weight: 600; }
+.btn { border: 0; background: var(--fill); color: var(--ink); font: 500 13.5px Inter, system-ui, sans-serif; padding: 8px 14px; border-radius: 8px; cursor: pointer; text-decoration: none; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); }
+.btn:hover { filter: brightness(.96); }
+.wrap { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 24px; max-width: 1180px; margin: 24px auto; padding: 0 24px; }
+nav { display: flex; flex-direction: column; gap: 4px; position: sticky; top: 84px; align-self: start; }
+nav button { text-align: left; border: 0; background: none; color: var(--ink); font: inherit; padding: 8px 12px; border-radius: 8px; cursor: pointer; }
+nav button.on { background: var(--card); box-shadow: 0 0 0 1px var(--line); font-weight: 600; }
+nav small { display: block; color: var(--muted); font-weight: 400; }
+nav .dot { color: var(--edited); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 20px 22px; margin-bottom: 18px; }
+.card h2 { margin: 0 0 4px; font-size: 17px; font-weight: 600; }
+.card > p { margin: 0 0 14px; color: var(--muted); }
+.field { display: flex; flex-direction: column; gap: 6px; margin-top: 14px; }
+.field .top { display: flex; align-items: baseline; gap: 10px; }
+.field label { font-weight: 500; }
+.field .tag { font-size: 12px; color: var(--edited); }
+.field .reset { margin-left: auto; font-size: 12.5px; color: var(--accent); background: none; border: 0; cursor: pointer; padding: 0; font-family: inherit; }
+input[type=text], input[type=url], textarea { width: 100%; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+textarea { resize: vertical; min-height: 64px; }
+input:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+.help { color: var(--muted); font-size: 13px; margin: 0; }
+.help b { color: var(--ink); font-weight: 600; }
+ol.help { padding-left: 18px; }
+#toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 8px; font-size: 13.5px; max-width: calc(100% - 32px); }
+@media (max-width: 760px) {
+  header { padding: 12px 16px; }
+  .wrap { grid-template-columns: 1fr; padding: 0 16px; gap: 12px; }
+  nav { position: static; flex-direction: row; overflow-x: auto; }
+  nav button { white-space: nowrap; }
+  nav small { display: none; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Edit the demo</h1>
+  <button class="btn primary" id="show">Show in the map</button>
+  <button class="btn" id="save">Save file</button>
+  <button class="btn" id="load">Load file</button>
+  <button class="btn" id="discard">Discard edits</button>
+  <input type="file" id="load-input" accept=".json,application/json" hidden>
+</header>
+<div class="wrap">
+  <nav id="nav" aria-label="Steps"></nav>
+  <main>
+    <div class="card" id="link-card"></div>
+    <div class="card" id="text-card"></div>
+    <div class="card">
+      <h2>How your edits are kept</h2>
+      <ol class="help">
+        <li><b>While you type</b>, edits are kept in this browser only. <b>Show in the map</b> opens the map with them; nobody else sees them yet.</li>
+        <li><b>To keep them with the demo</b>, click <b>Save file</b>. It downloads <code>demo-config.json</code>.
+          On the laptop, put it in the demo folder next to <code>index.html</code>, replacing the old one.
+          For the web site, upload it to the repository (<a href="https://github.com/aditykulkarni/novaceris-demo-map/upload/main" target="_blank" rel="noopener">GitHub, Add file, Upload</a>); the site updates within a few minutes.</li>
+        <li>Then click <b>Discard edits</b>, so this browser shows the demo as saved.</li>
+      </ol>
+      <p class="help" style="margin-top:10px"><b>Tab links are never put in the file.</b> The web site is public, so links to the tenant stay in this browser. Use <b>Copy links</b> and <b>Paste links</b> to move them to another laptop.</p>
+    </div>
+  </main>
+</div>
+<div id="toast" hidden></div>
+<script type="module">
+import { STEPS, FIELDS, getField, setField, applyEdits, loadEdits, loadLinks, saveLinks, PREVIEW_KEY } from './steps.js';
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const clone = o => JSON.parse(JSON.stringify(o));
+const SHORT = new Set(['tab', 'who', 'role', 'exp', 'brand', 'live', 'video', 'done']);
+
+const base = clone(STEPS);                 // the demo as built
+const loaded = await loadEdits();
+const fileSteps = clone(STEPS); applyEdits(fileSteps, loaded.file);   // the demo as saved in demo-config.json
+const work = clone(fileSteps); applyEdits(work, loaded.preview);      // what is being edited
+let links = loadLinks();
+let cur = +(new URLSearchParams(location.search).get('step')) || 1;
+
+const val = (s, k) => { const v = getField(s, k); return k === 'kpis' ? (v || []).join('\n') : (v || ''); };
+const edited = (n, k) => val(work.find(s => s.n === n), k) !== val(base.find(s => s.n === n), k);
+function diff() {
+  const out = { steps: {} };
+  for (const s of work) for (const [k] of FIELDS) if (edited(s.n, k)) {
+    (out.steps[s.n] ||= {})[k] = k === 'kpis' ? (s.kpis || []) : val(s, k);
+  }
+  return out;
+}
+function keep() { try { localStorage.setItem(PREVIEW_KEY, JSON.stringify(diff())); } catch (e) {} }
+let tt; function toast(m, ms) { const t = $('toast'); t.textContent = m; t.hidden = false; clearTimeout(tt); tt = setTimeout(() => t.hidden = true, ms || 3000); }
+
+function renderNav() {
+  $('nav').innerHTML = work.map(s => {
+    const any = FIELDS.some(([k]) => edited(s.n, k));
+    return `<button type="button" data-n="${s.n}" class="${s.n === cur ? 'on' : ''}">Step ${s.n}${any ? ' <span class="dot" title="Edited">•</span>' : ''}<small>${esc(s.who)}: ${esc(s.tab)}</small></button>`;
+  }).join('');
+  $('nav').querySelectorAll('button').forEach(b => b.onclick = () => { cur = +b.dataset.n; history.replaceState(null, '', '?step=' + cur); renderNav(); renderStep(); });
+}
+function renderStep() {
+  const s = work.find(x => x.n === cur);
+  $('link-card').innerHTML = `<h2>Step ${s.n}: tab link</h2>
+    <p>The page the <b>Open tab</b> button opens for this step, such as its 3DDashboard tab. Kept in this browser only.</p>
+    <div class="field"><input type="url" id="link" placeholder="https://..." value="${esc(links[s.n] || '')}" aria-label="Tab link for step ${s.n}"></div>
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><button class="btn" id="copy-links">Copy links</button><button class="btn" id="paste-links">Paste links</button></div>`;
+  $('link').oninput = e => { const v = e.target.value.trim(); if (v) links[s.n] = v; else delete links[s.n]; saveLinks(links); };
+  $('copy-links').onclick = async () => { try { await navigator.clipboard.writeText(JSON.stringify(links, null, 1)); toast('Tab links copied. Paste them on the other laptop with Paste links.'); } catch (e) { toast('The browser did not allow copying.'); } };
+  $('paste-links').onclick = async () => {
+    let t = ''; try { t = await navigator.clipboard.readText(); } catch (e) { t = prompt('Paste the copied links here') || ''; }
+    try { const l = JSON.parse(t); if (!l || typeof l !== 'object') throw 0; links = {}; for (const [n, u] of Object.entries(l)) if (/^https?:\/\//i.test(String(u))) links[n] = String(u); saveLinks(links); renderStep(); toast('Tab links pasted.'); }
+    catch (e) { toast('That was not a list of links copied from this page.'); }
+  };
+
+  $('text-card').innerHTML = `<h2>Step ${s.n}: what the map shows</h2><p>Empty a field to hide it. Step order, camera and plant changes stay as built.</p>` +
+    FIELDS.map(([k, label]) => {
+      if (k === 'aisha' && !getField(base.find(x => x.n === s.n), k)) return '';
+      const v = val(s, k), e = edited(s.n, k);
+      const input = SHORT.has(k) ? `<input type="text" id="f-${k}" value="${esc(v)}">` : `<textarea id="f-${k}" rows="${k === 'does' ? 5 : 3}">${esc(v)}</textarea>`;
+      return `<div class="field"><div class="top"><label for="f-${k}">${esc(label)}</label>${e ? '<span class="tag">Edited</span><button class="reset" data-k="' + k + '">Back to original</button>' : ''}</div>${input}</div>`;
+    }).join('');
+  for (const [k] of FIELDS) {
+    const el = $('f-' + k); if (!el) continue;
+    el.oninput = () => {
+      const was = edited(s.n, k);
+      if (k === 'kpis') s.kpis = el.value.split('\n').map(x => x.trim()).filter(Boolean); else setField(s, k, el.value);
+      keep(); if (was !== edited(s.n, k)) { renderNav(); const pos = el.selectionStart; renderStep(); const n = $('f-' + k); n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) {} }
+    };
+  }
+  $('text-card').querySelectorAll('.reset').forEach(b => b.onclick = () => {
+    const k = b.dataset.k, orig = base.find(x => x.n === s.n);
+    if (k === 'kpis') s.kpis = clone(orig.kpis || []); else setField(s, k, getField(orig, k) || '');
+    keep(); renderNav(); renderStep();
+  });
+}
+
+$('show').onclick = () => {
+  keep();
+  const w = window.open('index.html?edit=' + Date.now() + '#step=' + cur, 'novaceris-map');   // a new query reloads the map tab if it is open
+  if (w) w.focus();
+};
+$('save').onclick = () => {
+  const blob = new Blob([JSON.stringify(diff(), null, 2) + '\n'], { type: 'application/json' });
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: 'demo-config.json' });
+  document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  toast('Saved demo-config.json. Put it next to index.html (laptop) or upload it to the repository (web site).', 6000);
+};
+$('load').onclick = () => $('load-input').click();
+$('load-input').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  try { const j = JSON.parse(await f.text()); const w = clone(STEPS); applyEdits(w, j); work.splice(0, work.length, ...w); keep(); renderNav(); renderStep(); toast('Loaded ' + f.name + '. Click Show in the map to see it.'); }
+  catch (err) { toast('That file could not be read as demo edits.'); }
+};
+$('discard').onclick = () => {
+  if (!confirm('Discard the edits in this browser and go back to the demo as saved?')) return;
+  try { localStorage.removeItem(PREVIEW_KEY); } catch (e) {}
+  work.splice(0, work.length, ...clone(fileSteps)); renderNav(); renderStep(); toast('Edits discarded. The map shows the demo as saved.');
+};
+renderNav(); renderStep();
+</script>
+</body>
+</html>

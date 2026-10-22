@@ -87,6 +87,7 @@ while ($listener.IsListening) {
     $res = $ctx.Response
     $rel = [System.Uri]::UnescapeDataString($ctx.Request.Url.AbsolutePath).TrimStart('/')
     if ($rel -eq '') { $rel = 'index.html' }
+    if ($rel -notmatch '\.[A-Za-z0-9]+$' -and (Test-Path -LiteralPath (Join-Path $rootFull ($rel.TrimEnd('/') + '.html')) -PathType Leaf)) { $rel = $rel.TrimEnd('/') + '.html' }   # /admin opens admin.html
     $file = [System.IO.Path]::GetFullPath((Join-Path $rootFull $rel))
     if (-not $file.StartsWith($rootFull, [System.StringComparison]::OrdinalIgnoreCase) -or -not (Test-Path -LiteralPath $file -PathType Leaf)) {
       if ($rel -ne 'favicon.ico') { Log "404 $rel" }
