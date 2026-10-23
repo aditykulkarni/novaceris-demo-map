@@ -7,9 +7,9 @@
 <style>@font-face { font-family: "Inter"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("fonts/InterVariable.woff2") format("woff2"); }</style>
 <style>
 /* Look modelled on the Dassault Systèmes web site's layout: white top bar, a dark hero band with light large type,
-   flat cards with square corners, small spaced capitals for labels, one accent colour. The colours here are neutral
-   stand-ins: a brand.css file in the media folder can replace any of these variables (and load brand fonts) on the
-   presenting laptop, so no brand colours or fonts are published with the public page. */
+   flat cards with square corners, small spaced capitals for labels, one accent colour. The 3DEXPERIENCE colour theme
+   below this block sets the accent and brand colours; a brand.css file in the media folder can still replace any of
+   these variables (and load brand fonts) on the presenting laptop. */
 :root {
   --bg: #F2F4F6; --surface: #FFFFFF; --ink: #0E1B26; --muted: #5C6975; --line: #DCE2E7;
   --band: #0F2133; --band-ink: #FFFFFF; --band-muted: #A9B8C6; --band-line: rgba(255,255,255,.16);
@@ -43,9 +43,34 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f
 @media (min-width: 1700px) { .in { padding: 0 40px; } .wrap { padding: 24px 40px 40px; } }
 @media (max-width: 760px) { .in { padding: 0 16px; } .wrap { padding: 16px 16px 32px; } }
 
-/* Top bar: Novaceris, and what it runs on */
-.nav { background: color-mix(in srgb, var(--surface) 86%, transparent); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); border-bottom: 1px solid var(--line); position: relative; z-index: 30; }
-.nav .in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; min-height: 68px; padding-top: 10px; padding-bottom: 10px; }
+/* Top bar, after the 3DEXPERIENCE web pattern: compass top left (roles and Experiences), the dashboard's name,
+   search in the middle, quick actions and the signed-in persona on the right */
+.topbar { display: flex; align-items: center; gap: 14px; min-height: 52px; padding: 6px 16px 6px 10px; background: var(--surface); border-bottom: 1px solid var(--line); position: relative; z-index: 30; }
+.compass-btn { flex: none; width: 40px; height: 40px; border: 0; padding: 0; background: none; cursor: pointer; border-radius: 50%; }
+.compass-btn svg, .compass-btn img { width: 100%; height: 100%; display: block; object-fit: contain; transition: transform .3s; }
+.compass-btn[aria-expanded="true"] svg { transform: rotate(-45deg); }
+.compass-btn .c-ring { fill: none; stroke: var(--line); stroke-width: 1.5; }
+.compass-btn .c-n { fill: color-mix(in srgb, var(--accent) 85%, var(--surface)); }
+.compass-btn .c-e { fill: color-mix(in srgb, var(--accent) 65%, var(--surface)); }
+.compass-btn .c-s { fill: color-mix(in srgb, var(--accent) 45%, var(--surface)); }
+.compass-btn .c-w { fill: color-mix(in srgb, var(--accent) 30%, var(--surface)); }
+.compass-btn .c-nw { fill: color-mix(in srgb, var(--accent) 18%, var(--surface)); }
+.compass-btn .c-hub { fill: var(--surface); stroke: var(--line); }
+.compass-btn:hover .c-ring { stroke: var(--accent); }
+.search { position: relative; flex: 1 1 280px; max-width: 520px; margin: 0 auto; display: flex; align-items: center; }
+.search svg { position: absolute; left: 11px; width: 16px; height: 16px; fill: none; stroke: var(--muted); stroke-width: 1.8; stroke-linecap: round; pointer-events: none; }
+.search input { width: 100%; height: 34px; border: 1px solid var(--line); border-radius: 17px; background: var(--bg); color: var(--ink); font: 13.5px var(--f-sans); padding: 0 14px 0 34px; }
+.search input:focus { outline: 0; border-color: var(--accent); background: var(--surface); }
+.search-pop { position: absolute; left: 0; right: 0; top: calc(100% + 6px); margin: 0; padding: 6px; list-style: none; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 18px 50px rgba(0,0,0,.18); z-index: 50; max-height: 60vh; overflow: auto; }
+.search-pop li { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; align-items: center; padding: 8px 10px; border-radius: 6px; cursor: pointer; }
+.search-pop li.on, .search-pop li:hover { background: var(--accent-soft); }
+.search-pop b { grid-row: span 2; width: 26px; height: 26px; border-radius: 4px; display: grid; place-items: center; background: var(--fill); font-size: 12px; }
+.search-pop span { font-size: 13.5px; }
+.search-pop small { font-size: 12px; color: var(--muted); }
+.search-pop .none { display: block; color: var(--muted); cursor: default; }
+.me { flex: none; width: 34px; height: 34px; margin-left: 6px; border-radius: 50%; border: 0; background: var(--accent); color: #fff; font: 600 14px var(--f-sans); cursor: default; background-size: cover; background-position: center; }
+.me:empty { background: var(--fill); }
+@media (max-width: 1100px) { .search { display: none; } }
 .lockup { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .title { margin: 0 0 0 6px; padding-left: 18px; border-left: 1px solid var(--line); font-weight: 400; font-size: 19px; line-height: 1.2; letter-spacing: -.012em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .title span { font-weight: 650; color: var(--accent); }
@@ -82,45 +107,65 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
 .menu-row .btn { min-width: 128px; }
 a.btn { display: inline-block; text-align: center; text-decoration: none; }
 .menu.attn summary::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--warn); margin-right: 7px; vertical-align: 1px; }
-/* Hero band: the demo's title, the step controls, and a rail of the steps */
-.hero { background: var(--band); color: var(--band-ink); }
-.hero .top { display: flex; align-items: center; gap: 24px; }
+/* Tab bar: one tab per step, as a 3DDashboard's tabs, the active one underlined; Back and Next on the right */
+.tabbar { display: flex; align-items: stretch; gap: 16px; padding: 0 16px 0 10px; background: var(--surface); border-bottom: 1px solid var(--line); position: relative; z-index: 20; }
 h1 { margin: 0; }
-.stepnav { display: flex; align-items: center; gap: 8px; flex: none; }
-.progress { font-size: 13px; color: var(--band-muted); font-variant-numeric: tabular-nums; min-width: 84px; text-align: center; }
-.hero .btn:not(.primary), .intro .btn:not(.primary) { background: rgba(255,255,255,.1); color: var(--band-ink); }
-.hero .btn:not(.primary):hover:not(:disabled), .intro .btn:not(.primary):hover:not(:disabled) { background: rgba(255,255,255,.18); }
-.hero .btn.primary, .intro .btn.primary { background: var(--accent-band); color: #0B1B2A; }
-.rail { flex: 1; min-width: 0; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--n, 11), minmax(0, 1fr)); }
-.rail button { all: unset; box-sizing: border-box; display: flex; align-items: center; gap: 9px; width: 100%; cursor: pointer; padding: 12px 8px 12px 0; color: var(--band-muted); font-size: 13px; line-height: 1.25; position: relative; }
-.rail b { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.28); transition: background .2s, color .2s; }
-.rail small { display: none; font-size: 11.5px; opacity: .75; margin-top: 1px; }
-.rail .rt { min-width: 0; }
-.rail .rt > span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; min-width: 0; overflow: hidden; }
-.rail .done { color: var(--band-ink); }
-.rail .done b { box-shadow: inset 0 0 0 1.5px var(--accent-band); color: var(--accent-band); }
-.rail .on { color: var(--band-ink); font-weight: 600; }
-.rail .on b { background: var(--accent-band); color: #0B1B2A; box-shadow: none; }
-.rail .on small { display: block; font-weight: 400; }
-.rail button:hover { color: var(--band-ink); }
-.rail button:focus-visible { outline: 2px solid var(--accent-band); outline-offset: -2px; }
-/* Narrower screens: the steps become numbered dots, and only the current one keeps its name */
-@media (max-width: 1599px) {
-  .rail { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
-  .rail li { flex: none; }
-  .rail li:has(.on) { flex: 0 1 auto; min-width: 0; }
-  .rail button { padding-right: 4px; }
-  .rail button:not(.on) .rt { display: none; }
-  .rail .on .rt > span { -webkit-line-clamp: 1; white-space: nowrap; text-overflow: ellipsis; display: block; }
-}
-@media (max-width: 1100px) { .rail .rt { display: none; } .rail button { justify-content: center; padding-right: 0; } }
-@media (max-width: 760px) { .hero .top { flex-wrap: wrap; gap: 0 12px; } .rail { flex-basis: 100%; } }
+.stepnav { display: flex; align-items: center; gap: 8px; flex: none; padding: 6px 0; }
+.stepnav .btn { padding: 6px 14px; }
+.progress { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 84px; text-align: center; }
+.intro .btn:not(.primary) { background: rgba(255,255,255,.1); color: var(--band-ink); }
+.intro .btn:not(.primary):hover:not(:disabled) { background: rgba(255,255,255,.18); }
+.intro .btn.primary { background: var(--accent-band); color: #0B1B2A; }
+.rail { flex: 1; min-width: 0; list-style: none; margin: 0; padding: 0; display: flex; overflow-x: auto; scrollbar-width: none; }
+.rail::-webkit-scrollbar { display: none; }
+.rail li { flex: 0 1 auto; min-width: 0; }
+.rail li:has(.on) { flex: none; }
+.rail button { all: unset; box-sizing: border-box; display: flex; align-items: center; gap: 8px; height: 100%; min-height: 42px; width: 100%; overflow: hidden; cursor: pointer; padding: 0 11px; color: var(--muted); font-size: 13px; line-height: 1.2; position: relative; white-space: nowrap; }
+.rail button::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 3px; border-radius: 2px 2px 0 0; background: transparent; }
+.rail b { flex: none; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 4px; display: grid; place-items: center; font-size: 11.5px; font-weight: 600; font-variant-numeric: tabular-nums; background: var(--fill); color: var(--muted); }
+.rail .rt { min-width: 0; overflow: hidden; display: flex; align-items: baseline; }
+.rail .rt > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.rail small { flex: none; margin-left: 6px; font-size: 12px; opacity: .8; }
+.rail .done { color: var(--ink); }
+.rail .done b { background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); }
+.rail .on { color: var(--ink); font-weight: 600; }
+.rail .on::after { background: var(--accent); }
+.rail .on b { background: var(--accent); color: #fff; }
+.rail button:hover { color: var(--ink); background: var(--fill); }
+.rail button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.rail li + li button { border-left: 1px solid var(--line); }
+.rail button:not(.on) small { display: none; }
+@media (max-width: 1250px) { .rail li { flex: none; } .rail li:has(.on) { flex: 0 1 auto; } .rail button:not(.on) .rt { display: none; } }
 
-main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; align-items: start; }
-@media (min-width: 1700px) { main { grid-template-columns: minmax(0, 1fr) 400px; gap: 24px; } }
+/* Compass pane: the personas as roles, each with the Experiences they work in; a click opens that step */
+.compass-pane { position: fixed; left: 0; top: 52px; bottom: 0; width: 340px; max-width: 100%; z-index: 60; background: var(--surface); border-right: 1px solid var(--line); box-shadow: 12px 0 40px rgba(0,0,0,.14); overflow: auto; padding: 18px 16px 24px; display: grid; align-content: start; gap: 18px; }
+.cp-head { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.cp-role { display: grid; gap: 4px; }
+.cp-who { display: flex; align-items: center; gap: 10px; padding: 4px 4px 8px; }
+.cp-who .avatar { width: 36px; height: 36px; font-size: 15px; }
+.cp-who b { display: block; font-weight: 600; }
+.cp-who small { color: var(--muted); font-size: 12.5px; }
+.cp-app { all: unset; box-sizing: border-box; display: grid; grid-template-columns: 34px 1fr; gap: 0 10px; align-items: center; padding: 8px; border-radius: 6px; cursor: pointer; }
+.cp-app:hover, .cp-app.on { background: var(--accent-soft); }
+.cp-app i { grid-row: span 2; width: 34px; height: 34px; border-radius: 6px; display: grid; place-items: center; font-style: normal; font-weight: 700; font-size: 11px; letter-spacing: .02em; color: var(--b-ink, #fff); background: var(--b-bg, var(--accent)); }
+.cp-app span { font-size: 13.5px; font-weight: 500; }
+.cp-app small { font-size: 12px; color: var(--muted); }
+.cp-app:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+/* Widgets: the plant and the task sit in frames with a title bar, as apps do on a dashboard tab */
+.widget { background: var(--surface); border: 1px solid var(--line); border-radius: 4px; box-shadow: none; min-width: 0; overflow: hidden; display: flex; flex-direction: column; }
+.wh { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 36px; padding: 0 12px; border-bottom: 1px solid var(--line); font-size: 13px; }
+.wt { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.wsub { font-weight: 400; color: var(--muted); margin-left: 6px; }
+.wa { display: flex; align-items: center; gap: 14px; color: var(--muted); font-size: 12.5px; white-space: nowrap; }
+.wa button { border: 0; background: none; color: var(--accent); font: 500 12.5px var(--f-sans); cursor: pointer; padding: 0; }
+.stage .hint { display: none; }
+
+main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 12px; align-items: start; }
+@media (min-width: 1700px) { main { grid-template-columns: minmax(0, 1fr) 400px; } }
 @media (max-width: 960px) { main { grid-template-columns: minmax(0, 1fr); } }
 
-.plantcol { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); padding: 0 0 14px; display: grid; gap: 10px; min-width: 0; overflow: hidden; }
+.plantcol { padding: 0; gap: 0; }
 .stage { position: relative; aspect-ratio: 16 / 10; max-height: calc(100vh - 150px); min-height: 380px; background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom) 70%); border-radius: 0; overflow: hidden; min-width: 0; }
 .stage::after { content: ""; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 90px rgba(8, 16, 24, .16); z-index: 1; }
 .stage.land::after { box-shadow: inset 0 0 70px rgba(8, 16, 24, .1); }
@@ -182,7 +227,7 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; al
 .xc-chal { font-size: 15px; color: var(--muted); }
 .brandmark { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 12px; letter-spacing: .06em; }
 .brandmark img { height: 22px; width: auto; display: block; }
-.brandmark .ph { background: var(--fill); color: var(--ink); border-radius: 6px; padding: 4px 9px; }
+.brandmark .ph { background: var(--b-bg, var(--fill)); color: var(--b-ink, var(--ink)); border-radius: 6px; padding: 4px 9px; }
 .mode { font-size: 12.5px; padding: 4px 10px; border-radius: 999px; background: var(--fill); color: var(--muted); }
 .mode.live { color: var(--good); background: color-mix(in srgb, var(--good) 14%, transparent); }
 
@@ -281,7 +326,7 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; al
 .present #intro-fs { display: none; }
 
 /* Side panel: the step's Experience and challenge, the person and their question, what is shown, and the platform credit at the foot */
-.panel { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); padding: 0; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+.panel { background: var(--surface); padding: 0; display: flex; flex-direction: column; min-width: 0; min-height: 0; flex: 1; overflow: hidden; }
 .pbody { padding: 24px 24px 20px; display: grid; gap: 16px; align-content: start; min-height: 0; }
 .phead { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .pfoot { margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 12px 24px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
@@ -338,9 +383,7 @@ dialog#player::backdrop { background: rgba(10, 16, 22, .78); }
 @media (min-width: 961px) and (min-height: 560px) {
   html, body { height: 100%; }
   body { display: flex; flex-direction: column; overflow: hidden; }
-  .nav .in { min-height: 56px; padding-top: 6px; padding-bottom: 6px; }
-  .rail button { padding: 10px 8px 10px 0; }
-  .wrap { flex: 1; min-height: 0; width: 100%; display: flex; padding-top: 14px; padding-bottom: 14px; }
+  .wrap { flex: 1; min-height: 0; width: 100%; max-width: none; display: flex; padding: 12px; }
   main { flex: 1; min-height: 0; height: 100%; }
   .plantcol { height: 100%; display: flex; flex-direction: column; gap: 0; padding: 0; }
   .stagebox { flex: 1; min-height: 0; display: flex; }
@@ -352,21 +395,63 @@ dialog#player::backdrop { background: rgba(10, 16, 22, .78); }
   .meter-val { order: 3; font-size: 22px; }
   .scale, .note { display: none; }
   .target span { bottom: auto; top: -20px; }
-  .panel { height: 100%; }
+  .side { height: 100%; }
   .pbody { flex: 1 1 auto; overflow: auto; padding: 20px 22px; gap: 14px; }
 }
+</style>
+<style id="ds-theme">
+/* 3DEXPERIENCE colour theme, from the palette Aditya shared on 2026-10-23 (major colours and one colour per brand) */
+:root, :root[data-theme="light"] {
+  --accent: rgb(0, 83, 134);            /* major dark blue */
+  --accent-soft: rgba(0, 83, 134, .10);
+  --accent-band: rgb(0, 159, 222);      /* major light blue */
+  --band: rgb(0, 83, 134);              /* intro slides */
+  --band-muted: rgba(255, 255, 255, .78);
+  --band-line: rgba(255, 255, 255, .24);
+  --muted: #5F6366;
+  --line: #D9DADB;
+  --fill: rgba(151, 153, 155, .16);     /* major grey */
+  --fill-2: rgba(151, 153, 155, .28);
+
+  --brand-catia: rgb(0, 24, 113);      --brand-catia-ink: #fff;
+  --brand-geovia: rgb(0, 24, 113);     --brand-geovia-ink: #fff;
+  --brand-simulia: rgb(0, 24, 113);    --brand-simulia-ink: #fff;
+  --brand-delmia: rgb(255, 205, 0);    --brand-delmia-ink: #1A1A1A;
+  --brand-solidworks: rgb(218, 41, 28); --brand-solidworks-ink: #fff;
+  --brand-biovia: rgb(200, 211, 0);    --brand-biovia-ink: #1A1A1A;
+  --brand-medidata: rgb(200, 211, 0);  --brand-medidata-ink: #1A1A1A;
+  --brand-enovia: rgb(232, 119, 34);   --brand-enovia-ink: #fff;
+  --brand-netvibes: rgb(232, 119, 34); --brand-netvibes-ink: #fff;
+}
+:root[data-theme="dark"] {
+  --accent: rgb(0, 159, 222);
+  --accent-soft: rgba(0, 159, 222, .16);
+  --band: rgb(0, 54, 88);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --accent: rgb(0, 159, 222); --accent-soft: rgba(0, 159, 222, .16); --band: rgb(0, 54, 88); }
+}
+.btn.primary, .rail .on b { color: #fff; }
+.rail .on::after { background: rgb(0, 159, 222); }
 </style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><g id="nv-logo" transform="translate(0,407) scale(0.1,-0.1)"><path d="M2010 3891 c-100 -33 -165 -107 -196 -226 -21 -78 -20 -1941 1 -2012 30 -102 117 -176 223 -190 93 -12 207 51 255 141 22 41 22 45 25 701 l3 660 32 -60 c27 -50 113 -235 163 -350 91 -211 180 -392 236 -480 130 -206 337 -404 520 -497 173 -89 310 -122 503 -122 145 0 228 15 362 64 355 131 620 454 679 825 19 127 18 171 -6 195 -20 20 -33 20 -845 20 -468 0 -825 -4 -825 -9 0 -5 12 -34 26 -65 l25 -56 755 0 c711 0 754 -1 754 -17 -1 -41 -42 -177 -77 -255 -122 -271 -308 -428 -556 -469 -63 -10 -94 -11 -165 0 -191 27 -332 102 -492 261 -172 171 -306 391 -437 717 -24 61 -25 66 -21 285 4 197 7 231 26 290 46 139 134 209 272 216 67 3 81 0 130 -25 60 -30 118 -97 140 -161 9 -25 14 -122 17 -297 5 -297 7 -305 73 -305 66 0 70 15 70 230 0 310 -27 445 -110 548 -59 73 -134 117 -237 139 -76 16 -85 16 -158 0 -42 -10 -97 -29 -121 -43 -132 -78 -213 -227 -231 -428 l-6 -69 -72 149 c-118 245 -246 437 -379 568 -95 93 -164 128 -259 132 -40 2 -83 0 -97 -5z m149 -141 c83 -38 184 -146 296 -315 110 -167 215 -384 379 -783 25 -59 60 -142 80 -185 20 -42 36 -79 36 -81 0 -21 192 -340 220 -366 3 -3 18 -23 35 -45 91 -124 291 -286 437 -354 68 -32 58 -37 -38 -20 -196 34 -376 133 -532 292 -182 185 -246 290 -437 722 -158 356 -240 513 -315 598 -46 52 -73 59 -108 27 l-22 -21 0 -747 c0 -464 -4 -761 -10 -783 -29 -105 -178 -121 -224 -24 -14 29 -16 145 -16 987 0 536 4 970 10 992 11 50 37 84 80 107 44 24 74 24 129 -1z M3100 3886 c-81 -19 -154 -51 -223 -98 -109 -74 -207 -190 -207 -245 0 -25 47 -93 65 -93 8 0 34 31 58 68 74 114 185 195 317 231 252 70 517 -42 645 -274 64 -116 68 -139 74 -473 6 -285 7 -304 25 -318 31 -22 93 -18 107 7 7 15 9 108 6 313 -3 238 -7 303 -22 356 -67 245 -232 428 -457 506 -60 21 -97 26 -203 30 -87 2 -148 -1 -185 -10z M1135 963 c-227 -70 -304 -400 -133 -573 76 -78 122 -95 248 -95 94 0 110 3 156 27 63 33 119 94 151 166 22 46 26 69 25 148 0 87 -3 99 -34 161 -77 151 -243 218 -413 166z m236 -110 c24 -15 57 -49 74 -73 28 -43 30 -50 30 -145 0 -92 -2 -103 -27 -142 -53 -81 -137 -121 -232 -108 -126 16 -206 116 -206 253 1 155 107 258 257 248 47 -3 71 -10 104 -33z M3340 963 c-145 -52 -225 -171 -223 -333 1 -94 28 -171 85 -234 61 -70 124 -99 228 -104 97 -5 148 6 206 44 63 41 69 57 33 92 l-31 30 -44 -33 c-113 -87 -291 -41 -354 92 -18 39 -21 60 -18 134 3 78 6 92 33 131 17 23 51 56 75 73 41 27 53 30 125 30 74 0 84 -3 128 -33 26 -17 51 -32 56 -32 4 0 19 13 34 28 l28 29 -27 26 c-14 14 -47 36 -72 49 -61 29 -196 35 -262 11z M5667 965 c-89 -34 -131 -91 -131 -181 -1 -109 46 -149 224 -195 47 -12 100 -33 118 -46 30 -23 33 -29 30 -70 -4 -61 -35 -85 -118 -91 -73 -5 -142 11 -193 44 -22 14 -40 24 -42 22 -1 -2 -10 -18 -19 -36 -16 -31 -16 -35 -1 -52 9 -10 40 -29 68 -42 44 -20 68 -23 162 -23 125 0 155 11 209 78 38 48 48 134 21 191 -26 55 -61 72 -248 127 -117 33 -150 93 -89 159 46 52 162 56 253 10 l36 -19 19 41 c18 39 18 41 -1 54 -51 38 -230 55 -298 29z M172 633 l3 -338 43 -3 42 -3 0 245 c0 135 3 246 8 246 4 0 43 -49 87 -108 285 -380 286 -382 327 -382 23 0 38 5 39 13 1 14 1 62 0 415 l-1 253 -47 -3 -48 -3 -5 -237 -5 -237 -170 227 c-93 125 -175 233 -182 240 -6 6 -30 12 -52 12 l-41 0 2 -337z M1675 948 c7 -21 73 -185 95 -233 22 -49 90 -214 90 -219 0 -3 11 -29 24 -58 14 -29 34 -75 45 -101 20 -48 21 -48 63 -45 33 2 45 8 55 28 17 33 61 134 83 190 26 65 96 231 140 330 60 136 60 130 2 130 -57 0 -50 11 -126 -177 -25 -62 -52 -128 -60 -145 -8 -18 -30 -71 -48 -116 -19 -46 -38 -85 -43 -85 -4 -1 -27 45 -50 103 -70 175 -157 384 -166 403 -7 13 -22 17 -60 17 -48 0 -50 -1 -44 -22z M2614 935 c-7 -19 -14 -37 -14 -39 0 -3 -11 -29 -24 -58 -14 -29 -61 -138 -106 -243 -44 -104 -91 -212 -104 -240 -13 -27 -22 -53 -19 -57 2 -5 24 -8 47 -8 50 0 58 8 96 108 l25 62 166 0 c189 0 165 12 213 -105 l24 -60 51 -3 c58 -3 60 0 32 61 -10 23 -28 63 -40 89 -11 26 -21 49 -21 52 0 2 -16 39 -35 80 -19 42 -35 78 -35 80 0 3 -13 33 -29 68 -15 35 -45 105 -67 156 l-38 92 -54 0 c-51 0 -54 -1 -68 -35z m93 -131 c7 -21 20 -53 28 -71 15 -32 75 -176 75 -180 0 -2 -58 -3 -129 -3 l-129 0 55 133 c30 72 57 140 60 150 8 27 25 15 40 -29z M3882 633 l3 -338 228 -3 227 -2 0 50 0 50 -180 0 -180 0 0 105 0 105 156 0 155 0 -3 43 -3 42 -152 3 -153 3 0 94 0 95 173 2 172 3 3 43 3 42 -226 0 -225 0 2 -337z M4532 633 l3 -338 45 0 45 0 3 103 3 102 97 0 97 0 44 -73 c79 -130 86 -137 136 -137 24 0 46 3 48 8 3 4 -26 54 -65 111 -38 57 -67 108 -66 112 2 4 19 18 38 31 50 34 90 116 90 187 0 83 -39 156 -104 196 l-49 30 -184 3 -183 4 2 -339z m348 232 c65 -34 91 -136 50 -202 -34 -57 -62 -68 -187 -72 l-113 -3 0 146 0 146 110 0 c78 0 119 -4 140 -15z M5242 633 l3 -338 45 0 45 0 3 338 2 337 -50 0 -50 0 2 -337z" fill="currentColor"/><path d="M4444 2316 c-11 -8 -37 -49 -58 -90 -20 -42 -61 -102 -90 -134 -68 -74 -76 -89 -64 -122 13 -40 49 -56 87 -40 72 30 222 252 221 329 -1 53 -55 86 -96 57z M4082 1934 c-27 -18 -31 -84 -6 -108 20 -21 78 -21 95 0 19 23 16 80 -6 104 -22 24 -52 26 -83 4z" fill="#54D4D3"/></g></defs></svg>
-<header class="nav">
-  <div class="in">
-    <div class="lockup">
-      <span class="logo" data-img="novaceris-logo"><svg class="nv-mark" viewBox="174 12 315 255" aria-hidden="true"><use href="#nv-logo"/></svg></span>
-      <div class="company"><svg class="nv-word" viewBox="12 304 594 79" role="img" aria-label="Novaceris"><use href="#nv-logo"/></svg></div>
-      <h1 class="title"><span>Perfect Production</span> for Sanitaryware</h1>
-    </div>
-    <div class="controls">
+<header class="topbar">
+  <button class="compass-btn" id="compass-btn" type="button" aria-label="Roles and Experiences" aria-expanded="false" aria-controls="compass-pane" title="Roles and Experiences">
+    <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18.5" class="c-ring"/><path class="c-n" d="M20 3.5a16.5 16.5 0 0 1 11.7 4.8L20 20z"/><path class="c-e" d="M31.7 8.3A16.5 16.5 0 0 1 36.5 20H20z"/><path class="c-s" d="M36.5 20a16.5 16.5 0 0 1-16.5 16.5V20z"/><path class="c-w" d="M20 36.5A16.5 16.5 0 0 1 3.5 20H20z"/><path class="c-nw" d="M3.5 20A16.5 16.5 0 0 1 20 3.5V20z"/><circle cx="20" cy="20" r="6.5" class="c-hub"/></svg>
+  </button>
+  <div class="lockup">
+    <span class="logo" data-img="novaceris-logo"><svg class="nv-mark" viewBox="174 12 315 255" aria-hidden="true"><use href="#nv-logo"/></svg></span>
+    <div class="company"><svg class="nv-word" viewBox="12 304 594 79" role="img" aria-label="Novaceris"><use href="#nv-logo"/></svg></div>
+    <h1 class="title"><span>Perfect Production</span> for Sanitaryware</h1>
+  </div>
+  <div class="search" role="search">
+    <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M12.6 12.6 17 17"/></svg>
+    <input id="search" type="search" placeholder="Search steps, people, Experiences" autocomplete="off" aria-label="Search the demo">
+    <ul class="search-pop" id="search-pop" role="listbox" hidden></ul>
+  </div>
+  <div class="controls">
       <div class="seg" role="group" aria-label="Mode">
         <button id="mode-guided" type="button" aria-pressed="true">Guided</button>
         <button id="mode-explore" type="button" aria-pressed="false">Explore</button>
@@ -385,25 +470,23 @@ dialog#player::backdrop { background: rgba(10, 16, 22, .78); }
           <input id="vid-input" type="file" webkitdirectory multiple hidden>
         </div>
       </details>
+      <button class="me" id="me" type="button" title="The persona you are playing" aria-label="Current persona"></button>
     </div>
-  </div>
 </header>
-<section class="hero">
-  <div class="in">
-    <div class="top">
-      <ol class="rail" id="rail" aria-label="Steps"></ol>
-      <div class="stepnav">
-        <button id="back" class="btn" type="button">Back</button>
-        <span id="progress" class="progress" aria-live="polite"></span>
-        <button id="next" class="btn primary" type="button">Next</button>
-      </div>
-    </div>
+<nav class="tabbar" aria-label="Steps">
+  <ol class="rail" id="rail"></ol>
+  <div class="stepnav">
+    <button id="back" class="btn" type="button">Back</button>
+    <span id="progress" class="progress" aria-live="polite"></span>
+    <button id="next" class="btn primary" type="button">Next</button>
   </div>
-</section>
+</nav>
+<aside class="compass-pane" id="compass-pane" hidden aria-label="Roles and Experiences"></aside>
 <div class="wrap">
 
   <main>
-    <section class="plantcol" aria-label="Factory">
+    <section class="plantcol widget" aria-label="Factory">
+      <div class="wh"><span class="wt">3D plant <span class="wsub">Novaceris, Saxony</span></span><span class="wa"><button type="button" id="wh-reframe" title="Re-center the view">Re-center</button><button type="button" id="wh-fs" title="Full screen">Full screen</button></span></div>
       <div class="stagebox" id="stagebox">
         <div class="stage" id="stage">
           <div class="compass" id="compass" hidden></div>
@@ -430,7 +513,10 @@ dialog#player::backdrop { background: rgba(10, 16, 22, .78); }
       </div>
       <div class="note"><span>The frame line appears at Step 3 and the robotic glazing cell during Step 4; before that the plant is as it is today.</span><span>1,750 is the design target, not a simulation result.</span></div>
     </section>
-    <aside class="panel" id="panel" aria-live="polite"></aside>
+    <section class="side widget">
+      <div class="wh"><span class="wt" id="panel-title">Introduction</span><span class="wa" id="panel-step"></span></div>
+      <aside class="panel" id="panel" aria-live="polite"></aside>
+    </section>
   </main>
 </div>
 <div class="toast" id="toast" hidden></div>
@@ -1289,7 +1375,7 @@ function renderRail(guided) {
   const items = guided ? [{ n: 0 }, ...STEPS] : STEPS, cur = guided ? state.step : state.sel;
   if (railKey !== state.mode) {
     railKey = state.mode; rail.style.setProperty('--n', items.length);
-    rail.innerHTML = items.map(s => `<li><button type="button" data-n="${s.n}" title="${s.n ? `Step ${s.n}: ${esc(s.who)}, ${esc(s.exp)}` : 'Introduction'}"><b>${s.n || 'i'}</b><span class="rt"><span>${s.n ? esc(s.exp.replace(/ Experience$/, '')) : 'Introduction'}</span><small>${s.n ? esc(s.who) : 'Novaceris'}</small></span></button></li>`).join('');
+    rail.innerHTML = items.map(s => `<li><button type="button" data-n="${s.n}" title="${s.n ? `Step ${s.n}: ${esc(s.who)}, ${esc(s.exp)}` : 'Introduction'}"><b>${s.n || 'i'}</b><span class="rt"><span>${s.n ? esc(s.short || s.exp.replace(/ Experience$/, '')) : 'Introduction'}</span>${s.n ? `<small>${esc(s.who)}</small>` : ''}</span></button></li>`).join('');
   }
   rail.querySelectorAll('button').forEach(b => {
     const n = +b.dataset.n;
@@ -1297,12 +1383,82 @@ function renderRail(guided) {
     if (n === cur) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
   });
 }
-rail.addEventListener('click', e => {
-  const b = e.target.closest('button[data-n]'); if (!b) return;
-  const n = +b.dataset.n;
+function jumpTo(n) {
   if (state.mode !== 'guided') return select(n);
   state.step = n; state.beat = 0; if (n === 0) state.slide = 0; state.card = true; render(true);
+}
+rail.addEventListener('click', e => {
+  const b = e.target.closest('button[data-n]'); if (!b) return;
+  jumpTo(+b.dataset.n);
 });
+
+/* ---------- compass pane: the personas as roles, each with the Experiences they work in (as the platform's compass lists roles and apps) ---------- */
+const cpane = $('compass-pane'), cbtn = $('compass-btn');
+const brandTag = b => b.replace(/[^A-Za-z0-9]/g, '').slice(0, 3).toUpperCase();
+function renderRoles() {
+  const cur = state.mode === 'guided' ? state.step : state.sel;
+  const roles = [...new Set(STEPS.map(s => s.who))];
+  cpane.innerHTML = `<div class="cp-head">Roles and Experiences</div>` + roles.map(who => {
+    const mine = STEPS.filter(s => s.who === who);
+    return `<div class="cp-role"><div class="cp-who">${avatar(who)}<div><b>${esc(who)}</b><small>${esc(mine[0].role)}</small></div></div>` +
+      mine.map(s => `<button type="button" class="cp-app${s.n === cur ? ' on' : ''}" data-n="${s.n}"><i title="${esc(s.brand)}" style="${brandVars(s.brand, 'var(--accent)', '#fff')}">${esc(brandTag(s.brand))}</i><span>${esc(s.exp)}</span><small>Step ${s.n} · ${esc(s.tab)}</small></button>`).join('') + `</div>`;
+  }).join('');
+}
+function compassOpen(on) {
+  if (on) renderRoles();
+  cpane.hidden = !on; cbtn.setAttribute('aria-expanded', on);
+}
+cbtn.addEventListener('click', () => compassOpen(cpane.hidden));
+cpane.addEventListener('click', e => { const b = e.target.closest('[data-n]'); if (!b) return; compassOpen(false); jumpTo(+b.dataset.n); });
+document.addEventListener('click', e => { if (!cpane.hidden && !cpane.contains(e.target) && !cbtn.contains(e.target)) compassOpen(false); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !cpane.hidden) compassOpen(false); });
+
+/* ---------- search in the top bar: steps by question, person, role, Experience or brand ---------- */
+const sIn = $('search'), sPop = $('search-pop');
+let sHits = [], sOn = 0;
+function searchShow() {
+  const q = sIn.value.trim().toLowerCase();
+  if (!q) { sPop.hidden = true; return; }
+  sHits = STEPS.filter(s => [s.tab, s.who, s.role, s.exp, s.brand, s.chal].join(' ').toLowerCase().includes(q)).slice(0, 8);
+  sOn = 0;
+  sPop.innerHTML = sHits.length ? sHits.map((s, i) => `<li role="option" data-n="${s.n}" class="${i === sOn ? 'on' : ''}"><b>${s.n}</b><span>${esc(s.tab)}</span><small>${esc(s.who)} · ${esc(s.exp)}</small></li>`).join('')
+    : `<li class="none">Nothing matches "${esc(sIn.value.trim())}"</li>`;
+  sPop.hidden = false;
+}
+function searchGo(n) { sIn.value = ''; sPop.hidden = true; sIn.blur(); jumpTo(n); }
+sIn.addEventListener('input', searchShow);
+sIn.addEventListener('focus', searchShow);
+sIn.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { sIn.value = ''; sPop.hidden = true; sIn.blur(); }
+  else if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && sHits.length) {
+    e.preventDefault(); sOn = (sOn + (e.key === 'ArrowDown' ? 1 : -1) + sHits.length) % sHits.length;
+    sPop.querySelectorAll('li').forEach((li, i) => li.classList.toggle('on', i === sOn));
+  } else if (e.key === 'Enter' && sHits.length && !sPop.hidden) { e.preventDefault(); searchGo(sHits[sOn].n); }
+});
+sPop.addEventListener('mousedown', e => { const li = e.target.closest('li[data-n]'); if (li) { e.preventDefault(); searchGo(+li.dataset.n); } });
+sIn.addEventListener('blur', () => setTimeout(() => { sPop.hidden = true; }, 100));
+$('wh-reframe').addEventListener('click', () => $('reframe').click());
+$('wh-fs').addEventListener('click', () => $('fs').click());
+
+// The persona being played sits where the signed-in user does on the platform
+const COMPASS_IMG = 'assets/3dexperience-compass.png';
+let compassUrl = null;
+function setCompassImg() {
+  const url = images.get('3dexperience-compass') || COMPASS_IMG;
+  if (url === compassUrl) return; compassUrl = url;
+  const old = cbtn.querySelector('img'); if (old) old.remove();
+  cbtn.querySelector('svg').style.display = url ? 'none' : '';
+  if (url) cbtn.insertAdjacentHTML('beforeend', `<img src="${url}" alt="">`);
+}
+function setMe(s) {
+  setCompassImg();
+  const me = $('me');
+  if (!s) { me.textContent = ''; me.style.backgroundImage = ''; me.title = 'No persona yet'; return; }
+  const url = images.get('persona-' + keyOf(s.who));
+  me.style.backgroundImage = url ? `url('${url}')` : '';
+  me.textContent = url ? '' : s.who[0];
+  me.title = `Playing ${s.who}, ${s.role}`;
+}
 function select(n) { if (state.mode === 'guided') { state.step = n; state.beat = 0; } else state.sel = n; state.card = true; render(true); }
 
 let prevG = -1;
@@ -1396,7 +1552,12 @@ function avatar(name) {
 }
 function brandMark(b) {
   const f = 'brand-' + keyOf(b), url = images.get(f);
-  return `<span class="brandmark">${url ? `<img src="${url}" alt="${esc(b)}">` : `<span class="ph" title="${wants(f)}">${esc(b)}</span>`}</span>`;
+  return `<span class="brandmark">${url ? `<img src="${url}" alt="${esc(b)}">` : `<span class="ph" style="${brandVars(b)}" title="${wants(f)}">${esc(b)}</span>`}</span>`;
+}
+// Brand colours are not published with the page: brand.css in the media folder can set --brand-delmia, --brand-delmia-ink and so on
+function brandVars(b, bg = 'var(--fill)', ink = 'var(--ink)') {
+  const k = keyOf(b);
+  return `--b-bg: var(--brand-${k}, ${bg}); --b-ink: var(--brand-${k}-ink, ${ink});`;
 }
 // A picture on an intro slide: the photo from the media folder, or a placeholder naming the file
 function shot(f) {
@@ -1407,12 +1568,15 @@ function shot(f) {
 let notesOpen = false;   // presenter notes stay as the presenter left them from step to step
 // The platform credit sits at the foot of the side panel, with the 3DEXPERIENCE logo when the media folder has one
 function poweredBy() {
-  const url = images.get('3dexperience-compass') || images.get('3dexperience-logo');
+  const url = images.get('3dexperience-compass') || images.get('3dexperience-logo') || COMPASS_IMG;
   return `<div class="pfoot">${url ? `<img class="compass-img" src="${url}" alt="3DEXPERIENCE compass">`
     : `<span class="compass-img ph" title="${wants('3dexperience-compass')}" aria-hidden="true"></span>`}<span>Powered by <b>The 3DEXPERIENCE Platform</b></span></div>`;
 }
 function renderPanel(s, guided) {
   const panel = $('panel');
+  $('panel-title').textContent = s ? `${s.who}'s task` : guided ? 'Before Step 1' : 'Explore';
+  setMe(s);
+  if (!cpane.hidden) renderRoles();
   if (!s) {
     panel.innerHTML = `<div class="pbody">${guided ? `
       <div class="stepno">Introduction</div>

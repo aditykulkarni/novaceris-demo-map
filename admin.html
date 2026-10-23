@@ -80,7 +80,7 @@ import { STEPS, FIELDS, getField, setField, applyEdits, loadEdits, loadLinks, sa
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const clone = o => JSON.parse(JSON.stringify(o));
-const SHORT = new Set(['tab', 'who', 'role', 'exp', 'brand', 'live', 'video', 'done']);
+const SHORT = new Set(['short', 'tab', 'who', 'role', 'exp', 'brand', 'live', 'video', 'done']);
 
 const base = clone(STEPS);                 // the demo as built
 const loaded = await loadEdits();
